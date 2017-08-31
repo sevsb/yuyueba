@@ -5,6 +5,7 @@ if (file_exists(dirname(__FILE__) . "/../PATH.php")) {
 }
 
 include_once(dirname(__FILE__) . "/../framework/config.php");
+include_once(dirname(__FILE__) . "/autoload.php");
 
 include_once(FRAMEWORK_PATH . "/helper.php");
 include_once(FRAMEWORK_PATH . "/logging.php");

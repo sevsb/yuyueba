@@ -1,25 +1,27 @@
 <?php
 include_once(dirname(__FILE__) . "/../config.php");
 
-class User {
+class TempUser extends User {
     private $mSummary = null;
     private $mGroups = null;
 
-    public function User($summary = array()) {
+    public function TempUser($summary = array()) {
         if (empty($summary)) {
             $summary = array(
                 "id" => 0,
-                "username" => "",
-                "password" => "",
-                "telephone" => "",
-                "email" => "",
-                "groups" => "",
-                "comments" => "",
+                "type" => "",
+                "openid" => "",
+                "yuyue_session" => "",
+                "session_key " => "",
+                "uid" => "",
+                "nickname" => "",
+                "avatar" => "",
                 "create_time" => "",
                 "active_time" => "",
                 "last_login" => "",
                 "token" => "",
                 "status" => 0,
+                "groups" => "",
             );
         }
         $this->mSummary = $summary;
@@ -29,52 +31,69 @@ class User {
         return $this->mSummary["id"];
     }
 
-    public function username() {
-        return $this->mSummary["username"];
+    public function type() {
+        return $this->mSummary["type"];
     }
 
-    public function password() {
-        return $this->mSummary["password"];
+    public function openid() {
+        return $this->mSummary["openid"];
     }
 
+    public function yuyue_session() {
+        return $this->mSummary["yuyue_session"];
+    }
+
+    public function session_key () {
+        return $this->mSummary["session_key "];
+    }
+
+    public function uid() {
+        return $this->mSummary["uid"];
+    }
+    
     public function nickname() {
         return $this->mSummary["nickname"];
     }
 
-    public function telephone() {
-        return $this->mSummary["telephone"];
+
+    public function avatar() {
+        return $this->mSummary["avatar"];
     }
 
-    public function email() {
-        return $this->mSummary["email"];
+    public function create_time() {
+        return $this->mSummary["create_time"];
     }
-
-    public function comments() {
-        return $this->mSummary["comments"];
+    
+    public function active_time() {
+        return $this->mSummary["active_time"];
     }
-
-    public function setUsername($n) {
-        $this->mSummary["username"] = $n;
+    
+    public function last_login() {
+        return $this->mSummary["last_login"];
     }
-
-    public function setPassword($p) {
-        $this->mSummary["password"] = $p;
+    
+    public function token() {
+        return $this->mSummary["token"];
+    }
+    
+    public function status() {
+        return $this->mSummary["status"];
     }
 
     public function setNickname($n) {
         $this->mSummary["nickname"] = $n;
     }
-
-    public function setTelephone($t) {
-        $this->mSummary["telephone"] = $t;
+    public function setYuyueSession($n) {
+        $this->mSummary["yuyue_session"] = $n;
     }
-
-    public function setEmail($mail) {
-        $this->mSummary["email"] = $mail;
+    public function setToken($n) {
+        $this->mSummary["token"] = $n;
     }
-
-    public function setComments($c) {
-        $this->mSummary["comments"] = $c;
+    public function setSessionKey($n) {
+        $this->mSummary["session_key"] = $n;
+    }
+    public function setOpenId($n) {
+        $this->mSummary["openid"] = $n;
     }
 
     public function gids() {
@@ -132,12 +151,12 @@ class User {
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_user::inst()->add($this->username(), $this->password(), $this->nickname(), $this->telephone(), $this->email(), $this->mSummary["groups"], $this->comments());
+            $id = db_tempuser::inst()->add($this->type(), $this->openid(), $this->uid(), $this->nickname(), $this->avatar(), $this->create_time(), $this->active_time(), $this->last_login(), $this->token(),  $this->status(), $this->mSummary["groups"]);
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_user::inst()->modify($id, $this->username(), $this->password(), $this->nickname(), $this->telephone(), $this->email(), $this->mSummary["groups"], $this->comments());
+            $id = db_tempuser::inst()->modify($id, $this->type(), $this->openid(), $this->uid(), $this->nickname(), $this->avatar(), $this->create_time(), $this->active_time(), $this->last_login(), $this->token(),  $this->status(), $this->mSummary["groups"]);
         }
         return $id;
     }
@@ -176,41 +195,40 @@ class User {
 
         return array(
             "id" => $this->id(),
-            "username" => $this->username(), 
-            "password" => $this->password(), 
             "nickname" => $this->nickname(), 
-            "telephone" => $this->telephone(), 
-            "email" => $this->email(), 
-            "comments" => $this->comments(), 
+            "avatar" => $this->telephone(), 
+            "token" => $this->token(), 
+            "status" => $this->status(), 
+            "yuyue_session" => $this->yuyue_session(), 
             "groups" => $groupInfo
         );
     }
 
     public static function create($uid) {
-        $user = db_user::inst()->get($uid);
-        return new User($user);
+        $user = db_tempuser::inst()->get($uid);
+        return new TempUser($user);
     }
 
     public static function all($include_deleted = false) {
-        $users = db_user::inst()->all();
+        $users = db_tempuser::inst()->all();
         $arr = array();
         foreach ($users as $uid => $user) {
             if (!$include_deleted) {
-                if ($user["status"] == db_user::STATUS_DELETED) {
+                if ($user["status"] == db_tempuser::STATUS_DELETED) {
                     continue;
                 }
             }
-            $arr[$uid] = new User($user);
+            $arr[$uid] = new TempUser($user);
         }
         return $arr;
     }
 
     public static function &cachedAll() {
         $cache = cache::instance();
-        $all = $cache->load("class.user.all", null);
+        $all = $cache->load("class.tempuser.all", null);
         if ($all === null) {
-            $all = User::all();
-            $cache->save("class.user.all", $all);
+            $all = TempUser::all();
+            $cache->save("class.tempuser.all", $all);
         }
         return $all;
     }
@@ -224,10 +242,29 @@ class User {
         }
         return null;
     }
+    public static function oneById($id) {
+        $users = self::cachedAll();
+        foreach ($users as $user) {
+            if ($user->id() == $id) {
+                return $user;
+            }
+        }
+        return null;
+    }
+    
+    public static function oneBySession($yuyue_session) {
+        $users = self::cachedAll();
+        foreach ($users as $user) {
+            if ($user->yuyue_session() == $yuyue_session) {
+                return $user;
+            }
+        }
+        return null;
+    }
     
 
     public static function remove($uid) {
-        return db_user::inst()->remove($uid);
+        return db_tempuser::inst()->remove($uid);
     }
 };
 

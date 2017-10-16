@@ -7,6 +7,7 @@ class organization_controller extends v1_base {
     }
 
     public function create_action() {
+        
     }
 
     public function edit_action() {

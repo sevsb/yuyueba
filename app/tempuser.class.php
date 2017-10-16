@@ -151,12 +151,12 @@ class TempUser extends User {
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_tempuser::inst()->add($this->type(), $this->openid(), $this->uid(), $this->nickname(), $this->avatar(), $this->create_time(), $this->active_time(), $this->last_login(), $this->token(),  $this->status(), $this->mSummary["groups"]);
+            $id = db_tempuser::inst()->add($this->type(), $this->openid(), $this->uid(), $this->nickname(), $this->avatar(), $this->create_time(), $this->active_time(), $this->last_login(), $this->token(),  $this->status(), $this->mSummary["groups"], $this->yuyue_session());
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_tempuser::inst()->modify($id, $this->type(), $this->openid(), $this->uid(), $this->nickname(), $this->avatar(), $this->create_time(), $this->active_time(), $this->last_login(), $this->token(),  $this->status(), $this->mSummary["groups"]);
+            $id = db_tempuser::inst()->modify($id, $this->type(), $this->openid(), $this->uid(), $this->nickname(), $this->avatar(), $this->create_time(), $this->active_time(), $this->last_login(), $this->token(),  $this->status(), $this->mSummary["groups"], $this->yuyue_session());
         }
         return $id;
     }
@@ -260,6 +260,16 @@ class TempUser extends User {
             }
         }
         return null;
+    }
+
+    public static function createByOpenid($openid) {
+        $users = self::cachedAll();
+        foreach ($users as $user) {
+            if ($user->openid() == $openid) {
+                return $user;
+            }
+        }
+        return new TempUser;
     }
     
 

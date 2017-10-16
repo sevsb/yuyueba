@@ -7,9 +7,11 @@ spl_autoload_register(function ($class) {
         $clz = strtolower($class);
         $file = dirname(__FILE__) . "/app/$clz.class.php";
     }
+    logging::d("AUTOLOAD", "file:" .$file);
     if (is_file($file)) {
         include($file);
     } else {
+        //logging::d("AUTOLOAD", "file:" .$file);
         die("No such class.");
     }
 });

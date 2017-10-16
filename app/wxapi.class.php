@@ -1,7 +1,7 @@
 <?php
 include_once(dirname(__FILE__) . "/../config.php");
 
-class WxApi {
+class Wxapi {
     
     public static function wx_auth($code){
         $url = 'https://api.weixin.qq.com/sns/jscode2session';

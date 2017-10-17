@@ -8,13 +8,10 @@ class user_controller extends v1_base {
 
     public function login_action() {
         $from = get_request('from');
-        //echo 123;
         logging::d("LOGIN", "FROM:" . $from);
         if ($from == 'weapp') {
             $yuyue_session = get_request('yuyue_session', "");  //yuyue_session用作传递的userid
-            //logging::d("LOGIN", "yuyue_session:" . $yuyue_session);
             $user = TempUser::oneBySession($yuyue_session);
-            //logging::d("LOGIN", "now user:" . $user);
             if (empty($user)) {
                 $code = get_request('code', '');
                 $wx_auth_ret = Wxapi::wx_auth($code);

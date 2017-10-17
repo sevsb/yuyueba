@@ -15,7 +15,7 @@ include_once(FRAMEWORK_PATH . "/cache.php");
 
 
 // database
-defined('MYSQL_SERVER') or define('MYSQL_SERVER', '180.76.188.68');
+defined('MYSQL_SERVER') or define('MYSQL_SERVER', '118.89.226.27');
 defined('MYSQL_USERNAME') or define('MYSQL_USERNAME', 'yyba');
 defined('MYSQL_PASSWORD') or define('MYSQL_PASSWORD', 'yyba');
 defined('MYSQL_DATABASE') or define('MYSQL_DATABASE', 'yyba');

@@ -56,7 +56,6 @@ class user_controller extends v1_base {
         $data->token = $user->token();
         
         return array("op" => "refreshtoken", 'data' => $data);
-        
     }
 
     public function bind_action() {

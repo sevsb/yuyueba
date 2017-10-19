@@ -75,11 +75,12 @@ class user_controller extends v1_base {
         $all_orgs = Organization::all();
         foreach ($all_orgs as $org) {
             if ($org->owner() == $userid) {
-                array_push($own_organizations, $org->packInfo());
+                $own_organizations[$org->id()] = $org->packInfo();
             }
         }
 
-        return array("op" => "organizations", 'data' => $own_organizations);
+        $data = array("own_orgs" =>$own_organizations, 'join_orgs' => array());
+        return array("op" => "organizations", 'data' => $data);
         
     }
 

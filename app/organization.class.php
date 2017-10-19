@@ -76,7 +76,7 @@ class Organization {
                $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_organization::inst()->modify($id);
+            $id = db_organization::inst()->modify($this->id(), $this->name(), $this->avatar(), $this->intro());
         }
         return $id;
     }

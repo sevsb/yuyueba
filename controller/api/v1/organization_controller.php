@@ -89,7 +89,7 @@ class organization_controller extends v1_base {
         $organization->save();
         $data = $organization->packInfo();
 
-        return array('op' => 'org_create', "data" =>  $data);
+        return array('op' => 'org_edit', "data" =>  $data);
     }
 
     public function remove_action() {

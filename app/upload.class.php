@@ -9,7 +9,7 @@ class Upload {
         //$file_type = $file["type"];
         $file_type = explode('.', $file['name']);
         $file_type = $file_type[1];
-        $new_name = md5('123' . uniqid()) . '.' . $file_type;
+        $new_name = md5($file['size'] . $file['name']) . '.' . $file_type;
         logging::d('upload_image', 'file_type:' . $file_type);
         logging::d('upload_image', 'new_name:' . $new_name);
         

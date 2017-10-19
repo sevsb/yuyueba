@@ -7,12 +7,13 @@ class organization_controller extends v1_base {
     }
 
     public function create_action() {
-        $org_name = get_request('org_name');
-        $org_intro = get_request('org_intro');
+        $org_name = urldecode(get_request('org_name'));
+        $org_intro = urldecode(get_request('org_intro'));
         $yuyue_session = get_request('yuyue_session');
         $token = get_request('token');
         
-        
+        logging::d('create_action','org_name' . $org_name);
+        logging::d('create_action','org_intro' . $org_intro);
         $org_avatar = Upload::upload_image();
         if (!$org_avatar) {
             return array('op' => 'fail', "code" => '???', "reason" => '上传图片失败');

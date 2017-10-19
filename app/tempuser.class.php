@@ -27,6 +27,7 @@ class TempUser extends User {
         $this->mSummary = $summary;
     }
 
+    //获取参数函数
     public function id() {
         return $this->mSummary["id"];
     }
@@ -80,6 +81,7 @@ class TempUser extends User {
         return $this->mSummary["status"];
     }
 
+    //修改参数函数
     public function setNickname($n) {
         $this->mSummary["nickname"] = $n;
     }
@@ -148,6 +150,7 @@ class TempUser extends User {
         $this->mSummary["groups"] = implode(",", $gids);
     }
 
+    //存储函数
     public function save() {
         $id = $this->id();
         if ($id == 0) {
@@ -171,6 +174,7 @@ class TempUser extends User {
         return $groups;
     }
 
+    //打包输出函数
     public function packInfo($pack_all_groups = true) {
         $groupInfo = array();
         if ($pack_all_groups) {

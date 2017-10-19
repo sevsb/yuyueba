@@ -9,12 +9,12 @@ class user_controller extends v1_base {
     public function login_action() {
         $from = get_request('from');
         logging::d("LOGIN", "FROM:" . $from);
-        if ($from == 'weapp') {
+        if ($from == 'weapp') { //具体的来源，现在只有微信小程序，也就是WXAPP
             $yuyue_session = get_request('yuyue_session', "");  //yuyue_session用作传递的userid
-            $user = TempUser::oneBySession($yuyue_session);
-            if (empty($user)) {
+            $user = TempUser::oneBySession($yuyue_session); //拿到具体的tempuser信息,tempuser是wx小程序的user,
+            if (empty($user)) {                             //如果没有对应的user，就创建一个。    
                 $code = get_request('code', '');
-                $wx_auth_ret = Wxapi::wx_auth($code);
+                $wx_auth_ret = Wxapi::wx_auth($code);   //获取openid
                 if (!empty($wx_auth_ret->errcode)){
                     return array('op' => 'fail', 'code' => $wx_auth_ret->errcode, 'reason' => $wx_auth_ret->errmsg);
                 }
@@ -24,7 +24,7 @@ class user_controller extends v1_base {
                 $token = md5(time());
                 
                 //$user = new TempUser();
-                $user = TempUser::createByOpenid($openid);
+                $user = TempUser::createByOpenid($openid);  //创建TempUser,修改属性，保存
                 
                 $user->setOpenId($openid);
                 $user->setSessionKey($session_key);
@@ -43,7 +43,7 @@ class user_controller extends v1_base {
         }
     }
 
-    public function refreshtoken_action() {
+    public function refreshtoken_action() { //刷新token
         $yuyue_session = get_request('yuyue_session', "");
         $user = TempUser::oneBySession($yuyue_session);
         
@@ -64,7 +64,7 @@ class user_controller extends v1_base {
     public function register_action() {
     }
 
-    public function organizations_action() {
+    public function organizations_action() {    //返回用户相关的org信息，一个是创建的，一个是参加的
         $yuyue_session = get_request('yuyue_session', "");
         
         $user = TempUser::oneBySession($yuyue_session);

@@ -65,6 +65,22 @@ class user_controller extends v1_base {
     }
 
     public function organizations_action() {
+        $yuyue_session = get_request('yuyue_session', "");
+        
+        $user = TempUser::oneBySession($yuyue_session);
+        $userid = $user->id();
+        
+        $own_organizations = array();
+        
+        $all_orgs = Organization::all();
+        foreach ($all_orgs as $org) {
+            if ($org->owner() == $userid) {
+                array_push($own_organizations, $org->packInfo());
+            }
+        }
+
+        return array("op" => "organizations", 'data' => $own_organizations);
+        
     }
 
 

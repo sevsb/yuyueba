@@ -15,7 +15,7 @@ include_once(FRAMEWORK_PATH . "/cache.php");
 
 //UPLOAD
 defined('UPLOAD_DIR') or define('UPLOAD_DIR', ROOT_PATH . '/upload/images');
-defined('UPLOAD_URL') or define('UPLOAD_URL', rtrim(INSTANCE_URL, "/") . '/upload/images');
+defined('UPLOAD_URL') or define('UPLOAD_URL', rtrim(DOMAIN_URL, "/") . '/sevsb/upload/images');
 
 
 // database

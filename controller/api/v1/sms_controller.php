@@ -1,7 +1,7 @@
 <?php
 include_once(dirname(__FILE__) . "/../../../config.php");
 include_once(dirname(__FILE__) . "/../v1_base.php");
-include_once(dirname(__FILE__) . "/app/SmsSingleSender.class.php");
+include_once(dirname(__FILE__) . "/../../../app/SmsSingleSender.class.php");
 class sms_controller extends v1_base {
 
    public function send_action() {
@@ -16,9 +16,9 @@ class sms_controller extends v1_base {
 		$verification_code = rand(1000,9999);
 	
 		
-	//	$sender = new SmsSingleSender( WX_APPID,WX_SECRET);
-//		$data = $sender->send(0, $nationCode, $phoneNumber, "123456", "", "");
-//	$data=json_decode($data);
-//	return array("data" =>  $data);
+		$sender = new SmsSingleSender( WX_APPID,WX_SECRET);
+		$data = $sender->send(0, $nationCode, $phoneNumber, "123456", "", "");
+		$data=json_decode($data);
+		return array("data" =>  $data);
    }
 }

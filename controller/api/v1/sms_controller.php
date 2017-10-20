@@ -15,8 +15,8 @@ class sms_controller extends v1_base {
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
 		
 		$verification_code = rand(1000,9999)
-		$msg = utf8_encode("【预约一下】您的验证码是：".$verification_code);
-		logging::d("sendsms", "sms code is:" .$verification_code);
+		$msg = utf8_encode("123456");
+		
 		$sender = new SmsSingleSender( WX_APPID,WX_SECRET);
 		$data = $sender->send(0, $nationCode, $phoneNumber, $msg, $extend = "", $ext = "");
 	

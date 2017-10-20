@@ -32,6 +32,9 @@ class Organization {
     public function avatar_url() {
         return rtrim(UPLOAD_URL, "/") . "/" . $this->mSummary["avatar"];
     }
+    public function avatar_thumbnail_url() {
+        return Upload::mkUploadThumbnail($this->mSummary["avatar"], 200, 200);
+    }
 
     public function intro() {
         return $this->mSummary["intro"];
@@ -88,6 +91,7 @@ class Organization {
             "intro" => $this->intro(), 
             "avatar_url" => $this->avatar_url(), 
             "owner_yuyue_session" => $this->owner_yuyue_session(), 
+            "avatar_thumbnail_url()" => $this->avatar_thumbnail_url(), 
         );
     }
 

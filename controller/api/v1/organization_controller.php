@@ -97,6 +97,27 @@ class organization_controller extends v1_base {
 
     public function invite_action() {
     }
+    
+    public function join_action() {
+        $org_id = get_request('org_id');
+        $yuyue_session = get_request("yuyue_session");
+        
+        $organization = Organization::oneById($org_id);
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($organization)) {
+            return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
+        }
+        if (!$user) {
+            return array('op' => 'fail', "code" => '333', "reason" => '无此用户');
+        }
+        if($yuyue_session == $organization->owner_yuyue_session()) {
+            return array('op' => 'fail', "code" => '444', "reason" => '申请加入的user是组织创建者');
+        }
+        $userid = $user->id();
+        
+        $ret = Organization::receive_join($org_id, $userid);
+        return $ret ? array("op" => "org_join" , "data" => $ret) : array('op' => 'fail', "code" => '666', "reason" => '申请失败');
+    }
 
     public function accept_action() {
     }
@@ -107,6 +128,38 @@ class organization_controller extends v1_base {
     public function activities_action() {
     }
 
+    public function search_action() {
+        $org_id = get_request('org_id');
+        $organization = Organization::oneById($org_id);
+        if (empty($organization)) {
+            return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
+        }
+        return array("op" => "org_search" , "data" => $organization->packInfo());
+    }
+
+    public function receive_list_action() {
+        $org_id = get_request('org_id');
+        $organization = Organization::oneById($org_id);
+        if (empty($organization)) {
+            return array("op" => "fail" , "code" => "444" , "reason" => "未找到此组织");
+        }
+        
+        $all_invite = db_invite::inst()->all();
+        $all_tempuser = db_tempuser::inst()->all();
+        
+        $ret = array();
+        foreach ($all_invite as $invite) {
+            $invite_id = $invite["id"];
+            $invite_userid = $invite["user"];
+            $invite_orgid = $invite["organization"];
+            if ($invite_orgid == $org_id) {
+                $join_user = new TempUser($all_tempuser[$invite_userid]);
+                $ret[$invite_id] = $invite;
+                $ret[$invite_id]["user"] = $join_user->packInfo();
+            }
+        }
+        return array("op" => "receive_list" , "data" => $ret);
+    }
 
 
 }

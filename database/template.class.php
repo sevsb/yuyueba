@@ -14,7 +14,7 @@ class db_template extends database_table {
     }
 
     private function db_template() {
-        parent::database_table(MYSQL_DATABASE, MYSQL_PREFIX . "template");
+        parent::__construct(MYSQL_DATABASE, MYSQL_PREFIX . "template");
     }
 
     public function get($id) {

@@ -177,6 +177,7 @@ class TempUser extends User {
     //打包输出函数
     public function packInfo($pack_all_groups = true) {
         $groupInfo = array();
+        /*
         if ($pack_all_groups) {
             $groups = self::cachedAllGroups();
             $gids = $this->gids();
@@ -196,6 +197,7 @@ class TempUser extends User {
                 $groupInfo []= $group->packInfo(false);
             }
         }
+        */
 
         return array(
             "id" => $this->id(),

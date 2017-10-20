@@ -84,6 +84,28 @@ class user_controller extends v1_base {
         
     }
 
+    public function join_list_action(){
+        $yuyue_session = get_request('yuyue_session', "");
+        $user = TempUser::oneBySession($yuyue_session);
+        if (!$user) {
+            return array('op' => 'fail', "code" => '232323', "reason" => '无此用户');
+        }
+        $userid = $user->id();
+        
+        $all_invite = db_invite::inst()->all();
+        $all_organization = db_organization::inst()->all();
+        
+        $ret = array();
+        foreach ($all_invite as $invite) {
+            $org_id = $invite["organization"];
+            if ($invite['user'] == $userid) {
+                $invite['organization'] = Organization::oneById($org_id)->packInfo();
+                $ret[$invite['id']] = $invite;
+            }
+        }
+        //var_dump($ret);
+        return array("op" => "join_list", 'data' => $ret);
+    }
 
 }
 

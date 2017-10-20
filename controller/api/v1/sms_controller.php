@@ -1,7 +1,7 @@
 <?php
 include_once(dirname(__FILE__) . "/../../../config.php");
 include_once(dirname(__FILE__) . "/../v1_base.php");
-include_once(dirname(__FILE__) . "/app/TCmessage.php");
+include_once(dirname(__FILE__) . "/app/SmsSingleSender.class.php");
 class sms_controller extends v1_base {
 
    public function send_action() {
@@ -21,20 +21,4 @@ class sms_controller extends v1_base {
 	//$data=json_decode($data)
 	//return array("data" =>  $data);
    }
-   
-  
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

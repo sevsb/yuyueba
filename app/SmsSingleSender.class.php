@@ -125,6 +125,7 @@ class SmsSingleSender {
         return $this->util->sendCurlPost($wholeUrl, $data);
     }
 }
+/*
 class SmsMultiSender {
     var $url;
     var $appid;
@@ -285,3 +286,4 @@ class SmsMultiSender {
         return $this->util->sendCurlPost($wholeUrl, $data);
     }
 }
+*/

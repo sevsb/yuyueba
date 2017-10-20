@@ -91,7 +91,7 @@ class Organization {
             "intro" => $this->intro(), 
             "avatar_url" => $this->avatar_url(), 
             "owner_yuyue_session" => $this->owner_yuyue_session(), 
-            "avatar_thumbnail_url()" => $this->avatar_thumbnail_url(), 
+            "avatar_thumbnail_url" => $this->avatar_thumbnail_url(), 
         );
     }
 

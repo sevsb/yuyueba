@@ -12,10 +12,11 @@ class sms_controller extends v1_base {
         $token = get_request('token');
 		$verification_code = rand(1000,9999)
 		$msg = "【预约一下】您的验证码是：".$verification_code;
-$sender = new SmsSingleSender( WX_APPID,WX_SECRET);
-$data = $sender->send(0, $nationCode, $phoneNumber, $msg, $extend = "", $ext = "");
- logging::d("sendsms", "sms msg is:" . $msg);
-  return array("data" =>  $data);
+		logging::d("sendsms", "sms msg is:" .verification_code);
+		$sender = new SmsSingleSender( WX_APPID,WX_SECRET);
+		$data = $sender->send(0, $nationCode, $phoneNumber, $msg, $extend = "", $ext = "");
+		logging::d("sendsms", "sms msg is:" .urldecode($msg));
+	return array("data" =>  $data);
    }
    
   public function verification_action() {
@@ -25,9 +26,9 @@ $data = $sender->send(0, $nationCode, $phoneNumber, $msg, $extend = "", $ext = "
         $token = get_request('token');
 		$verification_code = rand(1000,9999)
 		$msg = "【预约一下】您的验证码是：".$verification_code;
-$sender = new SmsSingleSender( WX_APPID,WX_SECRET);
-$data = $sender->send(0, $nationCode, $phoneNumber, $msg, $extend = "", $ext = "");
- logging::d("sendsms", "sms msg is:" . $msg);
+		$sender = new SmsSingleSender( WX_APPID,WX_SECRET);
+		$data = $sender->send(0, $nationCode, $phoneNumber, $msg, $extend = "", $ext = "");
+		logging::d("sendsms", "sms msg is:" . $msg);
   return array("data" =>  $data);
    }
 

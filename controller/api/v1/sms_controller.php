@@ -10,6 +10,10 @@ class sms_controller extends v1_base {
         $phoneNumber = get_request('phoneNumber');
         $yuyue_session = get_request('yuyue_session');
         $token = get_request('token');
+		
+		logging::d("sendsms", "nationCode is:" .$nationCode);
+		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
+		
 		$verification_code = rand(1000,9999)
 		$msg = "【预约一下】您的验证码是：".$verification_code;
 		logging::d("sendsms", "sms code is:" .$verification_code);

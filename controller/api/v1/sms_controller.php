@@ -1,7 +1,7 @@
 <?php
 include_once(dirname(__FILE__) . "/../../../config.php");
 include_once(dirname(__FILE__) . "/../v1_base.php");
-include_once(dirname(__FILE__) . "/app/TCmessage.class.php");
+include_once(dirname(__FILE__) . "/app/TCmessage.php");
 class sms_controller extends v1_base {
 
    public function send_action() {

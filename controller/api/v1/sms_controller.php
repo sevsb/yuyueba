@@ -15,10 +15,10 @@ class sms_controller extends v1_base {
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
 		
 		$verification_code = rand(1000,9999)
-		$message ="123456";
+		$message =;
 		
 		$sender = new SmsSingleSender( WX_APPID,WX_SECRET);
-		$data = $sender->send(0, $nationCode, $phoneNumber, $message, $extend = "", $ext = "");
+		$data = $sender->send(0, $nationCode, $phoneNumber, "123456", $extend = "", $ext = "");
 	
 	return array("data" =>  $data);
    }

@@ -17,7 +17,7 @@ class sms_controller extends v1_base {
 	
 		
 		$sender = new SmsSingleSender( WX_APPID,WX_SECRET);
-		$data = $sender->send(0, $nationCode, $phoneNumber, "123456", $extend = "", $ext = "");
+		$data = $sender->send(0, $nationCode, $phoneNumber, "123456");
 	
 	return array("data" =>  $data);
    }

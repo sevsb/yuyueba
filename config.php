@@ -32,6 +32,9 @@ defined('MYSQL_PREFIX') or define('MYSQL_PREFIX', 'yyba_');
 defined('WX_APPID') or define('WX_APPID', 'wx48789b1ee3a4fb7d');
 defined('WX_SECRET') or define('WX_SECRET', 'eb2d636b74d8da415455b368e817edd2');
 
+//TCmessage
 defined('WX_SMS_SDKID') or define('WX_SMS_SDKID', '1400045428');
 defined('WX_SMS_SECRET') or define('WX_SMS_SECRET', 'edbb6bf077fbadac41c40275783a2d2b');
 
+//payment
+defined('MCH_ID') or define('MCH_ID', 'edbb6bf077fbadac41c40275783a2d2b');

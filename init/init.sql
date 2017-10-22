@@ -302,6 +302,8 @@ CREATE TABLE `yyba_user` (
   `password` text CHARACTER SET latin1 NOT NULL,
   `nickname` text CHARACTER SET latin1 NOT NULL,
   `avatar` text CHARACTER SET latin1 NOT NULL,
+  `phonenumber` text CHARACTER SET latin1 NOT NULL,
+   `verifycode` text CHARACTER SET latin1 NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -155,6 +155,18 @@ class organization_controller extends v1_base {
         
     }
 
+    public function member_list_action() {
+        $org_id = get_request('org_id');
+        $organization = Organization::oneById($org_id);
+        if (empty($organization)) {
+            return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
+        }
+        $member_list = Organization::member_list($org_id);
+        
+        return array("op" => "member_list" , "data" => $member_list);
+        
+    }
+
     public function activities_action() {
     }
 

@@ -156,6 +156,25 @@ class Organization {
         }
         return db_organization_member::inst()->add($org_id, $userid);
     }
+
+    public static function member_list($org_id) {
+        $organization_member = db_organization_member::inst()->all();
+        $tempuser_list = db_tempuser::inst()->all();
+        //var_dump($organization_member);
+        //var_dump($tempuser_list);
+        
+        $ret_arr = [];
+        foreach ($organization_member as $member) {
+            $member_org_id = $member['organization'];
+            if ($member_org_id != $org_id) {
+                continue;
+            }
+            $userid = $member['user'];
+            $ret_arr[$userid] = new TempUser($tempuser_list[$userid]);
+            $ret_arr[$userid] = $ret_arr[$userid]->packInfo();
+        }
+        return $ret_arr;
+    }
     
     
 };

@@ -11,6 +11,10 @@ class user_controller extends v1_base {
         logging::d("LOGIN", "FROM:" . $from);
         if ($from == 'weapp') { //具体的来源，现在只有微信小程序，也就是WXAPP
             $yuyue_session = get_request('yuyue_session', "");  //yuyue_session用作传递的userid
+            $avatar = get_request('avatar', "");  //yuyue_session用作传递的userid
+            $nick = get_request('nick', "");  //yuyue_session用作传递的userid
+            logging::d("LOGIN", "nick:" . $nick);
+            logging::d("LOGIN", "avatar:" . $avatar);
             $user = TempUser::oneBySession($yuyue_session); //拿到具体的tempuser信息,tempuser是wx小程序的user,
             if (empty($user)) {                             //如果没有对应的user，就创建一个。    
                 $code = get_request('code', '');
@@ -22,17 +26,17 @@ class user_controller extends v1_base {
                 $session_key = $wx_auth_ret->session_key;
                 $yuyue_session = md5(time() . $openid . $session_key);
                 $token = md5(time());
-                
-                //$user = new TempUser();
+
                 $user = TempUser::createByOpenid($openid);  //创建TempUser,修改属性，保存
-                
                 $user->setOpenId($openid);
                 $user->setSessionKey($session_key);
                 $user->setToken($token);
                 $user->setYuyueSession($yuyue_session);
                 logging::d("LOGIN", "yuyue_session now is :" . $yuyue_session);
-                $user->save();
             }
+            $user->setAvatar($avatar);
+            $user->setNickname($nick);
+            $user->save();
             //logging::d("LOGIN", "now user is :" . $user);
             $data = new stdClass();
             $data->timeout = time() + 7200;

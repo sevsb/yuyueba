@@ -85,6 +85,9 @@ class TempUser extends User {
     public function setNickname($n) {
         $this->mSummary["nickname"] = $n;
     }
+    public function setAvatar($n) {
+        $this->mSummary["avatar"] = $n;
+    }
     public function setYuyueSession($n) {
         $this->mSummary["yuyue_session"] = $n;
     }
@@ -202,7 +205,7 @@ class TempUser extends User {
         return array(
             "id" => $this->id(),
             "nickname" => $this->nickname(), 
-            "avatar" => $this->telephone(), 
+            "avatar" => $this->avatar(), 
             "token" => $this->token(), 
             "status" => $this->status(), 
             "yuyue_session" => $this->yuyue_session(), 

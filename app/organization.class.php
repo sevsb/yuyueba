@@ -53,6 +53,11 @@ class Organization {
         $user = TempUser::oneById($owner);
         return $user->yuyue_session();
     }
+    public function owner_detail() {
+        $owner = $this->mSummary['owner'];
+        $user = TempUser::oneById($owner);
+        return $user->packInfo();
+    }
 
     public function setName($n) {
         $this->mSummary["name"] = $n;
@@ -92,6 +97,7 @@ class Organization {
             "avatar_url" => $this->avatar_url(), 
             "owner_yuyue_session" => $this->owner_yuyue_session(), 
             "avatar_thumbnail_url" => $this->avatar_thumbnail_url(), 
+            "owner" => $this->owner_detail(), 
         );
     }
 

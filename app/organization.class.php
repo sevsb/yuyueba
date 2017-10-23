@@ -138,8 +138,25 @@ class Organization {
         if (!$ret) {
             return db_invite::inst()->add($org_id, $userid);
         }else {
-            return $ret;
+            return db_invite::inst()->modify($org_id, $userid, 0);
         }
     }
+    
+    public static function audit_join($org_id, $userid, $audit) {
+        $ret = db_invite::inst()->modify($org_id, $userid, $audit);
+        if (!$ret) {
+            return false;
+        }
+        if ($audit == 2) {
+            return $ret;
+        }
+        $ret2 = db_organization_member::inst()->one($org_id, $userid);
+        if ($ret2) {
+            return $ret;
+        }
+        return db_organization_member::inst()->add($org_id, $userid);
+    }
+    
+    
 };
 

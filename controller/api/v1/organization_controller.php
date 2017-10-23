@@ -114,15 +114,45 @@ class organization_controller extends v1_base {
             return array('op' => 'fail', "code" => '444', "reason" => '申请加入的user是组织创建者');
         }
         $userid = $user->id();
+        if(db_organization_member::inst()->one($org_id, $userid)) {
+            return array('op' => 'fail', "code" => '4443', "reason" => '申请的用户已经是此组织会员');
+        }
         
         $ret = Organization::receive_join($org_id, $userid);
         return $ret ? array("op" => "org_join" , "data" => $ret) : array('op' => 'fail', "code" => '666', "reason" => '申请失败');
     }
 
-    public function accept_action() {
+    public function audit_action() {
+        $org_id = get_request('org_id');
+        $yuyue_session = get_request("yuyue_session");
+        $audit = get_request("audit");
+        
+        $organization = Organization::oneById($org_id);
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($organization)) {
+            return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
+        }
+        if (!$user) {
+            return array('op' => 'fail', "code" => '333', "reason" => '无此用户');
+        }
+        if($yuyue_session == $organization->owner_yuyue_session()) {
+            return array('op' => 'fail', "code" => '444', "reason" => '申请加入的user是组织创建者');
+        }
+        $userid = $user->id();
+        
+        $ret = Organization::audit_join($org_id, $userid, $audit);
+        return $ret ? array("op" => "org_audit" , "data" => $ret) : array('op' => 'fail', "code" => '555', "reason" => '失败操作');
+        
     }
 
     public function addvip_action() {
+        
+        
+        
+        
+        
+        
+        
     }
 
     public function activities_action() {

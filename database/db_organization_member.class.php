@@ -45,6 +45,11 @@ class db_organization_member extends database_table {
         return $this->update(array("status" => self::STATUS_DELETED), "id = $id");
     }
 
+    public function kick($org_id, $userid) {
+        $org_id = (int)$org_id;
+        return $this->delete("organization = $org_id and user = $userid");
+    }
+
 
 };
 

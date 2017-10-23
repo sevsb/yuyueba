@@ -167,6 +167,36 @@ class organization_controller extends v1_base {
         
     }
 
+    public function kick_member_action() {
+        $org_id = get_request('org_id');
+        $yuyue_session = get_request("yuyue_session");
+        
+        $organization = Organization::oneById($org_id);
+        $user = TempUser::oneBySession($yuyue_session);
+        $member_list = Organization::member_list($org_id);
+        if (empty($organization)) {
+            return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
+        }
+        if (!$user) {
+            return array('op' => 'fail', "code" => '333', "reason" => '无此用户');
+        }
+        $userid = $user->id();
+        if($yuyue_session == $organization->owner_yuyue_session()) {
+            return array('op' => 'fail', "code" => '444', "reason" => '踢出的user是组织创建者');
+        }
+        if (empty($member_list)) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织内没有会员');
+        }
+        foreach ($member_list as $member){
+            if ($member['id'] == $userid) {
+                $ret = db_organization_member::inst()->kick($org_id, $userid);
+                return $ret ? array('op' => 'kick_member', "data" => '') : array('op' => 'fail', "code" => '777', "reason" => '删除成员失败');
+            }
+        }
+        return array('op' => 'fail', "code" => '666', "reason" => '此用户非此组织成员');
+        
+    }
+
     public function activities_action() {
     }
 

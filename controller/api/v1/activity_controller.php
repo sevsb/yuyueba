@@ -7,7 +7,7 @@ class activity_controller extends v1_base {
     private $mUser = null;
 
     public function preaction($action) {
-        $token = get_request_assert("token");
+        //$token = get_request_assert("token");
     }
 
     public function list_action() {
@@ -69,10 +69,15 @@ class activity_controller extends v1_base {
     public function viewmember_action() {
     }
 
-    public function viewmember_action() {
-    }
-
     public function tipoff_action() {
+    }
+    
+    public function upload_image_action() {
+        $image = Upload::upload_image();   //先存图片
+        if (!$image) {
+            return array('op' => 'fail', "code" => 111, "reason" => '上传图片失败');
+        }
+        return array('op' => 'upload_image', "data" => $image);
     }
 }
 

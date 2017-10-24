@@ -138,6 +138,10 @@ class Organization {
     public static function remove($id) {
         return db_organization::inst()->remove($id);
     }
+
+    public static function disband($id) {
+        return db_organization::inst()->disband($id);
+    }
     
     public static function receive_join($org_id, $userid) {
         $ret = db_invite::inst()->one($org_id, $userid);

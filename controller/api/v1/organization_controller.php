@@ -73,7 +73,9 @@ class organization_controller extends v1_base {
         if ($owner_id != $userid) {
             return array('op' => 'fail', "code" => '30003', "reason" => '此用户不是组织的发起者，无法修改');
         }
-        
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
+        }
         $organization->setName($org_name);
         $organization->setIntro($org_intro);
         
@@ -110,6 +112,9 @@ class organization_controller extends v1_base {
         if (!$user) {
             return array('op' => 'fail', "code" => '333', "reason" => '无此用户');
         }
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '2323', "reason" => '此组织已经被解散');
+        }
         if($yuyue_session == $organization->owner_yuyue_session()) {
             return array('op' => 'fail', "code" => '444', "reason" => '申请加入的user是组织创建者');
         }
@@ -121,6 +126,31 @@ class organization_controller extends v1_base {
         $ret = Organization::receive_join($org_id, $userid);
         return $ret ? array("op" => "org_join" , "data" => $ret) : array('op' => 'fail', "code" => '666', "reason" => '申请失败');
     }
+    
+    public function disband_action() {
+        $org_id = get_request('org_id');
+        $yuyue_session = get_request("yuyue_session");
+        
+        $organization = Organization::oneById($org_id);
+        $user = TempUser::oneBySession($yuyue_session);
+        //var_dump($organization);
+        if (empty($organization)) {
+            return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
+        }
+        if (!$user) {
+            return array('op' => 'fail', "code" => '333', "reason" => '无此用户');
+        }
+        if($yuyue_session != $organization->owner_yuyue_session()) {
+            return array('op' => 'fail', "code" => '444', "reason" => 'user并非是组织创建者，无权解散组织');
+        }
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
+        }
+        $userid = $user->id();
+
+        $ret = Organization::disband($org_id);
+        return $ret ? array("op" => "org_disband" , "data" => $ret) : array('op' => 'fail', "code" => '666', "reason" => '组织解散失败');
+    }
 
     public function audit_action() {
         $org_id = get_request('org_id');
@@ -131,6 +161,9 @@ class organization_controller extends v1_base {
         $user = TempUser::oneBySession($yuyue_session);
         if (empty($organization)) {
             return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
+        }
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
         }
         if (!$user) {
             return array('op' => 'fail', "code" => '333', "reason" => '无此用户');
@@ -161,6 +194,9 @@ class organization_controller extends v1_base {
         if (empty($organization)) {
             return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
         }
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
+        }
         $member_list = Organization::member_list($org_id);
         
         return array("op" => "member_list" , "data" => $member_list);
@@ -176,6 +212,9 @@ class organization_controller extends v1_base {
         $member_list = Organization::member_list($org_id);
         if (empty($organization)) {
             return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
+        }
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
         }
         if (!$user) {
             return array('op' => 'fail', "code" => '333', "reason" => '无此用户');
@@ -206,6 +245,9 @@ class organization_controller extends v1_base {
         if (empty($organization)) {
             return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
         }
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
+        }
         return array("op" => "org_search" , "data" => $organization->packInfo());
     }
 
@@ -214,6 +256,9 @@ class organization_controller extends v1_base {
         $organization = Organization::oneById($org_id);
         if (empty($organization)) {
             return array("op" => "fail" , "code" => "444" , "reason" => "未找到此组织");
+        }
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
         }
         
         $all_invite = db_invite::inst()->all();

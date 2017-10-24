@@ -42,6 +42,11 @@ class db_organization extends database_table {
         return $this->update(array("status" => self::STATUS_DELETED), "id = $id");
     }
 
+    public function disband($id) {
+        $id = (int)$id;
+        return $this->update(array("type" => self::STATUS_DELETED), "id = $id");
+    }
+
 
 };
 

@@ -103,7 +103,7 @@ class user_controller extends v1_base {
         
     }
 
-    public function join_list_action(){
+    public function join_list_action(){ //用户申请加入列表
         $yuyue_session = get_request('yuyue_session', "");
         $user = TempUser::oneBySession($yuyue_session);
         if (!$user) {

@@ -25,6 +25,35 @@ class activity_controller extends v1_base {
         return $this->op("activities", $data);
     }
 
+    public function organized_list_action() {
+        $type = get_request("type");
+        $owner = get_request("owner");
+
+        if($type == 1){
+            $user = TempUser::oneBySession($owner);
+            if (empty($user)) {
+                return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+            }
+            $owner = $user->id();
+        }else if ($type == 2){
+            $organization = Organization::oneById($owner);
+            if (empty($organization)) {
+                return array('op' => 'fail', "code" => '000003', "reason" => '组织不存在');
+            }
+        }else {
+            return array('op' => 'fail', "code" => '000004', "reason" => 'type错误');
+        }
+
+        $all_activities = Activity::all();
+        $ret = [];
+        foreach ($all_activities as $act) {
+            if ($act->owner() == $owner) {
+                $ret[$act->id()] = $act->packInfo();
+            }
+        }
+        return $this->op("organized_list", $ret);
+    }
+
     public function search_action() {
         $s = get_request_assert("s");
 

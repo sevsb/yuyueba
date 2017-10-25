@@ -185,6 +185,17 @@ class Organization {
         }
         return $ret_arr;
     }
+
+    
+    public static function has_member($org_id, $userid) {
+        $member_list = $this->member_list($org_id);
+        foreach ($member_list as $member) {
+            if ($member->id() == $userid) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     
 };

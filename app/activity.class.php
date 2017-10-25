@@ -149,12 +149,12 @@ class Activity {
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_activity::inst()->add($this->owner(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->deadline(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->type(), $this->joinable(), $this->status());
+            $id = db_activity::inst()->add($this->owner(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->deadline(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->type(), $this->joinable());
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_activity::inst()->modify($id);
+            $id = db_activity::inst()->modify($this->id(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->deadline(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->joinable());
         }
         return $id;
     }
@@ -174,6 +174,16 @@ class Activity {
     public static function create($id) {
         $summary = db_activity::inst()->get($id);
         return new Activity($summary);
+    }
+    
+    public static function oneById($id) {
+        $activities = self::cachedAll();
+        foreach ($activities as $activity) {
+            if ($activity->id() == $id) {
+                return $activity;
+            }
+        }
+        return null;
     }
 
     public static function all() {

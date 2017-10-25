@@ -126,6 +126,30 @@ class user_controller extends v1_base {
         return array("op" => "join_list", 'data' => $ret);
     }
 
+    public function sign_list_action(){ //用户查看加入的活动列表
+        $yuyue_session = get_request('yuyue_session', "");
+        $user = TempUser::oneBySession($yuyue_session);
+        if (!$user) {
+            return array('op' => 'fail', "code" => '232323', "reason" => '无此用户');
+        }
+        $userid = $user->id();
+        
+        $all_sign = db_sign::all();
+        $all_activity = Activity::all();
+        $ret = [];
+        foreach ($all_sign as $sign) {
+            if ($sign['user'] == $userid) {
+                $s = array();
+                $s['activity'] = $all_activity[$sign['activity']]->packInfo();
+                $s['sheet'] = json_decode($sign['sheet']);
+                $s['id'] = $sign['id'];
+                $ret[$sign['id']] = $s;
+            }
+        }
+
+        return array("op" => "sign_list", 'data' => $ret);
+    }
+
 }
 
 

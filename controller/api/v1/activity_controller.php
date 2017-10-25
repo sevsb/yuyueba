@@ -42,13 +42,13 @@ class activity_controller extends v1_base {
     public function view_action() {
         $aid = get_request_assert("activity");
 
-        $act1 = new Activity();
+        $act = Activity::oneById($aid);
         $data = array(
             "info" => array(
-                $act1->packInfo(true),
+                $act->packInfo(true),
             ),
         );
-        return $this->op("activity", $data);
+        return $this->op("activity_view", $data);
     }
 
     public function join_action() {

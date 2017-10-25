@@ -45,6 +45,12 @@ class db_sign extends database_table {
         return $this->update(array("status" => self::STATUS_DELETED), "id = $id");
     }
 
+    public function del($activity_id, $userid,) {
+        $activity_id = (int)$activity_id;
+        $userid = (int)$userid;
+        return $this->delete("activity = $activity_id and user = $userid");
+    }
+
 
 };
 

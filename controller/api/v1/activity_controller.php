@@ -102,6 +102,28 @@ class activity_controller extends v1_base {
         $ret = db_sign::add($activity_id, $userid, json_encode($sheet));
         return $ret ?  array('op' => 'activity_sign', "data" => $ret) : array('op' => 'fail', "code" => 1033002, "reason" => '活动报名失败');
     }
+    
+    public function unsign_action() {
+        $activity_id = get_request("activity_id");
+        $yuyue_session = get_request("yuyue_session");
+
+        $activity = Activity::oneById($activity_id);
+        if (empty($activity)) {
+            return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
+        }
+        
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+        $userid = $user->id();
+        $sign = db_sign::one($activity_id, $userid);
+        if (!$sign) {
+            return array('op' => 'fail', "code" => 1033002, "reason" => '用户尚未报名过此活动')
+        }
+        $ret = db_sign::del($activity_id, $userid);
+        return $ret ?  array('op' => 'activity_unsign', "data" => $ret) : array('op' => 'fail', "code" => 1033002, "reason" => '退出活动/取消报名失败');
+    }
 
     public function mine_action() {
     }

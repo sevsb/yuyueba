@@ -40,6 +40,11 @@ class db_activity extends database_table {
         return $this->update(array("status" => self::STATUS_DELETED), "id = $id");
     }
 
+    public function cancel($id) {
+        $id = (int)$id;
+        return $this->update(array("status" => self::STATUS_DELETED), "id = $id");
+    }
+
 
 };
 

@@ -231,5 +231,9 @@ class Activity {
     public static function remove($id) {
         return db_activity::inst()->remove($id);
     }
+    
+    public static function cancel($id) {
+        return db_activity::inst()->cancel($id);
+    }
 };
 

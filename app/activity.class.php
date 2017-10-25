@@ -20,6 +20,19 @@ class Activity {
     public function owner() {
         return $this->mSummary["owner"];
     }
+    public function owner_detail() {
+        $type = $this->type();
+        $owner_id = $this->owner();
+        if ($type == 1) {
+            $user = TempUser::oneById($owner_id);
+            return $user ? $user->packInfo() : null;
+        }else if ($type == 2) {
+            $organization = Organization::oneById($owner_id);
+            return $organization ? $organization->packInfo() : null;
+        }else {
+            return false;
+        }
+    }
     public function title() {
         return $this->mSummary["title"];
     }
@@ -27,7 +40,7 @@ class Activity {
         return $this->mSummary["info"];
     }
     public function images() {
-        return $this->mSummary["images"];
+        return json_decode($this->mSummary["images"]);
     }
     public function createtime() {
         return $this->mSummary["createtime"];
@@ -66,7 +79,7 @@ class Activity {
         return $this->mSummary["joinable"];
     }
     public function joinsheet() {
-        return $this->mSummary["sheet"];
+        return json_decode($this->mSummary["sheet"]);
     }
     public function clickcount() {
         return $this->mSummary["clickcount"];
@@ -118,7 +131,7 @@ class Activity {
         $this->mSummary["content"] = $n;
     }
     public function setImages($n) {
-        $this->mSummary["images"] = $n;
+        $this->mSummary["images"] = json_encode($n);
     }
     public function setBegintime($n) {
         $this->mSummary["begintime"] = $n;
@@ -139,7 +152,7 @@ class Activity {
         $this->mSummary["repeatcount"] = $n;
     }
     public function setJoinsheet($n) {
-        $this->mSummary["sheet"] = $n;
+        $this->mSummary["sheet"] = json_encode($n);
     }
     public function setStatus($n) {
         $this->mSummary["status"] = $n;
@@ -162,12 +175,22 @@ class Activity {
     public function packInfo($detail = false) {
        return array(
             "id" => $this->id(),
-            "owner" => "发起组织名称",
-            "title" => "活动标题",
-            "info" => "活动概要",
-            "begintime" => time(),
-            "endtime" => time(),
-            "address" => "活动地址",
+            "type" => $this->type(),
+            "owner" => $this->owner_detail(),
+            "title" => $this->title(),
+            "info" => $this->info(),
+            "images" => $this->images(),
+            "content" => $this->content(),
+            "begintime" => $this->begintime(),
+            "endtime" => $this->endtime(),
+            "deadline" => $this->deadline(),
+            "address" => $this->address(),
+            "repeattype" => $this->repeattype(),
+            "repeatcount" => $this->repeatcount(),
+            "joinsheet" => $this->joinsheet(),
+            "status" => $this->status(),
+            "joinable" => $this->joinable(),
+            "max_participants" => $this->max_participants(),
         );
     }
 

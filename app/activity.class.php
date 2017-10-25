@@ -72,6 +72,10 @@ class Activity {
     public function max_participants() {
         return $this->mSummary["participants"];
     }
+    
+    public function now_participants() {
+        return count($this->signed_user_list());
+    }
     public function type() {
         return $this->mSummary["type"];
     }
@@ -86,6 +90,28 @@ class Activity {
     }
     public function status() {
         return $this->mSummary["status"];
+    }
+   
+    
+    public function signed_user_list() {   
+        $activity_id = $this->id();
+        
+        $all_sign = db_sign::all();
+        $all_user = TempUser::all();
+        
+        $ret = [];
+        if (empty($all_sign)) {
+            return [];
+        }
+        foreach ($all_sign as $sign) {
+            if ($sign["activity"] ==  $activity_id) {
+                $s["id"] = $sign['id'];
+                $s["sheet"] = json_decode($sign['sheet']);
+                $s["user"] = $all_user[$sign['user']]->packInfo();
+                $ret[$sign["id"]] = $s;
+            }
+        }
+        return $ret;
     }
     /*
         $activity->set_Type();

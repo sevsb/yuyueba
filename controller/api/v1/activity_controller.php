@@ -94,6 +94,21 @@ class activity_controller extends v1_base {
         if (empty($user)) {
             return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
         }
+        
+        $joinable = $activity->joinable();
+        if ($joinable == 0) {
+            return array('op' => 'fail', "code" => '20302', "reason" => '此活动无法报名');
+        }
+        $now_participants = $activity->now_participants();
+        $max_participants = $activity->max_participants();
+        if ($now_participants >= $max_participants) {
+            return array('op' => 'fail', "code" => '203402', "reason" => '此活动报名额度已经满额');
+        }
+        $deadline = $activity->deadline();
+        if (time() >= $deadline) {
+            return array('op' => 'fail', "code" => '203407', "reason" => '此活动报名截止时间已过，无法报名');
+        }
+        
         $userid = $user->id();
         $sign = db_sign::one($activity_id, $userid);
         if ($sign) {
@@ -333,6 +348,18 @@ class activity_controller extends v1_base {
     }
 
     public function tipoff_action() {
+    }
+    
+    public function signed_user_list_action() {
+        $activity_id = get_request("activity_id");
+        
+        $activity = Activity::oneById($activity_id);
+        if (empty($activity)) {
+            return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
+        }
+        
+        $signed_user_list = $activity->sign_user_list();
+        return array('op' => 'signed_user_list', "data" => $signed_user_list);
     }
     
     public function upload_image_action() {

@@ -98,6 +98,7 @@ class Organization {
             "owner_yuyue_session" => $this->owner_yuyue_session(), 
             "avatar_thumbnail_url" => $this->avatar_thumbnail_url(), 
             "owner" => $this->owner_detail(), 
+            "type" => $this->type(), 
         );
     }
 

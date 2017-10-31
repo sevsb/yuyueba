@@ -242,8 +242,8 @@ class activity_controller extends v1_base {
             return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
         }
         $userid = $user->id();
-        $type = activity->type();
-        $owner = activity->owner();
+        $type = $activity->type();
+        $owner = $activity->owner();
         if ($type == 1) {
             if ($owner != $userid){
                 return array('op' => 'fail', "code" => '0023002', "reason" => '用户无权限编辑此活动');
@@ -330,8 +330,8 @@ class activity_controller extends v1_base {
             return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
         }
         $userid = $user->id();
-        $type = activity->type();
-        $owner = activity->owner();
+        $type = $activity->type();
+        $owner = $activity->owner();
         if ($type == 1) {
             if ($owner != $userid){
                 return array('op' => 'fail', "code" => '0023002', "reason" => '用户无权限编辑此活动');

@@ -77,7 +77,7 @@ class SmsSingleSender {
      * @param string $ext 服务端原样返回的参数，可填空串
      * @return string json string { "result": xxxxx, "errmsg": "xxxxxx"  ... }，被省略的内容参见协议文档
      */
-    function sendWithParam($nationCode, $phoneNumber, $templId = 0, $params, $sign = "", $extend = "", $ext = "") {
+    function sendWithParam($nationCode, $phoneNumber, $templId, $params, $sign = "小柠檬科技", $extend = "", $ext = "") {
 /*
 请求包体
 {

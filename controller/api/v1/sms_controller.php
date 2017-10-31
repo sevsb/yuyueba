@@ -17,7 +17,7 @@ class sms_controller extends v1_base {
 		
 		$verification_code = rand(1000,9999);
 		logging::d("sendsms", "verification_code is:" .$verification_code);
-	$params =[""+$verification_code];
+	$params =array($verification_code);
 		
 		$sender = new SmsSingleSender( WX_SMS_SDKID,WX_SMS_SECRET);
 		$data = $sender->sendWithParam($nationCode, $phoneNumber, $templId, $params);

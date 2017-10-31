@@ -20,7 +20,7 @@ class sms_controller extends v1_base {
 	$params =array("".$verification_code);
 		
 		$sender = new SmsSingleSender( WX_SMS_SDKID,WX_SMS_SECRET);
-		$msg ="【小柠檬科技】您的验证码是".$verification_code ."，如非本人操作，请忽略本短信。"
+		$msg ="【小柠檬科技】您的验证码是（".$verification_code."），如非本人操作，请忽略本短信。"
 		$data = $sender->send(0, $nationCode, $phoneNumber, $msg, $extend = "", $ext = "")
 		//$data = $sender->sendWithParam($nationCode, $phoneNumber, $templId, $params);
 		$data=json_decode($data);

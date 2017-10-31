@@ -72,6 +72,9 @@ class Activity {
     public function max_participants() {
         return $this->mSummary["participants"];
     }
+    public function participants() {
+        return $this->mSummary["participants"];
+    }
     
     public function now_participants() {
         return count($this->signed_user_list());

@@ -155,7 +155,7 @@ class activity_controller extends v1_base {
         $participants = get_request("participants", 0);
         
         $title = get_request("title");
-        $info = get_request("info");
+        $info = get_request("info", "缺省");
         $images = get_request("images");
         $content = get_request("content");
         
@@ -170,21 +170,23 @@ class activity_controller extends v1_base {
         
         $joinsheet = get_request("joinsheet");
         
-
-        if ($type != 1 || $type != 2 || empty($owner)) {
+        //logging::d("ACT type", ($type));
+        //logging::d("ACT owner", ($owner));
+        if (($type != 1 && $type != 2) || empty($owner)) {
             return array('op' => 'fail', "code" => 000001, "reason" => '活动类型或创建者信息不完整');
         }
         if ($type == 1) {
+            $yuyue_session = $owner;
             $user = TempUser::oneBySession($yuyue_session);
             if (!$user) {
                 return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
             }
             $owner = $user->id();
         }
-        if (empty($title) ||　empty($info) ||　empty($content) ) {
+        if (empty($title) || empty($info) || empty($content) ) {
             return array('op' => 'fail', "code" => 000002, "reason" => '活动标题，简介，详情不完整');
         }
-        if (empty($begintime) ||　empty($endtime)) {
+        if (empty($begintime) || empty($endtime)) {
             return array('op' => 'fail', "code" => 000003, "reason" => '活动开始时间，结束时间不完整');
         }
         if (empty($address)) {
@@ -216,7 +218,8 @@ class activity_controller extends v1_base {
         
         $activity->setStatus(0);
         
-        
+        //logging::d("ACT CREATE", dump_var($activity));
+        //return;
         $ret = $activity->save();
         
         return $ret ?  array('op' => 'activity_organize', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 100002, "reason" => '活动发起失败');

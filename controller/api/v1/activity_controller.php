@@ -28,7 +28,8 @@ class activity_controller extends v1_base {
     public function organized_list_action() {
         $type = get_request("type");
         $owner = get_request("owner");
-
+        logging::d("ORGED_LIST type:", $type);
+        logging::d("ORGED_LIST owner:", $owner);
         if($type == 1){
             $user = TempUser::oneBySession($owner);
             if (empty($user)) {

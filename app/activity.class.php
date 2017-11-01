@@ -99,7 +99,7 @@ class Activity {
     public function signed_user_list() {   
         $activity_id = $this->id();
         
-        $all_sign = db_sign::all();
+        $all_sign = db_sign::inst()->all();
         $all_user = TempUser::all();
         
         $ret = [];
@@ -220,6 +220,7 @@ class Activity {
             "status" => $this->status(),
             "joinable" => $this->joinable(),
             "max_participants" => $this->max_participants(),
+            "now_participants" => $this->now_participants(),
         );
     }
 

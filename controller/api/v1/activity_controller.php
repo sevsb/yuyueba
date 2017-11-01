@@ -71,14 +71,14 @@ class activity_controller extends v1_base {
     
     public function view_action() {
         $aid = get_request_assert("activity");
-
+        logging::d("ACT VIEW", $aid);
         $act = Activity::oneById($aid);
         $data = array(
             "info" => array(
                 $act->packInfo(true),
             ),
         );
-        return $this->op("activity_view", $data);
+        return $this->op("activity_view", $act->packInfo());
     }
 
     public function sign_action() {

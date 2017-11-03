@@ -42,6 +42,28 @@ class Activity {
     public function images() {
         return json_decode($this->mSummary["images"]);
     }
+    public function image_url_list() {
+        $images = json_decode($this->mSummary["images"]);
+        if (empty($images)) {
+            return images;
+        }
+        $arr = [];
+        foreach ($images as $image) {
+            array_push($arr, rtrim(UPLOAD_URL, "/") . "/" . $image);
+        }
+        return $arr;
+    }
+    public function image_thumbnail_url_list() {
+        $images = json_decode($this->mSummary["images"]);
+        if (empty($images)) {
+            return images;
+        }
+        $arr = [];
+        foreach ($images as $image) {
+            array_push($arr, rtrim(THUMBNAIL_URL, "/") . "/thumbnail-$image");
+        }
+        return $arr;
+    }
     public function createtime() {
         return $this->mSummary["createtime"];
     }
@@ -209,6 +231,8 @@ class Activity {
             "title" => $this->title(),
             "info" => $this->info(),
             "images" => $this->images(),
+            "image_url_list" => $this->image_url_list(),
+            "image_thumbnail_url_list" => $this->image_thumbnail_url_list(),
             "content" => $this->content(),
             "begintime" => $this->begintime(),
             "endtime" => $this->endtime(),

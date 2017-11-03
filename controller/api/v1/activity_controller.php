@@ -368,7 +368,7 @@ class activity_controller extends v1_base {
     
     public function upload_image_action() {
         $image = Upload::upload_image();   //先存图片
-        $thumbnail = Upload::mkUploadThumbnail($image);
+        $thumbnail = Upload::mkUploadThumbnail($image, 200, 200);
         if (!$image || !$thumbnail) {
             return array('op' => 'fail', "code" => 111, "reason" => '上传图片失败');
         }

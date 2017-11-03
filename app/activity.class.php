@@ -42,6 +42,21 @@ class Activity {
     public function images() {
         return json_decode($this->mSummary["images"]);
     }
+    public function images_full_list(){
+        $images = json_decode($this->mSummary["images"]);
+        if (empty($images)) {
+            return images;
+        }
+        $arr = [];
+        foreach ($images as $image) {
+            $a = [];
+            $a["name"] = $image;
+            $a["image_url"] = rtrim(UPLOAD_URL, "/") . "/" . $image;
+            $a["thumbnail_url"] = rtrim(THUMBNAIL_URL, "/") . "/thumbnail-$image";
+            array_push($arr, $a);
+        }
+        return $arr;
+    }
     public function image_url_list() {
         $images = json_decode($this->mSummary["images"]);
         if (empty($images)) {
@@ -230,9 +245,10 @@ class Activity {
             "owner" => $this->owner_detail(),
             "title" => $this->title(),
             "info" => $this->info(),
-            "images" => $this->images(),
-            "image_url_list" => $this->image_url_list(),
-            "image_thumbnail_url_list" => $this->image_thumbnail_url_list(),
+            //"images" => $this->images(),
+            //"image_url_list" => $this->image_url_list(),
+            //"image_thumbnail_url_list" => $this->image_thumbnail_url_list(),
+            "images_full_list" => $this->images_full_list(),
             "content" => $this->content(),
             "begintime" => $this->begintime(),
             "endtime" => $this->endtime(),

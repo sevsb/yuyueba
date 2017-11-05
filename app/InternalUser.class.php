@@ -1,33 +1,62 @@
 <?php
 include_once(dirname(__FILE__) . "/../config.php");
 
-class TempUser extends User {
+class InternalUser extends User{
     private $mSummary = null;
     private $mGroups = null;
-
-    public function TempUser($summary = array()) {
+/**
+{
+	id //唯一序号
+	type //
+	username // 用户名
+	password //密码
+	nickname //昵称
+	tid //临时id
+	telephone // 电话号
+	email //邮箱
+	avatar // 头像地址
+	comments //
+	create_time //创建时间
+	active_time // 活跃时间
+	last_login // 最后一次登录
+	verify_code // 验证码
+	verify_status // 验证状态
+	token //
+	status //
+	groups //
+	yuyue_session//
+	session_key
+}
+*/
+    public function InternalUser($summary = array()) {
         if (empty($summary)) {
+			
             $summary = array(
                 "id" => 0,
-                "type" => "",
-                "openid" => "",
-                "yuyue_session" => "",
-                "session_key " => "",
-                "uid" => "",
-                "nickname" => "",
-                "avatar" => "",
+                "username" => "",
+                "password" => "",
+				"type" => "",
+				"tid" => "",
+                "telephone" => "",
+                "email" => "",
+                "groups" => "",
+                "comments" => "",
                 "create_time" => "",
                 "active_time" => "",
                 "last_login" => "",
+                "verify_code" => "",
+                "verify_status" => "",
                 "token" => "",
                 "status" => 0,
-                "groups" => "",
+				 "yuyue_session" => "",
+				 
+				 "session_key" => "",
+				
             );
         }
         $this->mSummary = $summary;
     }
 
-    //获取参数函数
     public function id() {
         return $this->mSummary["id"];
     }
@@ -35,11 +64,32 @@ class TempUser extends User {
     public function type() {
         return $this->mSummary["type"];
     }
-
-    public function openid() {
-        return $this->mSummary["openid"];
+public function username() {
+        return $this->mSummary["username"];
+    }
+    public function password() {
+        return $this->mSummary["password"];
     }
 
+    public function nickname() {
+        return $this->mSummary["nickname"];
+    }
+
+    public function telephone() {
+        return $this->mSummary["telephone"];
+    }
+
+    public function email() {
+        return $this->mSummary["email"];
+    }
+
+    public function comments() {
+        return $this->mSummary["comments"];
+    }
+
+
+
+   
     public function yuyue_session() {
         return $this->mSummary["yuyue_session"];
     }
@@ -48,14 +98,11 @@ class TempUser extends User {
         return $this->mSummary["session_key "];
     }
 
-    public function uid() {
-        return $this->mSummary["uid"];
+    public function tid() {
+        return $this->mSummary["tid"];
     }
     
-    public function nickname() {
-        return $this->mSummary["nickname"];
-    }
-
+    
 
     public function avatar() {
         return $this->mSummary["avatar"];
@@ -97,10 +144,31 @@ class TempUser extends User {
     public function setSessionKey($n) {
         $this->mSummary["session_key"] = $n;
     }
-    public function setOpenId($n) {
-        $this->mSummary["openid"] = $n;
+    public function setTelephone($t) {
+        $this->mSummary["telephone"] = $t;
     }
-//group ids
+
+    public function setEmail($mail) {
+        $this->mSummary["email"] = $mail;
+    }
+
+    public function setEmail($mail) {
+        $this->mSummary["email"] = $mail;
+    }
+    public function setComments($c) {
+        $this->mSummary["comments"] = $c;
+    }
+	public function verify($verify_code){
+		if(!empty( $verify_code)){
+			if($this->mSummary["verify_code"]==$verify_code){
+				this->mSummary["verify_code"]=="00000";
+				this->mSummary["verify_status"]=="true";
+				return true;
+			}
+			return false;
+		}
+		return null;
+	}
     public function gids() {
         $gids = $this->mSummary["groups"];
         if (empty($gids)) {
@@ -152,17 +220,16 @@ class TempUser extends User {
         }
         $this->mSummary["groups"] = implode(",", $gids);
     }
-
-    //存储函数
+//       public function add($type, $username, $password, $nickname,$tid, $telephone,$email, $avatar,$comments$create_time, $active_time, $last_login,  $verify_code, $verify_status,$token,$status,$groups,$yuyue_session) {
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_tempuser::inst()->add($this->type(), $this->openid(), $this->uid(), $this->nickname(), $this->avatar(), $this->create_time(), $this->active_time(), $this->last_login(), $this->token(),  $this->status(), $this->mSummary["groups"], $this->yuyue_session());
+            $id = db_user::inst()->add($this->type(),$this->username(), $this->password(), $this->nickname(),$this->tid(), $this->telephone(), $this->email(),$this->avatar(),$this->comments(),$this->create_time(),$this->active_time(),$this->last_login(),$this->verify_code(),$this->verify_status(),$this->token(),$this->status(), $this->mSummary["groups"],$this->yuyue_session(), );
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_tempuser::inst()->modify($id, $this->type(), $this->openid(), $this->uid(), $this->nickname(), $this->avatar(), $this->create_time(), $this->active_time(), $this->last_login(), $this->token(),  $this->status(), $this->mSummary["groups"], $this->yuyue_session());
+            $id = db_user::inst()->modify($this->id(),$this->type(),$this->username(), $this->password(), $this->nickname(),$this->tid(), $this->telephone(), $this->email(),$this->avatar(),$this->comments(),$this->create_time(),$this->active_time(),$this->last_login(),$this->verify_code(),$this->verify_status(),$this->token(),$this->status(), $this->mSummary["groups"],$this->yuyue_session(),);
         }
         return $id;
     }
@@ -177,10 +244,8 @@ class TempUser extends User {
         return $groups;
     }
 
-    //打包输出函数
     public function packInfo($pack_all_groups = true) {
         $groupInfo = array();
-        /*
         if ($pack_all_groups) {
             $groups = self::cachedAllGroups();
             $gids = $this->gids();
@@ -200,44 +265,44 @@ class TempUser extends User {
                 $groupInfo []= $group->packInfo(false);
             }
         }
-        */
 
         return array(
             "id" => $this->id(),
+            "username" => $this->username(), 
+            "password" => $this->password(), 
             "nickname" => $this->nickname(), 
-            "avatar" => $this->avatar(), 
-            "token" => $this->token(), 
-            "status" => $this->status(), 
-            "yuyue_session" => $this->yuyue_session(), 
+            "telephone" => $this->telephone(), 
+            "email" => $this->email(), 
+            "comments" => $this->comments(), 
             "groups" => $groupInfo
         );
     }
 
     public static function create($uid) {
-        $user = db_tempuser::inst()->get($uid);
-        return new TempUser($user);
+        $user = db_user::inst()->get($uid);
+        return new User($user);
     }
 
     public static function all($include_deleted = false) {
-        $users = db_tempuser::inst()->all();
+        $users = db_user::inst()->all();
         $arr = array();
         foreach ($users as $uid => $user) {
             if (!$include_deleted) {
-                if ($user["status"] == db_tempuser::STATUS_DELETED) {
+                if ($user["status"] == db_user::STATUS_DELETED) {
                     continue;
                 }
             }
-            $arr[$uid] = new TempUser($user);
+            $arr[$uid] = new User($user);
         }
         return $arr;
     }
 
     public static function &cachedAll() {
         $cache = cache::instance();
-        $all = $cache->load("class.tempuser.all", null);
+        $all = $cache->load("class.user.all", null);
         if ($all === null) {
-            $all = TempUser::all();
-            $cache->save("class.tempuser.all", $all);
+            $all = User::all();
+            $cache->save("class.user.all", $all);
         }
         return $all;
     }
@@ -251,16 +316,6 @@ class TempUser extends User {
         }
         return null;
     }
-    public static function oneById($id) {
-        $users = self::cachedAll();
-        foreach ($users as $user) {
-            if ($user->id() == $id) {
-                return $user;
-            }
-        }
-        return null;
-    }
-    
     public static function oneBySession($yuyue_session) {
         $users = self::cachedAll();
         foreach ($users as $user) {
@@ -271,19 +326,8 @@ class TempUser extends User {
         return null;
     }
 
-    public static function createByOpenid($openid) {
-        $users = self::cachedAll();
-        foreach ($users as $user) {
-            if ($user->openid() == $openid) {
-                return $user;
-            }
-        }
-        return new TempUser;
-    }
-    
-
     public static function remove($uid) {
-        return db_tempuser::inst()->remove($uid);
+        return db_user::inst()->remove($uid);
     }
 };
 

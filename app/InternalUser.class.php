@@ -282,7 +282,15 @@ public function username() {
         $user = db_user::inst()->get($uid);
         return new User($user);
     }
-
+	public static function createByYuyue_seesion($yuyue_session) {
+        $users = self::cachedAll();
+        foreach ($users as $user) {
+            if ($user->yuyue_session() == $yuyue_session) {
+                return $user;
+            }
+        }
+        return new User;
+    }
     public static function all($include_deleted = false) {
         $users = db_user::inst()->all();
         $arr = array();

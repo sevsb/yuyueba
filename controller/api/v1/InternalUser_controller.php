@@ -2,7 +2,7 @@
 include_once(dirname(__FILE__) . "/../../../config.php");
 include_once(dirname(__FILE__) . "/../v1_base.php");
 include_once(dirname(__FILE__) . "/../../../app/SmsSingleSender.class.php");
-
+include_once(dirname(__FILE__) . "/../../../app/internaluser.class.php");
 class InternalUser_controller extends v1_base {
 
 public function send_action(){
@@ -13,10 +13,10 @@ public function send_action(){
         $token = get_request('token');
 		$templId = 50285;
 logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session);
-		$user = InternalUser::createByYuyue_seesion(yuyue_session);
+		$user = new InternalUser();
 			
-		$user->setTelephone($phoneNumber);
-		$id = $user->save();
+	$user->setTelephone($phoneNumber);
+$id = $user->save();
 	
 		logging::d("sendsms", "nationCode is:" .$nationCode);
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);

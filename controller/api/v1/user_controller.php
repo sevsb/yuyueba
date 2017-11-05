@@ -47,32 +47,7 @@ class user_controller extends v1_base {
             return array("op" => "login", 'data' => $data);
         }
     }
-public function send_action(){
- 
-	   $nationCode = get_request('nationCode');
-        $phoneNumber = get_request('phoneNumber');
-        $yuyue_session = get_request('yuyue_session');
-        $token = get_request('token');
-		$templId = 50285;
-logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session);
-	//	$user = InternalUser::createByYuyue_seesion(yuyue_session);
-			
-		//$user->setTelephone($phoneNumber);
-		//$id = $user->save();
-	
-		logging::d("sendsms", "nationCode is:" .$nationCode);
-		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
-		
-		$verification_code = rand(1000,9999);
-		logging::d("sendsms", "verification_code is:" .$verification_code);
-		$params =array("".$verification_code);
-		
-		$sender = new SmsSingleSender( WX_SMS_SDKID,WX_SMS_SECRET);
 
-		$data = $sender->sendWithParam($nationCode, $phoneNumber, $templId, $params);
-		$data=json_decode($data);
-		return array("data" =>  $data);
-   }
     public function refreshtoken_action() { //刷新token
         $yuyue_session = get_request('yuyue_session', "");
         $user = TempUser::oneBySession($yuyue_session);

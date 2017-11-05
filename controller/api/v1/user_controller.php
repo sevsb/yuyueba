@@ -55,9 +55,10 @@ public function send_action(){
 		$templId = 50285;
 
 		$user = InternalUser::createByYuyue_seesion(yuyue_session);
-		$user->setTelephone($phoneNumber);
-		$id = $user->save();
-		logging::d("user", "userId is:" .$id);
+			logging::d("user", "user is:" .$user);
+		//$user->setTelephone($phoneNumber);
+		//$id = $user->save();
+	
 		logging::d("sendsms", "nationCode is:" .$nationCode);
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
 		

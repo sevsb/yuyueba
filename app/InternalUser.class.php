@@ -284,6 +284,7 @@ public function username() {
     }
 	public static function createByYuyue_seesion($yuyue_session) {
         $users = self::cachedAll();
+		logging::d("user", "user is:" .$users);
         foreach ($users as $user) {
             if ($user->yuyue_session() == $yuyue_session) {
                 return $user;

@@ -27,8 +27,7 @@ class InternalUser extends User{
 	yuyue_session//
 	session_key
 }
-*/
-    public function InternalUser($summary = array()) {
+*/ function __construct($summary=array()) {
         if (empty($summary)) {
 			
             $summary = array(
@@ -55,7 +54,9 @@ class InternalUser extends User{
             );
         }
         $this->mSummary = $summary;
+
     }
+  
 
     public function id() {
         return $this->mSummary["id"];

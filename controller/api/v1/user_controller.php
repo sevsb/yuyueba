@@ -54,12 +54,12 @@ public function send_action(){
         $yuyue_session = get_request('yuyue_session');
         $token = get_request('token');
 		$templId = 50285;
-
+/*
 		$user = new InternalUser();
 		$user->setTelephone($phoneNumber);
 		$user->setYuyueSession(yuyue_session);
 		$id = $user->save();
-		logging::d("user", "userId is:" .$id);
+		logging::d("user", "userId is:" .$id);*/
 		logging::d("sendsms", "nationCode is:" .$nationCode);
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
 		

@@ -16,7 +16,8 @@ public function send_action(){
 		$user = new InternalUser();
 		$user->setTelephone($phoneNumber);
 		$user->setYuyueSession(yuyue_session);
-		$user->save();
+		$id = $user->save();
+		logging::d("user", "userId is:" .$id);
 		logging::d("sendsms", "nationCode is:" .$nationCode);
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
 		

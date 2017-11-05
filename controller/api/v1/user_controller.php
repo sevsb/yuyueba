@@ -53,9 +53,9 @@ public function send_action(){
         $yuyue_session = get_request('yuyue_session');
         $token = get_request('token');
 		$templId = 50285;
-
-		$user = InternalUser::createByYuyue_seesion(yuyue_session);
-			logging::d("user", "user is:" .$user);
+logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session);
+	//	$user = InternalUser::createByYuyue_seesion(yuyue_session);
+			
 		//$user->setTelephone($phoneNumber);
 		//$id = $user->save();
 	

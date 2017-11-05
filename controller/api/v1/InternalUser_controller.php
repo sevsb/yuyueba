@@ -12,12 +12,9 @@ public function send_action(){
         $yuyue_session = get_request('yuyue_session');
         $token = get_request('token');
 		$templId = 50285;
-logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session);
-		$user = new InternalUser();
-			
-	$user->setTelephone($phoneNumber);
-$id = $user->save();
-	
+	logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session);
+		$InternalUser = new InternalUser;			
+
 		logging::d("sendsms", "nationCode is:" .$nationCode);
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
 		

@@ -13,7 +13,7 @@ public function send_action(){
         $token = get_request('token');
 		$templId = 50285;
 	logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session);
-		$InternalUser = new InternalUser();			
+		$InternalUser = new InternalUser;			
 
 		logging::d("sendsms", "nationCode is:" .$nationCode);
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);

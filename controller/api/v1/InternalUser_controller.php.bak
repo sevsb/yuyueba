@@ -11,6 +11,7 @@ public function send_action(){
         $phoneNumber = get_request('phoneNumber');
         $yuyue_session = get_request('yuyue_session');
         $token = get_request('token');
+		$templId = 50285
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = new InternalUser();
 
@@ -34,12 +35,12 @@ public function send_action(){
 
 		$data = $sender->sendWithParam($nationCode, $phoneNumber, $templId, $params);
 		$data=json_decode($data);
-		logging::d("data", "data is:" .$data);
-		/*if($data->result == 0){
+
+		if($data->result == 0){
 		$id = $user->save();
 		logging::d("id", "id is:" .$id);
 		
-		}*/
+		}
 		return array("data" =>  $data);
    }
 

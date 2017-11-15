@@ -15,14 +15,14 @@ public function send_action(){
 		$user = new InternalUser();
 
 		$templId = $tempuser->id();//获取对应tempid
-		$user->setTempid($templId);
+		//$user->setTempid($templId);
 		logging::d("templId", "templId is:" .$templId);
-		$user->setTelephone($telephone);
+		//$user->setTelephone($telephone);
 		logging::d("sendsms", "nationCode is:" .$nationCode);
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
 		
 		$verification_code = rand(1000,9999);//随机验证码
-		$user->setCode($verification_code);
+		//$user->setCode($verification_code);
 		logging::d("sendsms", "verification_code is:" .$verification_code);
 		
 		
@@ -33,12 +33,12 @@ public function send_action(){
 		$sender = new SmsSingleSender( WX_SMS_SDKID,WX_SMS_SECRET);
 
 		$data = $sender->sendWithParam($nationCode, $phoneNumber, $templId, $params);
-		$data=json_decode($data);
+		/*$data=json_decode($data);
 		if(data.result == 0){
 		$id = $user->save();
 		logging::d("id", "id is:" .$id);
 		
-		}
+		}*/
 		return array("data" =>  $data);
    }
 

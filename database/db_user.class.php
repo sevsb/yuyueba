@@ -45,13 +45,7 @@ class db_user extends database_table {
         $id = (int)$id;
         return $this->update(array("tempid"=>$tempid, "telephone" => $telephone,"email"=> $email,"verify_code" => $verify_code, "verify_status" => $verify_status, "status" => $status), "id = $id");
     }
-	public function get($id) {
-        $id = (int)$id;
-        return $this->get_one("id = $id");
-    }
-	public function all() {
-        return $this->get_all();
-    }
+	
     public function remove($id) {
         $id = (int)$id;
         return $this->update(array("status" => self::STATUS_DELETED), "id = $id");

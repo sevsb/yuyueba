@@ -34,7 +34,7 @@ public function send_action(){
 
 		$data = $sender->sendWithParam($nationCode, $phoneNumber, $templId, $params);
 		$data=json_decode($data);
-		if(data.result == 0){
+		if($data.result == 0){
 		$id = $user->save();
 		logging::d("id", "id is:" .$id);
 		

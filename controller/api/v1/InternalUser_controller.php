@@ -2,7 +2,7 @@
 include_once(dirname(__FILE__) . "/../../../config.php");
 include_once(dirname(__FILE__) . "/../v1_base.php");
 include_once(dirname(__FILE__) . "/../../../app/SmsSingleSender.class.php");
-include_once(dirname(__FILE__) . "/../../../app/internaluser.class.php");
+include_once(dirname(__FILE__) . "/../../../app/InternalUser.class.php");
 class InternalUser_controller extends v1_base {
 
 public function send_action(){

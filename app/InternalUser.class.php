@@ -95,12 +95,12 @@ class InternalUser extends User{
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_user::inst()->add($this->tempid(), $this->telephone(), $this->email(),$this->verify_code(),$this->verify_status(),$this->status());
+            $id = db_user::inst()->add($this->tempid, $this->telephone, $this->email,$this->verify_code,$this->verify_status,$this->status);
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_user::inst()->modify($this->id(),$this->tempid(), $this->telephone(), $this->email(),$this->verify_code(),$this->verify_status(),$this->status());
+            $id = db_user::inst()->modify($this->id(),$this->tempid(), $this->telephone(), $this->email,$this->verify_code,$this->verify_status,$this->status);
         }
         return $id;
     }

@@ -153,17 +153,14 @@ public function username() {
         $this->mSummary["email"] = $mail;
     }
 
-    public function setEmail($mail) {
-        $this->mSummary["email"] = $mail;
-    }
     public function setComments($c) {
         $this->mSummary["comments"] = $c;
     }
 	public function verify($verify_code){
 		if(!empty( $verify_code)){
 			if($this->mSummary["verify_code"]==$verify_code){
-				this->mSummary["verify_code"]=="00000";
-				this->mSummary["verify_status"]=="true";
+				$this->mSummary["verify_code"]=="00000";
+				$this->mSummary["verify_status"]=="true";
 				return true;
 			}
 			return false;
@@ -225,12 +222,12 @@ public function username() {
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_user::inst()->add($this->type(),$this->username(), $this->password(), $this->nickname(),$this->tid(), $this->telephone(), $this->email(),$this->avatar(),$this->comments(),$this->create_time(),$this->active_time(),$this->last_login(),$this->verify_code(),$this->verify_status(),$this->token(),$this->status(), $this->mSummary["groups"],$this->yuyue_session(), );
+            $id = db_user::inst()->add($this->type(),$this->username(), $this->password(), $this->nickname(),$this->tid(), $this->telephone(), $this->email(),$this->avatar(),$this->comments(),$this->create_time(),$this->active_time(),$this->last_login(),$this->verify_code(),$this->verify_status(),$this->token(),$this->status(), $this->mSummary["groups"],$this->yuyue_session());
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_user::inst()->modify($this->id(),$this->type(),$this->username(), $this->password(), $this->nickname(),$this->tid(), $this->telephone(), $this->email(),$this->avatar(),$this->comments(),$this->create_time(),$this->active_time(),$this->last_login(),$this->verify_code(),$this->verify_status(),$this->token(),$this->status(), $this->mSummary["groups"],$this->yuyue_session(),);
+            $id = db_user::inst()->modify($this->id(),$this->type(),$this->username(), $this->password(), $this->nickname(),$this->tid(), $this->telephone(), $this->email(),$this->avatar(),$this->comments(),$this->create_time(),$this->active_time(),$this->last_login(),$this->verify_code(),$this->verify_status(),$this->token(),$this->status(), $this->mSummary["groups"],$this->yuyue_session());
         }
         return $id;
     }

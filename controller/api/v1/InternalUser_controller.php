@@ -15,9 +15,9 @@ public function send_action(){
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = new InternalUser();
 
-		$templId = $tempuser->id();//获取对应tempid
+		$tempId = $tempuser->id();//获取对应tempid
 		$user->setTempid($templId);
-		logging::d("templId", "templId is:" .$templId);
+		logging::d("tempId", "tempId is:" .$tempId);
 		$user->setTelephone($phoneNumber);
 		logging::d("sendsms", "nationCode is:" .$nationCode);
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);

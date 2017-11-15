@@ -11,7 +11,7 @@ public function send_action(){
         $phoneNumber = get_request('phoneNumber');
         $yuyue_session = get_request('yuyue_session');
         $token = get_request('token');
-		$templId = 50285
+		$templId = 50285;
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = new InternalUser();
 

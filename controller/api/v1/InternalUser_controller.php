@@ -17,7 +17,7 @@ public function send_action(){
 		$templId = $tempuser->id();//获取对应tempid
 		$user->setTempid($templId);
 		logging::d("templId", "templId is:" .$templId);
-		$user->setTelephone($telephone);
+		$user->setTelephone($phoneNumber);
 		logging::d("sendsms", "nationCode is:" .$nationCode);
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
 		

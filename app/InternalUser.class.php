@@ -73,7 +73,7 @@ class InternalUser extends User{
 	public function setTempid($tempid) {
         $this->mSummary["tempid"] = $tempid;
     }
-	public function setCode($tempid) {
+	public function setCode($verify_code) {
         $this->mSummary["verify_code"] = $verify_code;
     }
 	public function verify($verify_code){

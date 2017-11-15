@@ -24,8 +24,8 @@ class InternalUser extends User{
                 "telephone" => "",
                 "email" => "",
                 "verify_code" => "",
-                "verify_status" => "",
-				 "status" => "false",
+                "verify_status" => "false",
+				 "status" => "",
 				
             );
         }
@@ -100,7 +100,7 @@ class InternalUser extends User{
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_user::inst()->modify($this->id()$this->tempid(), $this->telephone(), $this->email(),$this->verify_code(),$this->verify_status(),$this->status());
+            $id = db_user::inst()->modify($this->id(),$this->tempid(), $this->telephone(), $this->email(),$this->verify_code(),$this->verify_status(),$this->status());
         }
         return $id;
     }

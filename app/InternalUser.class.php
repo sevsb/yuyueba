@@ -100,7 +100,7 @@ class InternalUser extends User{
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_user::inst()->modify($this->id()$this->tempid(), $this->telephone(), $this->email(),$this->verify_code(),$this->verify_status(),$this->status());
+            $id = db_user::inst()->modify($this->id(),$this->tempid(), $this->telephone(), $this->email(),$this->verify_code(),$this->verify_status(),$this->status());
         }
         return $id;
     }

@@ -28,34 +28,22 @@ class db_user extends database_table {
 /**
 {
 	id //唯一序号
-	type //
-	username // 用户名
-	password //密码
-	nickname //昵称
-	tid //临时id
+	tempid//对应临时用户id
 	telephone // 电话号
-	email //邮箱
-	avatar // 头像地址
-	comments //
-	create_time //创建时间
-	active_time // 活跃时间
-	last_login // 最后一次登录
+	email //邮箱	
 	verify_code // 验证码
 	verify_status // 验证状态
-	token //
-	status //
-	groups //
-	yuyue_session//
-	session_key
+	status // 账户状态
+
 }
 */
-    public function add($type, $username, $password, $nickname,$tid, $telephone,$email, $avatar,$comments$create_time, $active_time, $last_login, $verify_code, $verify_status,$token,$status,$groups,$yuyue_session,$session_key) {
-        return $this->insert(array("type"=>$type, "username" => $username, "password" => $password,"tid"=>$tid, "telephone" => $telephone,"email"=> $email,"nickname" => $nickname, "avatar" => $avatar,"comments"=>$comments, "create_time" => time(), "active_time" => $active_time, "last_login" => time(),"verify_code" => $verify_code, "verify_status" => $verify_status,"token"=>$token,"status"=>$status,"groups"=>$groups,"yuyue_session"=>$yuyue_session,"session_key"=>$session_key));
+    public function add($tempid, $telephone,$email, $verify_code, $verify_status, $status) {
+        return $this->insert(array("tempid"=>$tempid, "telephone" => $telephone,"email"=> $email,"verify_code" => $verify_code, "verify_status" => $verify_status, "status" => $status));
     }
 
-    public function modify($id,$type, $username,$tid, $password, $nickname, $telephone,$email, $avatar,$comments$create_time, $active_time, $last_login, $verify_code, $verify_status,$token,$status,$groups,$yuyue_session,$session_key) {
+    public function modify($id,$tempid, $telephone,$email, $verify_code, $verify_status, $status) {
         $id = (int)$id;
-        return $this->update(array("type"=>$type, "username" => $username, "password" => $password,"tid"=>$tid, "telephone" => $telephone,"email"=> $email,"nickname" => $nickname, "avatar" => $avatar,"comments"=>$comments, "create_time" => time(), "active_time" => $active_time, "last_login" => time(),"verify_code" => $verify_code, "verify_status" => $verify_status,"token"=>$token,"status"=>$status,"groups"=>$groups,"yuyue_session"=>$yuyue_session,"session_key"=>$session_key), "id = $id");
+        return $this->update(array("tempid"=>$tempid, "telephone" => $telephone,"email"=> $email,"verify_code" => $verify_code, "verify_status" => $verify_status, "status" => $status), "id = $id");
     }
 	public function get($id) {
         $id = (int)$id;

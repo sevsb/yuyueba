@@ -24,8 +24,8 @@ class InternalUser extends User{
                 "telephone" => "",
                 "email" => "",
                 "verify_code" => "",
-                "verify_status" => "false",
-				 "status" => "",
+                "verify_status" => "",
+				 "status" => "false",
 				
             );
         }

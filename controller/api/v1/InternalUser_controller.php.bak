@@ -36,7 +36,7 @@ public function send_action(){
 		$data=json_decode($data);
 		if(data.result == 0){
 		$id = $user->save();
-		logging::d("id", "id is:" .$id);
+logging::d("id", "id is:" .$id);
 		
 		}
 		return array("data" =>  $data);

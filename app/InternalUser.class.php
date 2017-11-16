@@ -73,7 +73,7 @@ class InternalUser extends User{
     public function setEmail($mail) {
         $this->mSummary["email"] = $mail;
     }
-	public function setTempid($tempid) {
+	public function setTempId($tempid) {
         $this->mSummary["tempid"] = $tempid;
     }
 	public function setCode($verify_code) {

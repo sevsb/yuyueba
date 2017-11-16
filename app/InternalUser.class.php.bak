@@ -20,7 +20,7 @@ class InternalUser extends User{
 			
             $summary = array(
                 "id" => 0,
-				"tempid" => "",
+				"tempid" => 0,
                 "telephone" => "",
                 "email" => "",
                 "verify_code" => "",
@@ -54,6 +54,9 @@ class InternalUser extends User{
     }
      public function verify_status() {
         return $this->mSummary["verify_status"];
+    }
+	 public function verify_code() {
+        return $this->mSummary["verify_code"];
     }
 	public function status() {
         return $this->mSummary["status"];
@@ -95,17 +98,21 @@ class InternalUser extends User{
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_user::inst()->add($this->tempid, $this->telephone, $this->email,$this->verify_code,$this->verify_status,$this->status);
+            $id = db_user::inst()->add($this->tempid(), $this->telephone(), $this->email(),$this->verify_code(),$this->verify_status(),$this->status());
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_user::inst()->modify($this->id(),$this->tempid(), $this->telephone(), $this->email,$this->verify_code,$this->verify_status,$this->status);
+            $id = db_user::inst()->modify($this->id(),$this->tempid(), $this->telephone(), $this->email(),$this->verify_code(),$this->verify_status(),$this->status());
         }
         return $id;
     }
 	
     public static function create($uid) {
+        $user = db_user::inst()->get($uid);
+        return new User($user);
+    }
+	public static function createByTelephone($telephone) {
         $user = db_user::inst()->get($uid);
         return new User($user);
     }

@@ -14,10 +14,11 @@ public function send_action(){
 		$templId = 50285;
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = new InternalUser();
+if(){
 
-		$templId = $tempuser->id();//获取对应tempid
-		$user->setTempid($templId);
-		logging::d("templId", "templId is:" .$templId);
+		$tempId = $tempuser->id();//获取对应tempid
+		$user->setTempid($tempId);
+		logging::d("tempId", "tempId is:" .$tempId);
 		$user->setTelephone($phoneNumber);
 		logging::d("sendsms", "nationCode is:" .$nationCode);
 		logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
@@ -27,7 +28,7 @@ public function send_action(){
 		logging::d("sendsms", "verification_code is:" .$verification_code);
 		
 		
-		
+}		
 		
 		$params =array("".$verification_code);
 		

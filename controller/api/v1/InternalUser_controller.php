@@ -13,10 +13,12 @@ public function send_action(){
         $token = get_request('token');
 		$templId = 50285;
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
-		$user = new InternalUser();
+		$user = InternalUser::createByTelephone();
+
 
 		$tempId = $tempuser->id();//获取对应tempid
-		$user->setTempid($templId);
+		if($tempId==$user->tempid())
+		$user->setTempid($tempId);
 		logging::d("tempId", "tempId is:" .$tempId);
 		$user->setTelephone($phoneNumber);
 		logging::d("sendsms", "nationCode is:" .$nationCode);
@@ -25,7 +27,6 @@ public function send_action(){
 		$verification_code = rand(1000,9999);//随机验证码
 		$user->setCode($verification_code);
 		logging::d("sendsms", "verification_code is:" .$verification_code);
-		
 		
 		
 		

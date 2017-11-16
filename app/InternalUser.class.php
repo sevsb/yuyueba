@@ -112,6 +112,10 @@ class InternalUser extends User{
         $user = db_user::inst()->get($uid);
         return new User($user);
     }
+	public static function createByTelephone($telephone) {
+        $user = db_user::inst()->getByTelephone($telephone);
+        return new User($user);
+    }
 	
     public static function all($include_deleted = false) {
         $users = db_user::inst()->all();

@@ -21,7 +21,10 @@ class db_user extends database_table {
         $id = (int)$id;
         return $this->get_one("id = $id");
     }
-
+public function getByTelephone($telephone) {
+        $telephone = (String)$telephone;
+        return $this->get_one("telephone = $telephone");
+    }
     public function all() {
         return $this->get_all();
     }

@@ -63,10 +63,7 @@ public function send_action(){
 				logging::d("id", "id is:" .$id);
 		
 			}
-$data = array("type"=>$type,"info"=>array( "id"=>$id,
-                "yuyue_session"=>$yuyue_session),"result" =>$result);
-
-		
+			$data = array("type"=>$type,"info"=>array( "id"=>$id,"yuyue_session"=>$yuyue_session),"result" =>$result);
 
 		return array("data" =>$data ,"op" =>"send" );
    }

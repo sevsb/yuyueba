@@ -60,11 +60,9 @@ public function send_action(){
 
 			if($result->result == 0){
 				$id = $user->save();
-				logging::d("id", "id is:" .$id);
-		
+				logging::d("id", "id is:" .$id);		
 			}
 			$data = array("type"=>$type,"info"=>array( "id"=>$id,"yuyue_session"=>$yuyue_session),"result" =>$result);
-
 		return array("data" =>$data ,"op" =>"send" );
    }
 

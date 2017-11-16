@@ -133,12 +133,23 @@ class InternalUser extends User{
 
     public static function &cachedAll() {
         $cache = cache::instance();
-        $all = $cache->load("class.user.all", null);
+        $all = $cache->load("class.InternalUser.all", null);
         if ($all === null) {
             $all = User::all();
-            $cache->save("class.user.all", $all);
+            $cache->save("class.InternalUser.all", $all);
         }
         return $all;
+    }
+
+
+    public static function oneByTelephone($telephone) {
+        $users = self::cachedAll();
+        foreach ($users as $user) {
+            if ($user->telephone() == $telephone) {
+                return $user;
+            }
+        }
+        return null;
     }
     public static function remove($uid) {
         return db_user::inst()->remove($uid);

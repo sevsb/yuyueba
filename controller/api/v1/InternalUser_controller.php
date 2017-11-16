@@ -13,7 +13,7 @@ public function send_action(){
   
 		$templId = 50285;
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
-		$user = InternalUser::createByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
+		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
 
 		if (empty($user)) {//如果没有对应的user，就创建一个。
 			$user = new InternalUser();

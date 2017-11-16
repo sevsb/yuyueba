@@ -48,12 +48,12 @@ public function send_action(){
 			}
 			
 		}	
-			$user->setTempId($tempId);
-			logging::d("tempId", "tempId is:" .$tempId);
+			
 			$verification_code = rand(1000,9999);//Ëæ»úÑéÖ¤Âë
 			$user->setCode($verification_code);
 			logging::d("sendsms", "verification_code is:" .$verification_code);
-
+			$user->setTempId($tempId);
+			logging::d("tempId", "tempId is:" .$tempId);
 			$params =array("".$verification_code);
 
 			$sender = new SmsSingleSender( WX_SMS_SDKID,WX_SMS_SECRET);

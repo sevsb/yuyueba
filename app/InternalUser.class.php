@@ -133,10 +133,10 @@ class InternalUser extends User{
 
     public static function &cachedAll() {
         $cache = cache::instance();
-        $all = $cache->load("class.InternalUser.all", null);
+        $all = $cache->load("class.user.all", null);
         if ($all === null) {
             $all = User::all();
-            $cache->save("class.InternalUser.all", $all);
+            $cache->save("class.user.all", $all);
         }
         return $all;
     }

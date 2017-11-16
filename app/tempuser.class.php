@@ -80,6 +80,37 @@ class TempUser extends User {
     public function status() {
         return $this->mSummary["status"];
     }
+    
+    public function organizations() {
+        $userid = $this->id();
+        
+        $own_organizations = array();
+        $join_orgs = array();
+        $my_orgs = array();
+        
+        $all_orgs = Organization::all();
+        $all_org_members = db_organization_member::inst()->all();
+        //var_dump($all_orgs);
+        //var_dump($all_org_members);
+        
+        foreach ($all_org_members as $member) {
+            $member_org_id = $member["organization"];
+            $member_userid = $member["user"];
+            if ($member_userid == $userid) {
+                $join_orgs[$member_org_id] = $all_orgs[$member_org_id]->packInfo();
+                array_push($my_orgs, $member_org_id);
+            }
+
+        }
+        foreach ($all_orgs as $org) {
+            if ($org->owner() == $userid) {
+                $own_organizations[$org->id()] = $org->packInfo();
+                array_push($my_orgs, $org->id());
+            }
+        }
+        $data = array("own_orgs" =>$own_organizations, 'join_orgs' => $join_orgs, 'my_orgs' => $my_orgs);
+        return $data;
+    }
 
     //修改参数函数
     public function setNickname($n) {

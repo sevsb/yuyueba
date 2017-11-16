@@ -15,15 +15,14 @@ public function send_action(){
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = InternalUser::createByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
 
-if (empty($user)) {//如果没有对应的user，就创建一个。
-$user = new InternalUser();
-}
+		if (empty($user)) {//如果没有对应的user，就创建一个。
+			$user = new InternalUser();
+		}
 		$tempId = $tempuser->id();//获取对应tempid
 		$type = 0;
 		if($user->id()==0){//未注册
 				
-			$user->setTempId($tempId);
-			logging::d("tempId", "tempId is:" .$tempId);
+			
 			$user->setTelephone($phoneNumber);
 			logging::d("sendsms", "nationCode is:" .$nationCode);
 			logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
@@ -43,13 +42,14 @@ $user = new InternalUser();
 				if($tempId==$user->tempid()){//对应微信注册 不做处理
 				
 				}else{//绑定有问题
-					$user->setTempId($tempId);
-					logging::d("tempId", "tempId is:" .$tempId);
+					
 				}
 		
 			}
 			
 		}	
+			$user->setTempId($tempId);
+			logging::d("tempId", "tempId is:" .$tempId);
 			$verification_code = rand(1000,9999);//随机验证码
 			$user->setCode($verification_code);
 			logging::d("sendsms", "verification_code is:" .$verification_code);

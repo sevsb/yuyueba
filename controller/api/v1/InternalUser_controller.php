@@ -20,7 +20,7 @@ public function send_action(){
 		$type = 0;
 		if($user->id()==0){//未注册
 				
-			$user->setTempid($tempId);
+			$user->setTempId($tempId);
 			logging::d("tempId", "tempId is:" .$tempId);
 			$user->setTelephone($phoneNumber);
 			logging::d("sendsms", "nationCode is:" .$nationCode);
@@ -41,7 +41,7 @@ public function send_action(){
 				if($tempId==$user->tempid()){//对应微信注册 不做处理
 				
 				}else{//绑定有问题
-					$user->setTempid($tempId);
+					$user->setTempId($tempId);
 					logging::d("tempId", "tempId is:" .$tempId);
 				}
 		

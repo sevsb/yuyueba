@@ -113,7 +113,7 @@ class InternalUser extends User{
         return new User($user);
     }
 	public static function createByTelephone($telephone) {
-        $user = db_user::inst()->get($uid);
+        $user = db_user::inst()->getByTelephone($telephone);
         return new User($user);
     }
 	

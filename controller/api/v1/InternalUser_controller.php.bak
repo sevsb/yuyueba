@@ -27,7 +27,7 @@ public function send_action(){
 			logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
 		
 		}
-		else if($user->id()!=0)//已注册
+		else if($user->id()!=0){//已注册
 			if($user->verify_status()=="true"){//已注册成功，登陆
 	
 				if($tempId==$user->tempid()){//对应微信登陆 不做处理
@@ -60,7 +60,8 @@ public function send_action(){
 
 			if($result->result == 0){
 				$id = $user->save();
-				logging::d("id", "id is:" .$id);		
+				logging::d("id", "id is:" .$id);
+		
 			}
 			$data = array("type"=>$type,"info"=>array( "id"=>$id,"yuyue_session"=>$yuyue_session),"result" =>$result);
 		return array("data" =>$data ,"op" =>"send" );

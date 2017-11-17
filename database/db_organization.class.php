@@ -13,7 +13,7 @@ class db_organization extends database_table {
         return self::$instance;
     }
 
-    private function init_db_organization() {
+    protected function __construct() {
         parent::__construct(MYSQL_DATABASE, MYSQL_PREFIX . "organization");
     }
 

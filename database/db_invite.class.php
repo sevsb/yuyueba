@@ -13,7 +13,7 @@ class db_invite extends database_table {
         return self::$instance;
     }
 
-    private function init_db_invite() {
+    protected function __construct() {
         parent::__construct(MYSQL_DATABASE, MYSQL_PREFIX . "invite");
     }
 

@@ -13,7 +13,7 @@ class db_calendar extends database_table {
         return self::$instance;
     }
 
-    private function init_db_calendar() {
+    protected function __construct() {
         parent::__construct(MYSQL_DATABASE, MYSQL_PREFIX . "calendar");
     }
 

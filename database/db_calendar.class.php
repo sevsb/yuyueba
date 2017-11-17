@@ -30,9 +30,9 @@ class db_calendar extends database_table {
         return $this->insert(array("title" => $title, "content" => $content, "type" => $type, "owner" => $owner, "activity_list" => '', "create_time" => time(), "modify_time" => time(), "status" => 0));
     }
 
-    public function modify($id, $title, $info, $images, $begintime, $endtime, $repeattype, $repeatcount, $deadline, $address, $content, $participants, $joinsheet, $joinable) {
+    public function modify($id, $title, $content, $type, $owner) {
         $id = (int)$id;
-        return $this->update(array("title" => $title, "info" => $info, "images" => $images, "begintime" => $begintime, "endtime" => $endtime, "repeattype" => $repeattype, "repeatcount" => $repeatcount, "deadline" => $deadline, "address" => $address, "content" => $content, "participants" => $participants, "sheet" => $joinsheet, "joinable" => $joinable, "modifytime" => time()), "id = $id");
+        return $this->update(array("title" => $title, "content" => $content, "type" => $type, "owner" => $owner,"modify_time" => time()), "id = $id");
     }
 
     public function remove($id) {

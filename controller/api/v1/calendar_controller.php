@@ -98,15 +98,15 @@ class calendar_controller extends v1_base {
     }
     
     public function view_action() {
-        $aid = get_request_assert("activity");
-        logging::d("ACT VIEW", $aid);
-        $act = Activity::oneById($aid);
+        $id = get_request_assert("id");
+        logging::d("CAL VIEW", $aid);
+        $calendar = Calendar::oneById($id);
         $data = array(
             "info" => array(
-                $act->packInfo(true),
+                $calendar->packInfo(true),
             ),
         );
-        return $this->op("activity_view", $act->packInfo());
+        return $this->op("calendar_view", $calendar->packInfo());
     }
 
     public function sign_action() {
@@ -298,82 +298,6 @@ class calendar_controller extends v1_base {
         return $ret ?  array('op' => 'calendar_edit', "data" => $calendar->packInfo()) : array('op' => 'fail', "code" => 100742, "reason" => '日历活动编辑失败');
         
         return;
-        
-        
-        
-        
-        
-        
-        
-        $userid = $user->id();
-        $type = $activity->type();
-        $owner = $activity->owner();
-        if ($type == 1) {
-            if ($owner != $userid){
-                return array('op' => 'fail', "code" => '0023002', "reason" => '用户无权限编辑此活动');
-            }
-        }else if($type == 2) {
-            if (!(Organization::has_member($owner, $userid))) {
-                return array('op' => 'fail', "code" => '0023032', "reason" => '用户无权限编辑此活动');
-            }
-        }
-
-        $joinable = get_request("joinable");
-        $participants = get_request("participants", 0);
-        
-        $title = get_request("title");
-        $info = get_request("info");
-        $images = get_request("images");
-        $content = get_request("content");
-        
-        $begintime = get_request("begintime");
-        $endtime = get_request("endtime");
-        $deadline = get_request("deadline");
-        
-        $address = get_request("address");
-        
-        $repeattype = get_request("repeattype", "once");
-        $repeatcount = get_request("repeatcount", 0);
-        
-        $joinsheet = get_request("joinsheet");
-        
-
-        if ($type != 1 || $type != 2 || empty($owner)) {
-            return array('op' => 'fail', "code" => 000001, "reason" => '活动类型或创建者信息不完整');
-        }
-
-        if (empty($title) ||　empty($info) ||　empty($content) ) {
-            return array('op' => 'fail', "code" => 000002, "reason" => '活动标题，简介，详情不完整');
-        }
-        if (empty($begintime) ||　empty($endtime)) {
-            return array('op' => 'fail', "code" => 000003, "reason" => '活动开始时间，结束时间不完整');
-        }
-        if (empty($address)) {
-            return array('op' => 'fail', "code" => 000004, "reason" => '活动地址不完整');
-        }
-        
-        $activity->setJoinable($joinable);
-        $activity->setParticipants($participants);
-        
-        $activity->setTitle($title);
-        $activity->setInfo($info);
-        $activity->setContent($content);
-        $activity->setImages($images);
-        
-        $activity->setBegintime($begintime);
-        $activity->setEndtime($endtime);
-        $activity->setDeadline($deadline);
-        
-        $activity->setAddress($address);
-        
-        $activity->setRepeattype($repeattype);
-        $activity->setRepeatcount($repeatcount);
-        $activity->setJoinsheet($joinsheet);
-        
-        $ret = $activity->save();
-        
-        return $ret ?  array('op' => 'activity_edit', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 1000042, "reason" => '活动编辑失败');
-        
         
     }
 

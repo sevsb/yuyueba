@@ -233,7 +233,7 @@ class Calendar {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_calendar::inst()->modify($this->id(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->deadline(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->joinable());
+            $id = db_calendar::inst()->modify($this->id(), $this->title(), $this->content(), $this->type(), $this->owner());
         }
         return $id;
     }

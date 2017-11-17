@@ -9,7 +9,7 @@ class db_user extends database_table {
     private static $instance = null;
     public static function inst() {
         if (self::$instance == null)
-            self::$instance = new init_db_user();
+            self::$instance = new db_user();
         return self::$instance;
     }
 

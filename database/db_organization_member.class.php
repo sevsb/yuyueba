@@ -9,7 +9,7 @@ class db_organization_member extends database_table {
     private static $instance = null;
     public static function inst() {
         if (self::$instance == null)
-            self::$instance = new init_db_organization_member();
+            self::$instance = new db_organization_member();
         return self::$instance;
     }
 

@@ -9,7 +9,7 @@ class db_tempuser extends database_table {
     private static $instance = null;
     public static function inst() {
         if (self::$instance == null)
-            self::$instance = new init_db_tempuser();
+            self::$instance = new db_tempuser();
         return self::$instance;
     }
 

@@ -9,7 +9,7 @@ class db_sign extends database_table {
     private static $instance = null;
     public static function inst() {
         if (self::$instance == null)
-            self::$instance = new init_db_sign();
+            self::$instance = new db_sign();
         return self::$instance;
     }
 

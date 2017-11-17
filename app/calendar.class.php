@@ -33,6 +33,10 @@ class Calendar {
             return false;
         }
     }
+    
+    public function activity_id_list() {
+        return $this->mSummary["title"];
+    }
     public function title() {
         return $this->mSummary["title"];
     }
@@ -245,7 +249,8 @@ class Calendar {
             "owner" => $this->owner_detail(),
             "title" => $this->title(),
             "content" => $this->content(),
-            "status" => $this->status()
+            "status" => $this->status(),
+            "activity_id_list" => $this->activity_id_list()
         );
     }
 

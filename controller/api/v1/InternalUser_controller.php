@@ -17,11 +17,11 @@ public function send_action(){
 if (empty($user)) {//如果没有对应的user，就创建一个。
 			$user = new InternalUser();
 		}
-
+/*
 logging::d("Id", "Id is:" .$user->id());
 logging::d("Id", "Id is:" .$user->verify_code());
 logging::d("Id", "Id is:" .$user->verify_status());
-
+*/
 
 		
 		$tempId = $tempuser->id();//获取对应tempid
@@ -29,11 +29,11 @@ logging::d("Id", "Id is:" .$user->verify_status());
 		if($user->id()==0){//未注册
 				
 			$user->setTempId($tempId);
-			logging::d("tempId", "tempId is:" .$tempId);
+		//	logging::d("tempId", "tempId is:" .$tempId);
 			$user->setTelephone($phoneNumber);
-			logging::d("sendsms", "nationCode is:" .$nationCode);
+			/*logging::d("sendsms", "nationCode is:" .$nationCode);
 			logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
-		
+		*/
 		}
 		else if($user->id()!=0){//已注册
 			if($user->verify_status()=="true"){//已注册成功，登陆
@@ -50,7 +50,7 @@ logging::d("Id", "Id is:" .$user->verify_status());
 				
 				}else{//绑定有问题
 					$user->setTempId($tempId);
-			logging::d("tempId", "tempId is:" .$tempId);
+		//	logging::d("tempId", "tempId is:" .$tempId);
 				}
 		
 			}
@@ -59,7 +59,7 @@ logging::d("Id", "Id is:" .$user->verify_status());
 			
 			$verification_code = rand(1000,9999);//随机验证码
 			$user->setCode($verification_code);
-			logging::d("sendsms", "verification_code is:" .$verification_code);
+		//	logging::d("sendsms", "verification_code is:" .$verification_code);
 			
 			$params =array("".$verification_code);
 
@@ -69,7 +69,7 @@ logging::d("Id", "Id is:" .$user->verify_status());
 
 			if($result->result == 0){
 				$id = $user->save();
-				logging::d("id", "id is:" .$id);
+		//		logging::d("id", "id is:" .$id);
 		
 			}
 			$data = array("type"=>$type,"info"=>array( "id"=>$id,"yuyue_session"=>$yuyue_session),"result" =>$result);

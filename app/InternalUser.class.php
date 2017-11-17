@@ -141,7 +141,15 @@ class InternalUser {
         return $all;
     }
 
-
+ public static function oneById($id) {
+        $users = self::cachedAll();
+        foreach ($users as $user) {
+            if ($user->id() == $id) {
+                return $user;
+            }
+        }
+        return null;
+    }
     public static function oneByTelephone($telephone) {
         $users = self::cachedAll();
         foreach ($users as $user) {

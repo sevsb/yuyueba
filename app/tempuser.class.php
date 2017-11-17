@@ -13,7 +13,7 @@ class TempUser extends User {
                 "openid" => "",
                 "yuyue_session" => "",
                 "session_key " => "",
-                "uid" => "",
+                "uid" => "",//是否注册，注册则为对应用户id，否则为0 
                 "nickname" => "",
                 "avatar" => "",
                 "create_time" => "",
@@ -22,6 +22,7 @@ class TempUser extends User {
                 "token" => "",
                 "status" => 0,
                 "groups" => "",
+				
             );
         }
         $this->mSummary = $summary;
@@ -130,6 +131,9 @@ class TempUser extends User {
     }
     public function setOpenId($n) {
         $this->mSummary["openid"] = $n;
+    }
+	public function setUId($n) {
+        $this->mSummary["uid"] = $n;
     }
 //group ids
     public function gids() {

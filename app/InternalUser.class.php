@@ -1,7 +1,7 @@
 <?php
 include_once(dirname(__FILE__) . "/../config.php");
 
-class InternalUser extends User{
+class InternalUser {
     private $mSummary = null;
     private $mGroups = null;
 /**

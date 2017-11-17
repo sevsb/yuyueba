@@ -9,11 +9,11 @@ class db_organization extends database_table {
     private static $instance = null;
     public static function inst() {
         if (self::$instance == null)
-            self::$instance = new db_organization();
+            self::$instance = new init_db_organization();
         return self::$instance;
     }
 
-    private function db_organization() {
+    private function init_db_organization() {
         parent::__construct(MYSQL_DATABASE, MYSQL_PREFIX . "organization");
     }
 

@@ -9,11 +9,11 @@ class db_template extends database_table {
     private static $instance = null;
     public static function inst() {
         if (self::$instance == null)
-            self::$instance = new db_template();
+            self::$instance = new init_db_template();
         return self::$instance;
     }
 
-    private function db_template() {
+    private function init_db_template() {
         parent::__construct(MYSQL_DATABASE, MYSQL_PREFIX . "template");
     }
 

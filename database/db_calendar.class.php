@@ -9,11 +9,11 @@ class db_calendar extends database_table {
     private static $instance = null;
     public static function inst() {
         if (self::$instance == null)
-            self::$instance = new db_calendar();
+            self::$instance = new init_db_calendar();
         return self::$instance;
     }
 
-    private function db_calendar() {
+    private function init_db_calendar() {
         parent::__construct(MYSQL_DATABASE, MYSQL_PREFIX . "calendar");
     }
 

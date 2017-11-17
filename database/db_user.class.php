@@ -9,11 +9,11 @@ class db_user extends database_table {
     private static $instance = null;
     public static function inst() {
         if (self::$instance == null)
-            self::$instance = new db_user();
+            self::$instance = new init_db_user();
         return self::$instance;
     }
 
-    private function db_user() {
+    private function init_db_user() {
         parent::__construct(MYSQL_DATABASE, MYSQL_PREFIX . "user");
     }
 

@@ -9,11 +9,11 @@ class db_activity extends database_table {
     private static $instance = null;
     public static function inst() {
         if (self::$instance == null)
-            self::$instance = new db_activity();
+            self::$instance = new init_db_activity();
         return self::$instance;
     }
 
-    private function db_activity() {
+    private function init_db_activity() {
         parent::__construct(MYSQL_DATABASE, MYSQL_PREFIX . "activity");
     }
 

@@ -9,11 +9,11 @@ class db_invite extends database_table {
     private static $instance = null;
     public static function inst() {
         if (self::$instance == null)
-            self::$instance = new db_invite();
+            self::$instance = new init_db_invite();
         return self::$instance;
     }
 
-    private function db_invite() {
+    private function init_db_invite() {
         parent::__construct(MYSQL_DATABASE, MYSQL_PREFIX . "invite");
     }
 

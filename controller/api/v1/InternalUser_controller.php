@@ -14,16 +14,16 @@ public function send_action(){
 		$templId = 50285;
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
-if (empty($user)) {//如果没有对应的user，就创建一个。
+		if (empty($user)) {//如果没有对应的user，就创建一个。
 			$user = new InternalUser();
 		}
 
 logging::d("Id", "Id is:" .$user->id());
-logging::d("Id", "Id is:" .$user->verify_code());
-logging::d("Id", "Id is:" .$user->verify_status());
+logging::d("verify_code", "verify_code is:" .$user->verify_code());
+logging::d("verify_status", "verify_status is:" .$user->verify_status());
 
 
-		
+		logging::d("tempuser", "Id is:" .$tempuser->id());
 		$tempId = $tempuser->id();//获取对应tempid
 		$type = 0;
 		if($user->id()==0){//未注册

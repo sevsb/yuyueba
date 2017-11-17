@@ -15,7 +15,7 @@ class InternalUser {
 	status //是否存在
 	
 }
-*/ function __construct($summary=array()) {
+*/ public function InternalUser($summary=array()) {
         if (empty($summary)) {
 			
             $summary = array(

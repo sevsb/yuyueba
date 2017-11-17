@@ -126,17 +126,17 @@ class InternalUser {
                     continue;
                 }
             }
-            $arr[$uid] = new User($user);
+            $arr[$uid] = new InternalUser($user);
         }
         return $arr;
     }
 
     public static function &cachedAll() {
         $cache = cache::instance();
-        $all = $cache->load("class.user.all", null);
+        $all = $cache->load("class.InternalUser.all", null);
         if ($all === null) {
-            $all = User::all();
-            $cache->save("class.user.all", $all);
+            $all = InternalUser::all();
+            $cache->save("class.InternalUser.all", $all);
         }
         return $all;
     }

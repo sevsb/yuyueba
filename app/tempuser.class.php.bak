@@ -5,7 +5,7 @@ class TempUser extends User {
     private $mSummary = null;
     private $mGroups = null;
 
-    public function __construct($summary = array()) {
+    public function TempUser($summary = array()) {
         if (empty($summary)) {
             $summary = array(
                 "id" => 0,

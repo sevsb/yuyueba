@@ -103,7 +103,7 @@ public function send_action(){
 			$type = 0;
 		}else if (empty($user)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "33333 is:"  );
-			$reason ="验证码错误，请重新获取";
+			$reason ="手机错误，请重新输入";
 			$type = 0;
 			
 		}else{ 
@@ -155,6 +155,49 @@ public function send_action(){
 						$type = 0;
 					}
 				}
+			}
+		}	
+		if($type!=0){
+			$id = $user->save();
+			$tempuser->save();
+			$data = array("status" => $type , "info"=>array( "id" => $id , "yuyue_session" => $yuyue_session));
+		}else{
+			$data = array("status" => $type , "reason" => $reason);
+		}
+		return array("data" => $data , "op" => "verify" );
+   }
+    public function login_action() {
+	
+		$nationCode = get_request('nationCode');
+		$phoneNumber = get_request('phoneNumber');
+		$yuyue_session = get_request('yuyue_session');
+		logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session );
+		
+		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
+		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
+		$type = 0;
+		$reason="系统错误";
+		$data = array();
+		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)){
+			logging::d("yuyue_session", "111111 is:"  );
+			$reason ="信息不全";
+			$type = 0;
+		
+		}else if(empty($tempuser)) {//如果没有对应的user，系统错误。
+			logging::d("yuyue_session", "1222222 is:"  );
+			$reason ="系统错误，请重启小程序";
+			$type = 0;
+		}else if (empty($user)) {//如果没有对应的user，系统错误。
+			logging::d("yuyue_session", "33333 is:"  );
+			$reason ="无此用户，请检查输入";
+			$type = 0;
+			
+		}else{ 
+		
+			if($user->verify_status()=="true"&&$tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
+				$yuyue_session = md5(time() . $yuyue_session);
+				$tempuser->setYuyueSession($yuyue_session);
+				$type =1;
 			}
 		}	
 		if($type!=0){

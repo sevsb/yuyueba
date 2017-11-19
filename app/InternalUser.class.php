@@ -50,7 +50,10 @@ class InternalUser {
 
    
     public function tempid() {
-        return $this->mSummary["tempid"];
+        return $this->mSummary["tempid"]; 
+    }
+	private function verify_code() {
+        return $this->mSummary["verify_code"];
     }
      public function verify_status() {
         return $this->mSummary["verify_status"];

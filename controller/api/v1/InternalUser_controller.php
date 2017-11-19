@@ -24,8 +24,8 @@ public function send_action(){
 			$user = new InternalUser();
 		}
 
-logging::d("Id", "Id is:" .$user->id());
-logging::d("verify_status", "verify_status is:" .$user->verify_status());
+	logging::d("Id", "Id is:" .$user->id());
+	logging::d("verify_status", "verify_status is:" .$user->verify_status());
 
 
 		logging::d("tempuser", "Id is:" .$tempuser->id());
@@ -89,20 +89,25 @@ logging::d("verify_status", "verify_status is:" .$user->verify_status());
 		logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session );
 		$verify_code = get_request('verify_code');
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
-		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code))
-			return array("data" =>array("status"=>0,"reason"=>"信息不全") ,"op" =>"verify" );
+		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
+			$data = array("status"=>0,"reason"=>"信息不全");
+		return array("data" => $data,"op" =>"verify" );
+		}
 		  //获取用户信息
 		
 		  
 		if (empty($tempuser)) {//如果没有对应的user，系统错误。
-			return array("data" =>array("status"=>0,"reason"=>"系统错误，请重启小程序") ,"op" =>"verify" );
+		$data =array("status"=>0,"reason"=>"系统错误，请重启小程序");
+			return array("data" =>$data ,"op" =>"verify" );
 		}
 		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
 		if (empty($user)) {//如果没有对应的user，系统错误。
-			return array("data" =>array("status"=>0,"reason"=>"验证码错误，请重新获取") ,"op" =>"verify" );
+		$data =array("status"=>0,"reason"=>"验证码错误，请重新获取");
+			return array("data" =>$data  ,"op" =>"verify" );
 		}
 		  if(!$user->verify($verify_code)){
-			  	return array("data" =>array("status"=>0,"reason"=>"验证码错误") ,"op" =>"verify" );
+			$data =  array("status"=>0,"reason"=>"验证码错误");
+			  	return array("data" => $data,"op" =>"verify" );
 		  }
 		  
 
@@ -125,7 +130,8 @@ logging::d("verify_status", "verify_status is:" .$user->verify_status());
 		}else {//不是对应微信，
 			$tempuser = TempUser::oneById($user->tempid());//获取对应用户信息
 			if (empty($tempuser)) {//如果没有对应的user，系统错误。
-				return array("data" =>array("status"=>0,"reason"=>"系统错误，账号无效，请联系管理员") ,"op" =>"verify" );
+				$data = array("status"=>0,"reason"=>"系统错误，账号无效，请联系管理员");
+				return array("data" => $data ,"op" =>"verify" );
 			}
 			$yuyue_session =$tempuser->tempuser();//获取yuyue_session
 			

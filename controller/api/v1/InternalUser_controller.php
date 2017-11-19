@@ -173,34 +173,42 @@ public function send_action(){
 		$uid = get_request('uid');
 		$user = InternalUser::oneById($uid);
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
-		$data= new stdclass();
-		logging::d("yuyue_session", "14879789611 is:"  );
 		
+		logging::d("yuyue_session", "14879789611 is:"  );
+		$reason =".0.0.";
+		$status = 0;
+		avatar = "";
+		$phoneNumber = "";
+	
 		if(empty($yuyue_session)){
 			
 			logging::d("yuyue_session", "111111 is:"  );
-			$data->reason ="信息不全";
-			$data->status = 0;
+			$reason ="信息不全";
+			$status = 0;
 		
 		}else if(empty($tempuser)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "1222222 is:"  );
-			$data->reason ="系统错误，请重启小程序";
-			$data->status = 0;
+			$reason ="系统错误，请重启小程序";
+			$status = 0;
 		}else if (empty($user)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "33333 is:"  );
-			$data->reason ="无此用户";
-			$data->status = 0;
+			$reason ="无此用户";
+			$status = 0;
 			
 		}else if($tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
 			logging::d("yuyue_session", "145611 is:"  );
-			$data->avatar = tempuser->avatar();
-			$data->phoneNumber =  $user->telephone();
-			$data->status = 1;
+			$avatar = tempuser->avatar();
+			$phoneNumber =  $user->telephone();
+			$status = 1;
 		}else{
 			logging::d("yuyue_session", "1789789781 is:"  );
-			$data->error ="未知错误";
+			$reason ="未知错误";
 		}
-		
+		if($status==1)
+		$data= array("phoneNumber"=>$phoneNumber,"avatar"=>$avatar,"status"=>$status);
+		else{
+		$data= array("reason"=>$reason,"status"=>$status);
+		}
 		return array( "op" => "getInfo","data" => $data  );
 	}
     public function login_action() {

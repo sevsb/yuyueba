@@ -11,6 +11,9 @@ public function send_action(){
         $phoneNumber = get_request('phoneNumber');
         $yuyue_session = get_request('yuyue_session');
   
+    $tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
+		if(empty($nationCode)&&empty($phoneNumber)&&empty($yuyue_session))
+			return array("data" =>array("status"=>0,"reason"=>"信息不全") ,"op" =>"verify" );
 		$templId = 50285;
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		if (empty($tempuser)) {//如果没有对应的user，就创建一个。
@@ -79,13 +82,16 @@ logging::d("verify_status", "verify_status is:" .$user->verify_status());
    }
 
    public function verify_action() {
- 
-	   $nationCode = get_request('nationCode');
-        $phoneNumber = get_request('phoneNumber');
-        $yuyue_session = get_request('yuyue_session');
-		  $verify_code = get_request('verify_code');
+	
+		$nationCode = get_request('nationCode');
+		$phoneNumber = get_request('phoneNumber');
+		$yuyue_session = get_request('yuyue_session');
+		$verify_code = get_request('verify_code');
+		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
+		if(empty($nationCode)&&empty($phoneNumber)&&empty($yuyue_session)&&empty($verify_code))
+			return array("data" =>array("status"=>0,"reason"=>"信息不全") ,"op" =>"verify" );
 		  //获取用户信息
-		  $tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
+		
 		  
 		if (empty($tempuser)) {//如果没有对应的user，系统错误。
 			return array("data" =>array("status"=>0,"reason"=>"系统错误，请重启小程序") ,"op" =>"verify" );

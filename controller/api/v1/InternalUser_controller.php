@@ -12,7 +12,7 @@ public function send_action(){
         $yuyue_session = get_request('yuyue_session');
   
     $tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
-		if(empty($nationCode)&&empty($phoneNumber)&&empty($yuyue_session))
+			if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session))
 			return array("data" =>array("status"=>0,"reason"=>"信息不全") ,"op" =>"verify" );
 		$templId = 50285;
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
@@ -88,7 +88,7 @@ logging::d("verify_status", "verify_status is:" .$user->verify_status());
 		$yuyue_session = get_request('yuyue_session');
 		$verify_code = get_request('verify_code');
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
-		if(empty($nationCode)&&empty($phoneNumber)&&empty($yuyue_session)&&empty($verify_code))
+		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code))
 			return array("data" =>array("status"=>0,"reason"=>"信息不全") ,"op" =>"verify" );
 		  //获取用户信息
 		

@@ -174,6 +174,7 @@ public function send_action(){
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$data= new stdclass();
 		if(empty($yuyue_session)){
+			
 			logging::d("yuyue_session", "111111 is:"  );
 			$data->reason ="信息不全";
 			$data->status = 0;
@@ -188,9 +189,12 @@ public function send_action(){
 			$data->status = 0;
 			
 		}else if($tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
+			logging::d("yuyue_session", "145611 is:"  );
 			$data->avatar = tempuser->avatar();
 			$data->phoneNumber =  $user->telephone();
 			$data->status = 1;
+		}else{
+			$data->error ="未知错误";
 		}
 		
 		return array( "op" => "getInfo","data" => $data  );

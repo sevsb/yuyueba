@@ -86,6 +86,7 @@ logging::d("verify_status", "verify_status is:" .$user->verify_status());
 		$nationCode = get_request('nationCode');
 		$phoneNumber = get_request('phoneNumber');
 		$yuyue_session = get_request('yuyue_session');
+		logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session );
 		$verify_code = get_request('verify_code');
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code))

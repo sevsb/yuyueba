@@ -197,8 +197,8 @@ public function send_action(){
 			
 		}else if($tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
 			logging::d("yuyue_session", "145611 is:"  );
-			$avatar = tempuser->avatar();
-			$phoneNumber =  $user->telephone();
+			//$avatar = tempuser->avatar();
+			//$phoneNumber =  $user->telephone();
 			$status = 1;
 		}else{
 			logging::d("yuyue_session", "1789789781 is:"  );

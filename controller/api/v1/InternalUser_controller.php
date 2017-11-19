@@ -91,7 +91,7 @@ public function send_action(){
 		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
 		$type = 0;
 		$reason="系统错误";
-		$data = array();
+		$data = array("123"=>12316);
 		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
 			logging::d("yuyue_session", "111111 is:"  );
 			$reason ="信息不全";

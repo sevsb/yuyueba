@@ -177,7 +177,7 @@ public function send_action(){
 		logging::d("yuyue_session", "14879789611 is:"  );
 		$reason =".0.0.";
 		$status = 0;
-		avatar = "";
+		$avatar = "";
 		$phoneNumber = "";
 		$data = array("1"=>123);
 		if(empty($yuyue_session)){

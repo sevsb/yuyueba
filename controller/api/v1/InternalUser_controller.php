@@ -90,6 +90,7 @@ public function send_action(){
 		$verify_code = get_request('verify_code');
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
+			logging::d("yuyue_session", "111111 is:"  );
 			$data = array("status"=>0,"reason"=>"信息不全");
 		return array("data" => $data,"op" =>"verify" );
 		}
@@ -97,15 +98,18 @@ public function send_action(){
 		
 		  
 		if (empty($tempuser)) {//如果没有对应的user，系统错误。
+		logging::d("yuyue_session", "1222222 is:"  );
 		$data =array("status"=>0,"reason"=>"系统错误，请重启小程序");
 			return array("data" =>$data ,"op" =>"verify" );
 		}
 		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
 		if (empty($user)) {//如果没有对应的user，系统错误。
+		logging::d("yuyue_session", "33333 is:"  );
 		$data =array("status"=>0,"reason"=>"验证码错误，请重新获取");
 			return array("data" =>$data  ,"op" =>"verify" );
 		}
 		  if(!$user->verify($verify_code)){
+			  logging::d("yuyue_session", "44444 is:"  );
 			$data =  array("status"=>0,"reason"=>"验证码错误");
 			  	return array("data" => $data,"op" =>"verify" );
 		  }

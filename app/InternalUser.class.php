@@ -55,9 +55,7 @@ class InternalUser {
      public function verify_status() {
         return $this->mSummary["verify_status"];
     }
-	 public function verify_code() {
-        return $this->mSummary["verify_code"];
-    }
+	
 	public function status() {
         return $this->mSummary["status"];
     }

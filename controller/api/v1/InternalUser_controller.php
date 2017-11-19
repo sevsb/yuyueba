@@ -174,6 +174,7 @@ public function send_action(){
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$data= new stdclass();
 		logging::d("yuyue_session", "14879789611 is:"  );
+		/*
 		if(empty($yuyue_session)){
 			
 			logging::d("yuyue_session", "111111 is:"  );
@@ -198,7 +199,7 @@ public function send_action(){
 			logging::d("yuyue_session", "1789789781 is:"  );
 			$data->error ="未知错误";
 		}
-		
+		*/
 		return array( "op" => "getInfo","data" => $data  );
 	}
     public function login_action() {

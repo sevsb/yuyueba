@@ -168,13 +168,13 @@ public function send_action(){
    }
    
     public function getInfo_action() {
-		logging::d("yuyue_session", "45678 is:"  );
+
 		$yuyue_session = get_request('yuyue_session');		
 		$uid = get_request('uid');
 		$user = InternalUser::oneById($uid);
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		
-		logging::d("yuyue_session", "14879789611 is:"  );
+	
 		$reason =".0.0.";
 		$status = 0;
 		$avatar = "";
@@ -197,8 +197,8 @@ public function send_action(){
 			
 		}else if($tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
 			logging::d("yuyue_session", "145611 is:"  );
-			//$avatar = tempuser->avatar();
-			//$phoneNumber =  $user->telephone();
+			$avatar = $tempuser->avatar();
+			$phoneNumber =  $user->telephone();
 			$status = 1;
 		}else{
 			logging::d("yuyue_session", "1789789781 is:"  );

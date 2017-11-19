@@ -121,29 +121,39 @@ public function send_action(){
 			
 						$type = 2;
 					}else {//未注册,注册
+						$tempuser->setUId($user->id());
 						$user->setStatus("true");
 						$user->setCode("00000");
 						$type = 1;
 					}
 			
 				}else {//不是对应微信，
-					$tempuser = TempUser::oneById($user->tempid());//获取对应用户信息
-					if (empty($tempuser)) {//如果没有对应的user，系统错误。
-						$reason ="系统错误，账号无效，请联系管理员";
-						$type = 0;
-				
-					}else{
-						
-					$yuyue_session =$tempuser->yuyue_session();//获取yuyue_session
-					$user->setStatus("true");
-					$user->setCode("00000");
-					$type = 3;
+					if($user->verify_status()=="true"){//已注册成功，登陆
+						$tempuser = TempUser::oneById($user->tempid());//获取对应用户信息
+						if (empty($tempuser)) {//如果没有对应的user，系统错误。
+							$reason ="系统错误，账号无效，请联系管理员";
+							$type = 0;
+					
+						}else{
+							
+						$yuyue_session =$tempuser->yuyue_session();//获取yuyue_session
+						$user->setStatus("true");
+						$user->setCode("00000");
+						$type = 3;
+						}
+					}else{//不应有这种情况
+						$tempuser->setUId($user->id());
+						$user->setTempId($tempuser->id());
+						$user->setStatus("true");
+						$user->setCode("00000");
+						$type = 1;
 					}
 				}
 			}
 		}	
 		if($type!=0){
 			$id = $user->save();
+			$tempuser->save();
 			$data = array("status" => $type , "info"=>array( "id" => $id , "yuyue_session" => $yuyue_session));
 		}else{
 			$data = array("status" => $type , "reason" => $reason);

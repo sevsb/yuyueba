@@ -91,22 +91,28 @@ public function send_action(){
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
 		$type = 0;
+		$reason="系统错误";
+		$data = array();
 		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
 			logging::d("yuyue_session", "111111 is:"  );
-			$data = array("status"=>0,"reason"=>"信息不全");
+			$reason ="信息不全";
+			$type = 0;
 		
 		}else if(empty($tempuser)) {//如果没有对应的user，系统错误。
-		logging::d("yuyue_session", "1222222 is:"  );
-		$data =array("status"=>0,"reason"=>"系统错误，请重启小程序");
-			
+			logging::d("yuyue_session", "1222222 is:"  );
+			$reason ="系统错误，请重启小程序";
+			$type = 0;
 		}else if (empty($user)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "33333 is:"  );
-			$data =array("status"=>0,"reason"=>"验证码错误，请重新获取");
+			$reason ="验证码错误，请重新获取";
+			$type = 0;
 			
 		}else{ 
 			if(!$user->verify($verify_code)){
-			  logging::d("yuyue_session", "44444 is:"  );
-				$data =  array("status"=>0,"reason"=>"验证码错误");  	
+				logging::d("yuyue_session", "44444 is:"  );
+				$reason ="验证码错误";
+				$type = 0;
+			
 			}else{
 			
 				$tempId = $tempuser->id();//获取对应tempid			
@@ -124,8 +130,9 @@ public function send_action(){
 				}else {//不是对应微信，
 					$tempuser = TempUser::oneById($user->tempid());//获取对应用户信息
 					if (empty($tempuser)) {//如果没有对应的user，系统错误。
-					$data = array("status"=>0,"reason"=>"系统错误，账号无效，请联系管理员");
-					
+						$reason ="系统错误，账号无效，请联系管理员";
+						$type = 0;
+				
 					}else{
 						
 					$yuyue_session =$tempuser->yuyue_session();//获取yuyue_session
@@ -137,9 +144,11 @@ public function send_action(){
 			}
 		}	
 		if(type!=0){
-		$id = $user->save();
-		$data = array("status"=>$type,"info"=>array( "id"=>$id,"yuyue_session"=>$yuyue_session));
+			$id = $user->save();
+			$data = array("status" => $type , "info"=>array( "id" => $id , "yuyue_session" => $yuyue_session));
+		}else{
+			$data = array("status" => $type , "reason" => $reason);
 		}
-		return array("data" =>$data ,"op" =>"verify" );
+		return array("data" => $data , "op" => "verify" );
    }
 }

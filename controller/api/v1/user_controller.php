@@ -41,6 +41,7 @@ class user_controller extends v1_base {
             //logging::d("LOGIN", "now user is :" . $user);
             $data = new stdClass();
             $data->timeout = time() + 7200;
+			 $data->uid =$user->uid();
             $data->token = $user->token();
             $data->yuyue_session = $user->yuyue_session();
             //logging::d("LOGIN", "now data is :" . $data);

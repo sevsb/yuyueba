@@ -80,11 +80,12 @@ class InternalUser {
 	public function setCode($verify_code) {
         $this->mSummary["verify_code"] = $verify_code;
     }
+	public function setStatus($status) {
+        $this->mSummary["verify_status"] = $status;
+    }
 	public function verify($verify_code){
 		if(!empty( $verify_code)){
 			if($this->mSummary["verify_code"]==$verify_code){
-				$this->mSummary["verify_code"]=="00000";
-				$this->mSummary["verify_status"]=="true";
 				return true;
 			}
 			return false;

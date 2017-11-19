@@ -126,8 +126,10 @@ public function send_action(){
 		if($user->tempid()== $tempId){//绑定无误
 			
 			if($user->verify_status()=="true"){//已注册成功，登陆
+			
 				$type = 2;
 			}else {//未注册,注册
+				$user->setStatus("true");
 				$type = 1;
 			}
 			
@@ -137,13 +139,14 @@ public function send_action(){
 				$data = array("status"=>0,"reason"=>"系统错误，账号无效，请联系管理员");
 				return array("data" => $data ,"op" =>"verify" );
 			}
-			$yuyue_session =$tempuser->yuyue_session();//获取yuyue_session
 			
+			$yuyue_session =$tempuser->yuyue_session();//获取yuyue_session
+			$user->setStatus("true");
 			$type = 3;
 		}
 			
 
-		$data = array("status"=>$type,"info"=>array( "id"=>$id,"yuyue_session"=>$yuyue_session));
+		$data = array("status"=>$type,"info"=>array( "id"=>$user->id,"yuyue_session"=>$yuyue_session));
 		return array("data" =>$data ,"op" =>"verify" );
    }
 }

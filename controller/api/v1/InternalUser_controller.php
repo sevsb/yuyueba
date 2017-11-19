@@ -47,7 +47,7 @@ public function send_action(){
 					$type = 1;
 				}else{//不是对应微信 获取session
 					$tempuser = TempUser::oneById($user->tempid());//获取对应用户信息
-					$yuyue_session =$tempuser->tempuser();//获取yuyue_session
+					$yuyue_session =$tempuser->yuyue_session();//获取yuyue_session
 					$type = 2;
 				}
 			}else{//未注册成功
@@ -104,9 +104,9 @@ public function send_action(){
 		}
 		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
 		if (empty($user)) {//如果没有对应的user，系统错误。
-		logging::d("yuyue_session", "33333 is:"  );
-		$data =array("status"=>0,"reason"=>"验证码错误，请重新获取");
-			return 123456;
+			logging::d("yuyue_session", "33333 is:"  );
+			$data =array("status"=>0,"reason"=>"验证码错误，请重新获取");
+			return array("data" =>$data  ,"op" =>"verify" );
 		}
 		  if(!$user->verify($verify_code)){
 			  logging::d("yuyue_session", "44444 is:"  );
@@ -137,7 +137,7 @@ public function send_action(){
 				$data = array("status"=>0,"reason"=>"系统错误，账号无效，请联系管理员");
 				return array("data" => $data ,"op" =>"verify" );
 			}
-			$yuyue_session =$tempuser->tempuser();//获取yuyue_session
+			$yuyue_session =$tempuser->yuyue_session();//获取yuyue_session
 			
 			$type = 3;
 		}

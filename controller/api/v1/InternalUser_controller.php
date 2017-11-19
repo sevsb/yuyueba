@@ -106,7 +106,7 @@ public function send_action(){
 		if (empty($user)) {//如果没有对应的user，系统错误。
 		logging::d("yuyue_session", "33333 is:"  );
 		$data =array("status"=>0,"reason"=>"验证码错误，请重新获取");
-			return 123456//array("data" =>$data  ,"op" =>"verify" );
+			return 123456;
 		}
 		  if(!$user->verify($verify_code)){
 			  logging::d("yuyue_session", "44444 is:"  );

@@ -166,47 +166,63 @@ public function send_action(){
 		}
 		return array("data" => $data , "op" => "verify" );
    }
-    public function login_action() {
-	
-		$nationCode = get_request('nationCode');
-		$phoneNumber = get_request('phoneNumber');
-		$yuyue_session = get_request('yuyue_session');
-		logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session );
-		
+   
+    public function getInfo_action() {
+		$yuyue_session = get_request('yuyue_session');		
+		$uid = get_request('uid');
+		$user = InternalUser::oneById($uid);
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
-		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
-		$type = 0;
-		$reason="系统错误";
-		$data = array();
-		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)){
+		$data= new stdclass();
+		if(empty($yuyue_session)){
 			logging::d("yuyue_session", "111111 is:"  );
-			$reason ="信息不全";
-			$type = 0;
+			$data->reason ="信息不全";
+			$data->status = 0;
 		
 		}else if(empty($tempuser)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "1222222 is:"  );
-			$reason ="系统错误，请重启小程序";
-			$type = 0;
+			$data->reason ="系统错误，请重启小程序";
+			$data->status = 0;
 		}else if (empty($user)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "33333 is:"  );
-			$reason ="无此用户，请检查输入";
-			$type = 0;
+			$data->reason ="无此用户";
+			$data->status = 0;
 			
-		}else{ 
-		
-			if($user->verify_status()=="true"&&$tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
-				$yuyue_session = md5(time() . $yuyue_session);
-				$tempuser->setYuyueSession($yuyue_session);
-				$type =1;
-			}
-		}	
-		if($type!=0){
-			$id = $user->save();
-			$tempuser->save();
-			$data = array("status" => $type , "info"=>array( "id" => $id , "yuyue_session" => $yuyue_session));
-		}else{
-			$data = array("status" => $type , "reason" => $reason);
+		}else if($tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
+			$data->avatar = tempuser->avatar();
+			$data->phoneNumber =  $user->telephone();
+			$data->status = 1;
 		}
-		return array("data" => $data , "op" => "verify" );
+		
+		return array( "op" => "getInfo","data" => $data  );
+	}
+    public function login_action() {
+	$yuyue_session = get_request('yuyue_session');		
+		$uid = get_request('uid');
+		$user = InternalUser::oneById($uid);
+		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
+		$data= new stdclass();
+		if(empty($yuyue_session)){
+			logging::d("yuyue_session", "111111 is:"  );
+			$data->reason ="信息不全";
+			$data->status = 0;
+		
+		}else if(empty($tempuser)) {//如果没有对应的user，系统错误。
+			logging::d("yuyue_session", "1222222 is:"  );
+			$data->reason ="系统错误，请重启小程序";
+			$data->status = 0;
+		}else if (empty($user)) {//如果没有对应的user，系统错误。
+			logging::d("yuyue_session", "33333 is:"  );
+			$data->reason ="无此用户";
+			$data->status = 0;
+			
+		}else if($tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
+			$tempuser->setSessionKey =  md5(time() . $tempuser->yuyue_session());
+			$tempuser->save();
+			$data->phoneNumber =  $user->telephone();
+			$data->yuyue_session = $tempuser->yuyue_session();
+			$data->status = 1;
+		}
+		
+		return array( "op" => "login","data" => $data);
    }
 }

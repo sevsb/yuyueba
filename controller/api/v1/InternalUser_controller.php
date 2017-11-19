@@ -146,7 +146,7 @@ public function send_action(){
 		}
 			
 
-		$data = array("status"=>$type,"info"=>array( "id"=>$user->id,"yuyue_session"=>$yuyue_session));
+		$data = array("status"=>$type,"info"=>array( "id"=>$user->id(),"yuyue_session"=>$yuyue_session));
 		return array("data" =>$data ,"op" =>"verify" );
    }
 }

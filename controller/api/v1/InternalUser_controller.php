@@ -115,16 +115,19 @@ public function send_action(){
 			}else{
 			
 				$tempId = $tempuser->id();//获取对应tempid			
-				if($user->tempid()== $tempId){//绑定无误
+				if($user->tempid()== $tempId){//单方绑定无误
 			
 					if($user->verify_status()=="true"){//已注册成功，登陆
 			
 						$type = 2;
-					}else {//未注册,注册
+					}else if($tempuser->id()==0){//未注册,注册
 						$tempuser->setUId($user->id());
 						$user->setStatus("true");
 						$user->setCode("00000");
 						$type = 1;
+					}else{//一个微信注册过，又用另一个手机号注册
+						$reason ="验证码错误";
+						$type = 0;
 					}
 			
 				}else {//不是对应微信，
@@ -141,12 +144,15 @@ public function send_action(){
 						$user->setCode("00000");
 						$type = 3;
 						}
-					}else{//不应有这种情况
+					}else if($tempuser->id()==0){//不应有这种情况
 						$tempuser->setUId($user->id());
 						$user->setTempId($tempuser->id());
 						$user->setStatus("true");
 						$user->setCode("00000");
 						$type = 1;
+					}else{//账号绑定错误
+						$reason ="账号错误";
+						$type = 0;
 					}
 				}
 			}

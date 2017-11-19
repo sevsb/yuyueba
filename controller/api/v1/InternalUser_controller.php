@@ -126,7 +126,7 @@ public function send_action(){
 						$user->setCode("00000");
 						$type = 1;
 					}else{//一个微信注册过，又用另一个手机号注册
-						$reason ="验证码错误";
+						$reason ="无此用户";
 						$type = 0;
 					}
 			

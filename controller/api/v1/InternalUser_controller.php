@@ -168,6 +168,7 @@ public function send_action(){
    }
    
     public function getInfo_action() {
+		logging::d("yuyue_session", "45678 is:"  );
 		$yuyue_session = get_request('yuyue_session');		
 		$uid = get_request('uid');
 		$user = InternalUser::oneById($uid);

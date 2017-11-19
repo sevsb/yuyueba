@@ -89,66 +89,57 @@ public function send_action(){
 		logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session );
 		$verify_code = get_request('verify_code');
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
+		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
+		$type = 0;
 		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
 			logging::d("yuyue_session", "111111 is:"  );
 			$data = array("status"=>0,"reason"=>"信息不全");
-		return array("data" => $data,"op" =>"verify" );
-		}
-		  //获取用户信息
 		
-		  
-		if (empty($tempuser)) {//如果没有对应的user，系统错误。
+		}else if(empty($tempuser)) {//如果没有对应的user，系统错误。
 		logging::d("yuyue_session", "1222222 is:"  );
 		$data =array("status"=>0,"reason"=>"系统错误，请重启小程序");
-			return array("data" =>$data ,"op" =>"verify" );
-		}
-		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
-		if (empty($user)) {//如果没有对应的user，系统错误。
+			
+		}else if (empty($user)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "33333 is:"  );
 			$data =array("status"=>0,"reason"=>"验证码错误，请重新获取");
-			return array("data" =>$data  ,"op" =>"verify" );
-		}
-		  if(!$user->verify($verify_code)){
+			
+		}else{ 
+			if(!$user->verify($verify_code)){
 			  logging::d("yuyue_session", "44444 is:"  );
-			$data =  array("status"=>0,"reason"=>"验证码错误");
-			  	return array("data" => $data,"op" =>"verify" );
-		  }
-		  
-
-	logging::d("Id", "Id is:" .$user->id());
-
-	logging::d("verify_code", "send verify_code is:" .$verify_code);
-	logging::d("verify_status", "verify_status is:" .$user->verify_status());
-	logging::d("tempuser", "Id is:" .$tempuser->id());
-		
-		$tempId = $tempuser->id();//获取对应tempid
-		$type = 0;
-		if($user->tempid()== $tempId){//绑定无误
+				$data =  array("status"=>0,"reason"=>"验证码错误");  	
+			}else{
 			
-			if($user->verify_status()=="true"){//已注册成功，登陆
+				$tempId = $tempuser->id();//获取对应tempid			
+				if($user->tempid()== $tempId){//绑定无误
 			
-				$type = 2;
-			}else {//未注册,注册
-				$user->setStatus("true");
-				$user->setCode("00000");
-				$type = 1;
+					if($user->verify_status()=="true"){//已注册成功，登陆
+			
+						$type = 2;
+					}else {//未注册,注册
+						$user->setStatus("true");
+						$user->setCode("00000");
+						$type = 1;
+					}
+			
+				}else {//不是对应微信，
+					$tempuser = TempUser::oneById($user->tempid());//获取对应用户信息
+					if (empty($tempuser)) {//如果没有对应的user，系统错误。
+					$data = array("status"=>0,"reason"=>"系统错误，账号无效，请联系管理员");
+					
+					}else{
+						
+					$yuyue_session =$tempuser->yuyue_session();//获取yuyue_session
+					$user->setStatus("true");
+					$user->setCode("00000");
+					$type = 3;
+					}
+				}
 			}
-			
-		}else {//不是对应微信，
-			$tempuser = TempUser::oneById($user->tempid());//获取对应用户信息
-			if (empty($tempuser)) {//如果没有对应的user，系统错误。
-				$data = array("status"=>0,"reason"=>"系统错误，账号无效，请联系管理员");
-				return array("data" => $data ,"op" =>"verify" );
-			}
-			
-			$yuyue_session =$tempuser->yuyue_session();//获取yuyue_session
-			$user->setStatus("true");
-			$user->setCode("00000");
-			$type = 3;
-		}
-			
+		}	
+		if(type!=0){
 		$id = $user->save();
 		$data = array("status"=>$type,"info"=>array( "id"=>$id,"yuyue_session"=>$yuyue_session));
+		}
 		return array("data" =>$data ,"op" =>"verify" );
    }
 }

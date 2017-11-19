@@ -129,7 +129,7 @@ public function send_action(){
 			
 				$type = 2;
 			}else {//Î´×¢²á,×¢²á
-				$user->setStatus("true");
+				logging::d("setStatus", "setStatus is:" .$user->setStatus("true"));
 				$type = 1;
 			}
 			
@@ -141,11 +141,11 @@ public function send_action(){
 			}
 			
 			$yuyue_session =$tempuser->yuyue_session();//»ñÈ¡yuyue_session
-			$user->setStatus("true");
+			logging::d("setStatus", "setStatus is:" .$user->setStatus("true"));
 			$type = 3;
 		}
 			
-$id= $user->id(); 
+		$id= $user->id(); 
 		$data = array("status"=>$type,"info"=>array( "id"=>$id,"yuyue_session"=>$yuyue_session));
 		return array("data" =>$data ,"op" =>"verify" );
    }

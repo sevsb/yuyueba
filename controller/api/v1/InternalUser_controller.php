@@ -73,11 +73,10 @@ public function send_action(){
 			$result=json_decode($result);
 
 			if($result->result == 0){
-				$id = $user->save();
-		//		logging::d("id", "id is:" .$id);
-		
+				$id = $user->save();	
 			}
 			$data = array("type"=>$type,"info"=>array( "id"=>$id,"yuyue_session"=>$yuyue_session),"result" =>$result);
+	
 		return array("data" =>$data ,"op" =>"send" );
    }
 
@@ -143,7 +142,7 @@ public function send_action(){
 				}
 			}
 		}	
-		if(type!=0){
+		if($type!=0){
 			$id = $user->save();
 			$data = array("status" => $type , "info"=>array( "id" => $id , "yuyue_session" => $yuyue_session));
 		}else{

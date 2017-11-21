@@ -45,7 +45,7 @@ class Activity {
     public function images_full_list(){
         $images = json_decode($this->mSummary["images"]);
         if (empty($images)) {
-            return images;
+            return $images;
         }
         $arr = [];
         foreach ($images as $image) {
@@ -60,7 +60,7 @@ class Activity {
     public function image_url_list() {
         $images = json_decode($this->mSummary["images"]);
         if (empty($images)) {
-            return images;
+            return $images;
         }
         $arr = [];
         foreach ($images as $image) {
@@ -71,7 +71,7 @@ class Activity {
     public function image_thumbnail_url_list() {
         $images = json_decode($this->mSummary["images"]);
         if (empty($images)) {
-            return images;
+            return $images;
         }
         $arr = [];
         foreach ($images as $image) {
@@ -97,8 +97,8 @@ class Activity {
     public function repeatcount() {
         return $this->mSummary["repeatcount"];
     }
-    public function deadline() {
-        return $this->mSummary["deadline"];
+    public function repeatend() {
+        return $this->mSummary["repeatend"];
     }
     public function address() {
         return $this->mSummary["address"];
@@ -167,7 +167,7 @@ class Activity {
         
         $activity->setBegintime();
         $activity->setEndtime();
-        $activity->setDeadline();
+        $activity->setrepeatend();
         
         $activity->setAddress();
         
@@ -205,8 +205,8 @@ class Activity {
     public function setEndtime($n) {
         $this->mSummary["endtime"] = $n;
     }
-    public function setDeadline($n) {
-        $this->mSummary["deadline"] = $n;
+    public function setRepeatend($n) {
+        $this->mSummary["repeatend"] = $n;
     }
     public function setAddress($n) {
         $this->mSummary["address"] = $n;
@@ -228,12 +228,12 @@ class Activity {
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_activity::inst()->add($this->owner(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->deadline(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->type(), $this->joinable());
+            $id = db_activity::inst()->add($this->owner(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->type(), $this->joinable());
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_activity::inst()->modify($this->id(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->deadline(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->joinable());
+            $id = db_activity::inst()->modify($this->id(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->joinable());
         }
         return $id;
     }
@@ -252,7 +252,7 @@ class Activity {
             "content" => $this->content(),
             "begintime" => $this->begintime(),
             "endtime" => $this->endtime(),
-            "deadline" => $this->deadline(),
+            "repeatend" => $this->repeatend(),
             "address" => $this->address(),
             "repeattype" => $this->repeattype(),
             "repeatcount" => $this->repeatcount(),

@@ -26,13 +26,13 @@ class db_activity extends database_table {
         return $this->get_all();
     }
 
-    public function add($owner, $title, $info, $images, $begintime, $endtime, $repeattype, $repeatcount, $deadline, $address, $content, $participants, $joinsheet, $type, $joinable) {
-        return $this->insert(array("owner" => $owner, "title" => $title, "info" => $info, "images" => $images, "begintime" => $begintime, "endtime" => $endtime, "repeattype" => $repeattype, "repeatcount" => $repeatcount, "deadline" => $deadline, "address" => $address, "content" => $content, "participants" => $participants, "sheet" => $joinsheet, "type" => $type, "joinable" => $joinable, "status" => 0, "createtime" => time(),  "modifytime" => time(), "clickcount" => 0));
+    public function add($owner, $title, $info, $images, $begintime, $endtime, $repeattype, $repeatcount, $repeatend, $address, $content, $participants, $joinsheet, $type, $joinable) {
+        return $this->insert(array("owner" => $owner, "title" => $title, "info" => $info, "images" => $images, "begintime" => $begintime, "endtime" => $endtime, "repeattype" => $repeattype, "repeatcount" => $repeatcount, "repeatend" => $repeatend, "address" => $address, "content" => $content, "participants" => $participants, "sheet" => $joinsheet, "type" => $type, "joinable" => $joinable, "status" => 0, "createtime" => time(),  "modifytime" => time(), "clickcount" => 0));
     }
 
-    public function modify($id, $title, $info, $images, $begintime, $endtime, $repeattype, $repeatcount, $deadline, $address, $content, $participants, $joinsheet, $joinable) {
+    public function modify($id, $title, $info, $images, $begintime, $endtime, $repeattype, $repeatcount, $repeatend, $address, $content, $participants, $joinsheet, $joinable) {
         $id = (int)$id;
-        return $this->update(array("title" => $title, "info" => $info, "images" => $images, "begintime" => $begintime, "endtime" => $endtime, "repeattype" => $repeattype, "repeatcount" => $repeatcount, "deadline" => $deadline, "address" => $address, "content" => $content, "participants" => $participants, "sheet" => $joinsheet, "joinable" => $joinable, "modifytime" => time()), "id = $id");
+        return $this->update(array("title" => $title, "info" => $info, "images" => $images, "begintime" => $begintime, "endtime" => $endtime, "repeattype" => $repeattype, "repeatcount" => $repeatcount, "repeatend" => $repeatend, "address" => $address, "content" => $content, "participants" => $participants, "sheet" => $joinsheet, "joinable" => $joinable, "modifytime" => time()), "id = $id");
     }
 
     public function remove($id) {

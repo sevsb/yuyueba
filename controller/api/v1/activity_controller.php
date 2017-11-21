@@ -162,7 +162,7 @@ class activity_controller extends v1_base {
         
         $begintime = get_request("begintime");
         $endtime = get_request("endtime");
-        $deadline = get_request("deadline");
+        $repeatend = get_request("repeatend");
         
         $address = get_request("address");
         
@@ -170,6 +170,8 @@ class activity_controller extends v1_base {
         $repeatcount = get_request("repeatcount", 0);
         
         $joinsheet = get_request("joinsheet");
+        
+        $calendar_id = get_request("calendar_id");
         
         //logging::d("ACT type", ($type));
         //logging::d("ACT owner", ($owner));
@@ -194,6 +196,9 @@ class activity_controller extends v1_base {
             return array('op' => 'fail', "code" => 000004, "reason" => '活动地址不完整');
         }
         
+        if ($calendar_id == 0) {
+            
+        
         $activity = new Activity();
         
         $activity->set_Type($type);
@@ -209,7 +214,7 @@ class activity_controller extends v1_base {
         
         $activity->setBegintime($begintime);
         $activity->setEndtime($endtime);
-        $activity->setDeadline($deadline);
+        $activity->setRepeatend($repeatend);
         
         $activity->setAddress($address);
         
@@ -224,6 +229,14 @@ class activity_controller extends v1_base {
         $ret = $activity->save();
         
         return $ret ?  array('op' => 'activity_organize', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 100002, "reason" => '活动发起失败');
+        
+        }else {
+            
+            
+            
+            
+            
+        }
         
     }
 

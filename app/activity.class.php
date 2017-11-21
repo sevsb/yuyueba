@@ -269,6 +269,37 @@ class Activity {
         return new Activity($summary);
     }
     
+    public static function build_one($type, $owner, $joinable, $participants, $title, $info, $content, $images, $begintime, $endtime, $repeatend, $address, $repeattype, $repeatcount, $joinsheet) {
+        $activity = new Activity();
+            
+        $activity->set_Type($type);
+        $activity->setOwner($owner);
+        
+        $activity->setJoinable($joinable);
+        $activity->setParticipants($participants);
+        
+        $activity->setTitle($title);
+        $activity->setInfo($info);
+        $activity->setContent($content);
+        $activity->setImages($images);
+        
+        $activity->setBegintime($begintime);
+        $activity->setEndtime($endtime);
+        $activity->setRepeatend($repeatend);
+        
+        $activity->setAddress($address);
+        
+        $activity->setRepeattype($repeattype);
+        $activity->setRepeatcount($repeatcount);
+        $activity->setJoinsheet($joinsheet);
+        
+        $activity->setStatus(0);
+
+        $ret = $activity->save();
+        
+        return array("ret" => $ret, "activity" => $activity);
+    }
+    
     public static function oneById($id) {
         $activities = self::cachedAll();
         foreach ($activities as $activity) {

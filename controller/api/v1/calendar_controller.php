@@ -99,7 +99,7 @@ class calendar_controller extends v1_base {
     
     public function view_action() {
         $id = get_request_assert("id");
-        logging::d("CAL VIEW", $aid);
+        logging::d("CAL VIEW", $id);
         $calendar = Calendar::oneById($id);
         $data = array(
             "info" => array(

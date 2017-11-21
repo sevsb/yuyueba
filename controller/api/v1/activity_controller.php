@@ -162,18 +162,18 @@ class activity_controller extends v1_base {
         
         $begintime = get_request("begintime");
         $endtime = get_request("endtime");
-        $repeatend = get_request("repeatend");
         
         $address = get_request("address");
         
         $repeattype = get_request("repeattype", "once");
         $repeatcount = get_request("repeatcount", 0);
+        $repeatend = get_request("repeatend");
         
         $joinsheet = get_request("joinsheet");
         
         $calendar_id = get_request("calendar_id");
         
-        //logging::d("ACT type", ($type));
+        logging::d("ACT calendar_id", ($calendar_id));
         //logging::d("ACT owner", ($owner));
         if (($type != 1 && $type != 2) || empty($owner)) {
             return array('op' => 'fail', "code" => 000001, "reason" => '活动类型或创建者信息不完整');
@@ -197,45 +197,102 @@ class activity_controller extends v1_base {
         }
         
         if ($calendar_id == 0) {
+            $result = Activity::build_one($type, $owner, $joinable, $participants, $title, $info, $content, $images, $begintime, $endtime, $repeatend, $address, $repeattype, $repeatcount, $joinsheet);
             
-        
-        $activity = new Activity();
-        
-        $activity->set_Type($type);
-        $activity->setOwner($owner);
-        
-        $activity->setJoinable($joinable);
-        $activity->setParticipants($participants);
-        
-        $activity->setTitle($title);
-        $activity->setInfo($info);
-        $activity->setContent($content);
-        $activity->setImages($images);
-        
-        $activity->setBegintime($begintime);
-        $activity->setEndtime($endtime);
-        $activity->setRepeatend($repeatend);
-        
-        $activity->setAddress($address);
-        
-        $activity->setRepeattype($repeattype);
-        $activity->setRepeatcount($repeatcount);
-        $activity->setJoinsheet($joinsheet);
-        
-        $activity->setStatus(0);
-        
-        //logging::d("ACT CREATE", dump_var($activity));
-        //return;
-        $ret = $activity->save();
-        
-        return $ret ?  array('op' => 'activity_organize', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 100002, "reason" => '活动发起失败');
+            $ret = $result['ret'];
+            $activity = $result['activity'];
+            
+            return $ret ?  array('op' => 'activity_organize', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 100002, "reason" => '活动发起失败');
         
         }else {
+        
+            logging::d("ACT begintime", ($begintime));
+            logging::d("ACT endtime", ($endtime));
             
+            logging::d("ACT repeattype", ($repeattype));
+            logging::d("ACT repeatcount", ($repeatcount));
+            logging::d("ACT repeatend", ($repeatend));
             
+            //repeattypes: ["仅一次", "每天", "每周", "隔周", "每月"],
+            //repeatcounts: ["once", "daily", "weekly", "fortnightly", "monthly"],
+            $duration = $endtime - $begintime;
+            $timestamp_array = [];
+            switch ($repeattype) {
+                case 'once': 
+                    $timestamp_start = $begintime;
+                    array_push($timestamp_array, $timestamp_start);
+                    break;
+                case 'daily': 
+                    $timestamp_start = $begintime;
+                    while ($timestamp_start <= $repeatend) {
+                        logging::d("ACT timestamp_start", ($timestamp_start));
+                        array_push($timestamp_array, $timestamp_start);
+                        $timestamp_start += 60 * 60 * 24;
+                    }
+                    break;
+                    
+                case 'weekly': 
+                    $timestamp_start = $begintime;
+                    while ($timestamp_start <= $repeatend) {
+                        array_push($timestamp_array, $timestamp_start);
+                        $timestamp_start += 60 * 60 * 24 * 7;
+                    }
+                    break;
+
+                case 'fortnightly': 
+                    $timestamp_start = $begintime;
+                    while ($timestamp_start <= $repeatend) {
+                        array_push($timestamp_array, $timestamp_start);
+                        $timestamp_start += 60 * 60 * 24 * 7 * 2;
+                    }
+                    break;
+
+                case 'monthly': 
+                    $timestamp_array = [];
+                    $timestamp_start = $begintime;
+                    while ($timestamp_start <= $repeatend) {
+                        array_push($timestamp_array, $timestamp_start);
+                        $timestamp_start = add_month($timestamp_start);
+
+                    }
+                    break;    
+
+                default: 
+                    break;
+            }
+            logging::d("timestamp_array", json_encode($timestamp_array));  
+            $ret = true;
             
+            $calendar = Calendar::oneById($calendar_id);
             
+            $activity_list = $calendar->activity_list();
+            $db_activity = db_activity::inst();
+            $db_activity->begin_transaction();
+            foreach ($timestamp_array as $begintime) {
+                $result = Activity::build_one($type, $owner, $joinable, $participants, $title, $info, $content, $images, $begintime, $begintime + $duration, $repeatend, $address, $repeattype, $repeatcount, $joinsheet);
+                
+                $add_ret = $result['ret'];
+                $activity_id = $result['activity']->id();
+                logging::d("add_ret", $add_ret);
+                logging::d("activity_id", $activity_id);
+                array_push($activity_list, $activity_id);
+                $ret = $ret && $add_ret;
+                logging::d("ret", $ret);
+            }
+            if (!$ret) {
+                $db_activity->rollback();
+                return array('op' => 'fail', "code" => 100002, "reason" => '日历活动activity发起失败');
+            }
+            logging::d("activity_list", json_encode($activity_list));
             
+            $calendar->set_activity_list($activity_list);
+            
+            $ret = $calendar->save();
+            if ($ret) {
+                $db_activity->commit();
+            }
+            return $ret ?  array('op' => 'activity_organize', "data" => "") : array('op' => 'fail', "code" => 100044, "reason" => '修改日历活动list失败');
+
         }
         
     }
@@ -391,13 +448,78 @@ class activity_controller extends v1_base {
 
 
 
+function add_month($stamp){
+        
+    $y = date("Y",$stamp);
+    $m = date("n",$stamp);
+    $d = date("d",$stamp);
+    $h = date("H",$stamp);
+    $m = date("m",$stamp);
+    $s = date("s",$stamp);
+    
+    $r = increate_month($y, $m);
+    $y = $r['y'];
+    $m = $r['m'];
+    while(!check_valid($y, $m, $d)){
+        $r = increate_month($y, $m);
+        $y = $r['y'];
+        $m = $r['m'];
+    }
+    
+    $new_date = "$y-$m-$d $h:$m:$s";
+
+    logging::d("add_month", $new_date);
+    logging::d("add_month strtotime", strtotime($new_date));
+    return strtotime($new_date);
+}
 
 
+function check_valid($y, $m, $d) {
+    switch ($m) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+            if ($d > 31 || $d < 0) {
+                return false;
+            }
+            break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            if ($d > 30 || $d < 0) {
+                return false;
+            }
+            break;
+        case 2:
+            if ($y % 4 == 0) {
+                if ($d > 29 || $d < 0) {
+                    return false;
+                }
+            }else {
+                if ($d > 28 || $d < 0) {
+                    return false;
+                }
+            }
+            break;
+        default:
+            return false;
+            break;
+    }
+    return true;
+}
 
-
-
-
-
-
-
+function increate_month($y, $m){
+    if ($m != 12) {
+        $m++;
+    }else {
+        $m = 1;
+        $y++;
+    }
+    return array("y" => $y, "m" => $m);
+}
 

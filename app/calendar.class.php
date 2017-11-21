@@ -34,8 +34,8 @@ class Calendar {
         }
     }
     
-    public function activity_id_list() {
-        return $this->mSummary["title"];
+    public function activity_list() {
+        return json_decode($this->mSummary["activity_list"]);
     }
     public function title() {
         return $this->mSummary["title"];
@@ -227,6 +227,9 @@ class Calendar {
     public function setStatus($n) {
         $this->mSummary["status"] = $n;
     }
+    public function set_activity_list($n) {
+        $this->mSummary["activity_list"] = json_encode($n);
+    }
 
 
     public function save() {
@@ -237,7 +240,7 @@ class Calendar {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_calendar::inst()->modify($this->id(), $this->title(), $this->content(), $this->type(), $this->owner());
+            $id = db_calendar::inst()->modify($this->id(), $this->title(), $this->content(), $this->type(), $this->owner(), json_encode($this->activity_list()));
         }
         return $id;
     }
@@ -250,7 +253,7 @@ class Calendar {
             "title" => $this->title(),
             "content" => $this->content(),
             "status" => $this->status(),
-            "activity_id_list" => $this->activity_id_list()
+            "activity_list" => $this->activity_list()
         );
     }
 

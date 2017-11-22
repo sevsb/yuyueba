@@ -156,28 +156,7 @@ class Activity {
         }
         return $ret;
     }
-    /*
-        $activity->set_Type();
-        $activity->setOwner();
-        
-        $activity->setJoinable();
-        $activity->setParticipants();
-        
-        $activity->setTitle();
-        $activity->setInfo();
-        $activity->setContent();
-        $activity->setImages();
-        
-        $activity->setBegintime();
-        $activity->setEndtime();
-        $activity->setrepeatend();
-        
-        $activity->setAddress();
-        
-        $activity->setRepeattype();
-        $activity->setRepeatcount();
-        $activity->setJoinsheet();
-    */
+
     public function setTitle($n) {
         $this->mSummary["title"] = $n;
     }

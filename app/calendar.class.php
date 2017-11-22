@@ -38,7 +38,7 @@ class Calendar {
         return json_decode($this->mSummary["activity_list"]);
     }
     
-    public function activity_detail_list() {
+    public function activity_detail_list_by_date() {
         $activity_list = $this->activity_list();
         $all_activity = Activity::all();
         
@@ -49,7 +49,9 @@ class Calendar {
         foreach ($activity_list as $aid ) {
             foreach ($all_activity as $act) {
                 if ($aid == $act->id()) {
-                    $array[$aid] = $act->packInfo();
+                    $act_start_time = $act->begintime();
+                    $act_start_date = $act_start_time - ($act_start_time % 60 *60 *24);
+                    $array[$act_start_date][$aid] = $act->packInfo();
                 }
             }
         }
@@ -176,28 +178,7 @@ class Calendar {
         }
         return $ret;
     }
-    /*
-        $Calendar->set_Type();
-        $Calendar->setOwner();
-        
-        $Calendar->setJoinable();
-        $Calendar->setParticipants();
-        
-        $Calendar->setTitle();
-        $Calendar->setInfo();
-        $Calendar->setContent();
-        $Calendar->setImages();
-        
-        $Calendar->setBegintime();
-        $Calendar->setEndtime();
-        $Calendar->setDeadline();
-        
-        $Calendar->setAddress();
-        
-        $Calendar->setRepeattype();
-        $Calendar->setRepeatcount();
-        $Calendar->setJoinsheet();
-    */
+
     public function setTitle($n) {
         $this->mSummary["title"] = $n;
     }
@@ -273,7 +254,7 @@ class Calendar {
             "content" => $this->content(),
             "status" => $this->status(),
             "activity_list" => $this->activity_list(),
-            "activity_detail_list" => $this->activity_detail_list()
+            "activity_detail_list_by_date" => $this->activity_detail_list_by_date()
         );
     }
 

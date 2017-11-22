@@ -291,6 +291,8 @@ class activity_controller extends v1_base {
             $ret = $calendar->save();
             if ($ret) {
                 $db_activity->commit();
+            }else {
+                $db_activity->rollback();
             }
             return $ret ?  array('op' => 'activity_organize', "data" => "") : array('op' => 'fail', "code" => 100044, "reason" => '修改日历活动list失败');
 

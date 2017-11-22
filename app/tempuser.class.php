@@ -239,7 +239,7 @@ class TempUser extends User {
 
         return array(
             "id" => $this->id(),
-            "nickname" => $this->nickname(), 
+            "name" => $this->nickname(), 
             "avatar" => $this->avatar(), 
             "token" => $this->token(), 
             "status" => $this->status(), 

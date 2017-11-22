@@ -94,7 +94,7 @@ class Organization {
             "id" => $this->id(),
             "name" => $this->name(), 
             "intro" => $this->intro(), 
-            "avatar_url" => $this->avatar_url(), 
+            "avatar" => $this->avatar_url(), 
             "owner_yuyue_session" => $this->owner_yuyue_session(), 
             "avatar_thumbnail_url" => $this->avatar_thumbnail_url(), 
             "owner" => $this->owner_detail(), 

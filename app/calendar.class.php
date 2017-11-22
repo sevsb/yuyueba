@@ -37,6 +37,25 @@ class Calendar {
     public function activity_list() {
         return json_decode($this->mSummary["activity_list"]);
     }
+    
+    public function activity_detail_list() {
+        $activity_list = $this->activity_list();
+        $all_activity = Activity::all();
+        
+        $array = [];
+        if (empty($activity_list)) {
+            return null;
+        }
+        foreach ($activity_list as $aid ) {
+            foreach ($all_activity as $act) {
+                if ($aid == $act->id()) {
+                    $array[$aid] = $act->packInfo();
+                }
+            }
+        }
+        return $array;
+    }
+    
     public function title() {
         return $this->mSummary["title"];
     }
@@ -253,7 +272,8 @@ class Calendar {
             "title" => $this->title(),
             "content" => $this->content(),
             "status" => $this->status(),
-            "activity_list" => $this->activity_list()
+            "activity_list" => $this->activity_list(),
+            "activity_detail_list" => $this->activity_detail_list()
         );
     }
 

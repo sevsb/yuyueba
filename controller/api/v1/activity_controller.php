@@ -197,7 +197,7 @@ class activity_controller extends v1_base {
         }
         
         if ($calendar_id == 0) {
-            $result = Activity::build_one($type, $owner, $joinable, $participants, $title, $info, $content, $images, $begintime, $endtime, $repeatend, $address, $repeattype, $repeatcount, $joinsheet);
+            $result = Activity::build_one($type, $owner, $joinable, $participants, $title, $info, $content, $images, $begintime, $endtime, $repeatend, $address, $repeattype, $repeatcount, $joinsheet, $calendar_id);
             
             $ret = $result['ret'];
             $activity = $result['activity'];
@@ -266,10 +266,11 @@ class activity_controller extends v1_base {
             $calendar = Calendar::oneById($calendar_id);
             
             $activity_list = $calendar->activity_list();
+            empty($activity_list) ? $activity_list = [] : $activity_list = $activity_list;
             $db_activity = db_activity::inst();
             $db_activity->begin_transaction();
             foreach ($timestamp_array as $begintime) {
-                $result = Activity::build_one($type, $owner, $joinable, $participants, $title, $info, $content, $images, $begintime, $begintime + $duration, $repeatend, $address, $repeattype, $repeatcount, $joinsheet);
+                $result = Activity::build_one($type, $owner, $joinable, $participants, $title, $info, $content, $images, $begintime, $begintime + $duration, $repeatend, $address, $repeattype, $repeatcount, $joinsheet, $calendar_id);
                 
                 $add_ret = $result['ret'];
                 $activity_id = $result['activity']->id();

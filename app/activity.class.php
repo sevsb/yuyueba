@@ -131,6 +131,9 @@ class Activity {
     public function status() {
         return $this->mSummary["status"];
     }
+    public function calendar_id() {
+        return $this->mSummary["calendar_id"];
+    }
    
     
     public function signed_user_list() {   
@@ -223,17 +226,20 @@ class Activity {
     public function setStatus($n) {
         $this->mSummary["status"] = $n;
     }
+    public function setCalendarid($n) {
+        $this->mSummary["calendar_id"] = $n;
+    }
 
 
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_activity::inst()->add($this->owner(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->type(), $this->joinable());
+            $id = db_activity::inst()->add($this->owner(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->type(), $this->joinable(), $this->calendar_id());
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_activity::inst()->modify($this->id(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->joinable());
+            $id = db_activity::inst()->modify($this->id(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->joinable(), $this->calendar_id());
         }
         return $id;
     }
@@ -261,6 +267,7 @@ class Activity {
             "joinable" => $this->joinable(),
             "max_participants" => $this->max_participants(),
             "now_participants" => $this->now_participants(),
+            "calendar_id" => $this->calendar_id(),
         );
     }
 
@@ -269,7 +276,7 @@ class Activity {
         return new Activity($summary);
     }
     
-    public static function build_one($type, $owner, $joinable, $participants, $title, $info, $content, $images, $begintime, $endtime, $repeatend, $address, $repeattype, $repeatcount, $joinsheet) {
+    public static function build_one($type, $owner, $joinable, $participants, $title, $info, $content, $images, $begintime, $endtime, $repeatend, $address, $repeattype, $repeatcount, $joinsheet, $calendar_id) {
         $activity = new Activity();
             
         $activity->set_Type($type);
@@ -292,6 +299,7 @@ class Activity {
         $activity->setRepeattype($repeattype);
         $activity->setRepeatcount($repeatcount);
         $activity->setJoinsheet($joinsheet);
+        $activity->setCalendarid($calendar_id);
         
         $activity->setStatus(0);
 

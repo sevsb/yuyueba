@@ -134,6 +134,9 @@ class Activity {
     public function calendar_id() {
         return $this->mSummary["calendar_id"];
     }
+    public function detail_qcode() {
+        return rtrim(UPLOAD_URL, "/") . "/qcode/" . $this->id() . ".jpg";
+    }
    
     
     public function signed_user_list() {   
@@ -209,6 +212,13 @@ class Activity {
         $this->mSummary["calendar_id"] = $n;
     }
 
+    public function make_detail_qcode($id){
+        $page = "pages/activity/detail";
+        $scene = "?id=$id";
+        $imgsrc = Wxapi::get_wx_acode($page, $scene);
+        $ret = Upload::save_qcode($imgsrc, $id);
+        return $ret;
+    }
 
     public function save() {
         $id = $this->id();
@@ -216,6 +226,7 @@ class Activity {
             $id = db_activity::inst()->add($this->owner(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->type(), $this->joinable(), $this->calendar_id());
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
+                $ret = $this->make_detail_qcode($id);
             }
         } else {
             $id = db_activity::inst()->modify($this->id(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->joinable(), $this->calendar_id());
@@ -247,6 +258,7 @@ class Activity {
             "max_participants" => $this->max_participants(),
             "now_participants" => $this->now_participants(),
             "calendar_id" => $this->calendar_id(),
+            "detail_qcode" => $this->detail_qcode(),
         );
     }
 

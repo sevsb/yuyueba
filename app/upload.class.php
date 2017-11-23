@@ -132,7 +132,28 @@ class Upload {
         return null;
     }
         
-    
+    public static function save_qcode($imgsrc, $id) {
+
+        logging::d("src", $imgsrc);
+        logging::d("id", $id);
+        if (!file_exists(UPLOAD_DIR . "/qcode")) {
+            $ret = @mkdir(UPLOAD_DIR . "/qcode", 0777, true);
+            if ($ret === false) {
+                logging::d('upload_image', '目录创建:' . '上传目录创建失败');
+                return false;
+            }
+        }
+        
+        $extension = "jpg";
+        logging::d('make_qcode', 'new_name:' . $id);
+        
+        $new_name = $id . "." . $extension;
+        if (file_exists(UPLOAD_DIR . "/qcode/" . $new_name)) {
+            return $new_name;
+        }
+        $ret = file_put_contents(UPLOAD_DIR . "/qcode/" . $new_name, $imgsrc);
+        return $ret ? $new_name : false;
+    }
     
     
 }

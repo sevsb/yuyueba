@@ -151,6 +151,16 @@ class user_controller extends v1_base {
 
         return array("op" => "sign_list", 'data' => $ret);
     }
+    
+    public function test_test_action(){
+        return false;
+        $id = 47;
+        $page = "pages/activity/detail";
+        $scene = "?id=$id";
+        $ret = Wxapi::get_wx_acode($page, $scene);
+        $ret = Upload::make_qcode($ret, $id);
+        var_dump($ret);
+    }
 
 }
 

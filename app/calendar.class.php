@@ -50,7 +50,7 @@ class Calendar {
             foreach ($all_activity as $act) {
                 if ($aid == $act->id()) {
                     $act_start_time = $act->begintime();
-                    $act_start_date = $act_start_time - ($act_start_time % 60 *60 *24);
+                    $act_start_date = $act_start_time - (($act_start_time + 60 * 60 * 8) % (60 * 60 * 24));
                     $array[$act_start_date][$aid] = $act->packInfo();
                 }
             }

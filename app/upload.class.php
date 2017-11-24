@@ -134,7 +134,7 @@ class Upload {
         
     public static function save_qcode($imgsrc, $id) {
 
-        logging::d("src", $imgsrc);
+        //logging::d("src", $imgsrc);
         logging::d("id", $id);
         if (!file_exists(UPLOAD_DIR . "/qcode")) {
             $ret = @mkdir(UPLOAD_DIR . "/qcode", 0777, true);

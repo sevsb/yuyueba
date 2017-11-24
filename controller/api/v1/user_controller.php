@@ -44,6 +44,7 @@ class user_controller extends v1_base {
 			 $data->uid =$user->uid();
             $data->token = $user->token();
             $data->yuyue_session = $user->yuyue_session();
+            $data->my_orgs = $user->organizations();
             //logging::d("LOGIN", "now data is :" . $data);
             return array("op" => "login", 'data' => $data);
         }

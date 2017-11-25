@@ -79,7 +79,7 @@ class Organization {
     public function set_Type($n) {
         $this->mSummary["type"] = $n;
     }
-	 public function set_Password($n) {
+	 public function setPassword($n) {
         $this->mSummary["password"] = $n;
     }
 

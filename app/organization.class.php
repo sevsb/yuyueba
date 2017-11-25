@@ -12,7 +12,8 @@ class Organization {
                 "avatar" => "",
                 "intro" => "",
                 "owner " => "",
-                "type" => 0
+                "type" => 0,
+				"password" => ""
             );
         }
         $this->mSummary = $summary;
@@ -25,7 +26,11 @@ class Organization {
     public function name() {
         return $this->mSummary["name"];
     }
-
+	
+	public function password(){
+		return $this->mSummary["password"];
+	}
+	
     public function avatar() {
         return $this->mSummary["avatar"];
     }
@@ -74,17 +79,20 @@ class Organization {
     public function set_Type($n) {
         $this->mSummary["type"] = $n;
     }
+	 public function set_Password($n) {
+        $this->mSummary["password"] = $n;
+    }
 
 
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_organization::inst()->add($this->name(), $this->avatar(), $this->intro(), $this->owner());
+            $id = db_organization::inst()->add($this->name(), $this->avatar(), $this->intro(), $this->owner(), $this->password());
             if ($id !== false) {
                $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_organization::inst()->modify($this->id(), $this->name(), $this->avatar(), $this->intro());
+            $id = db_organization::inst()->modify($this->id(), $this->name(), $this->avatar(), $this->intro(), $this->password());
         }
         return $id;
     }
@@ -99,6 +107,7 @@ class Organization {
             "avatar_thumbnail_url" => $this->avatar_thumbnail_url(), 
             "owner" => $this->owner_detail(), 
             "type" => $this->type(), 
+			"password"=>$this->password(),
         );
     }
 

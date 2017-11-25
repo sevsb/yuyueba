@@ -42,7 +42,36 @@ class organization_controller extends v1_base {
 
         return array('op' => 'org_create', "data" =>  $data);
     }
+	public function setPassword_action() {
+		$org_id = get_request('org_id');
+		$passwrod = get_request('passwrod');
+		$yuyue_session = get_request('yuyue_session');
+		logging::d('setPassword','org_id' . $org_id);
+		$user = TempUser::oneBySession($yuyue_session);
+        if (!$user) {
+            return array('op' => 'fail', "code" => '30002', "reason" => '无此用户');
+        }
+        $userid = $user->id();
+		$organization = Organization::oneById($org_id);
 
+        $owner_id = $organization->owner();
+        if ($owner_id != $userid) {
+            return array('op' => 'fail', "code" => '30003', "reason" => '此用户不是组织的发起者，无法修改');
+        }
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
+        }
+		
+		if (!$passwrod) {
+            return array('op' => 'fail', "code" => '3333', "reason" => '空口令');
+        }
+		$organization->setPassword($passwrod);
+		logging::d('setPassword','passwrod' . $passwrod);
+		$organization->save();
+		$data = $organization->packInfo();
+
+        return array('op' => 'setPassword', "data" => $data);
+	}
     public function edit_action() {
         $org_id = get_request('org_id');
         $org_name = urldecode(get_request('org_name'));

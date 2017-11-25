@@ -34,7 +34,7 @@ class db_organization extends database_table {
     
     public function modify($id, $name, $avatar, $intro, $password) {
         $id = (int)$id;
-        return $this->update(array("name" => $name, "avatar" => $avatar, "intro" => $intro, "password"=>$password)), "id = $id");
+        return $this->update(array("name" => $name, "avatar" => $avatar, "intro" => $intro, "password"=>$password), "id = $id");
     }
 
     public function remove($id) {

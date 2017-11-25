@@ -61,7 +61,7 @@ class organization_controller extends v1_base {
         if ($organization->type() == 1) {
             return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
         }
-		
+		logging::d('setPassword','passwrod' . $passwrod);
 		if (!$passwrod) {
             return array('op' => 'fail', "code" => '3333', "reason" => '空口令');
         }

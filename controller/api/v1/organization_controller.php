@@ -44,7 +44,7 @@ class organization_controller extends v1_base {
     }
 	public function setPassword_action() {
 		$org_id = get_request('org_id');
-		$passwrod = get_request('passwrod');
+		$password = get_request('password');
 		$yuyue_session = get_request('yuyue_session');
 		logging::d('setPassword','org_id' . $org_id);
 		$user = TempUser::oneBySession($yuyue_session);
@@ -61,12 +61,12 @@ class organization_controller extends v1_base {
         if ($organization->type() == 1) {
             return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
         }
-		logging::d('setPassword','passwrod' . $passwrod);
-		if (!$passwrod) {
+		logging::d('setPassword','password' . $password);
+		if (!$password) {
             return array('op' => 'fail', "code" => '3333', "reason" => '空口令');
         }
-		$organization->setPassword($passwrod);
-		logging::d('setPassword','passwrod' . $passwrod);
+		$organization->setPassword($password);
+		logging::d('setPassword','password' . $password);
 		$organization->save();
 		$data = $organization->packInfo();
 

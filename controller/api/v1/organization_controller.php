@@ -11,7 +11,7 @@ class organization_controller extends v1_base {
         $org_intro = urldecode(get_request('org_intro'));
         $yuyue_session = get_request('yuyue_session');
         $token = get_request('token');
-        
+        $password = get_request('password');
         logging::d('create_action','org_name' . $org_name);
         logging::d('create_action','org_intro' . $org_intro);
         $org_avatar = Upload::upload_image();   //先存图片
@@ -26,7 +26,11 @@ class organization_controller extends v1_base {
         $own_id = $user->id();
         
         $organization = new Organization();
-        
+        logging::d('setPassword','password' . $password);
+		if (!$password) {
+            return array('op' => 'fail', "code" => '3333', "reason" => '空口令');
+        }
+		$organization->setPassword($password);
         $organization->setName($org_name);
         $organization->setIntro($org_intro);
         $organization->setOwner($own_id);
@@ -143,6 +147,7 @@ class organization_controller extends v1_base {
         $org_id = get_request('org_id');
         $org_name = urldecode(get_request('org_name'));
         $org_intro = urldecode(get_request('org_intro'));
+		$password = get_request('password');
         $yuyue_session = get_request('yuyue_session');
         $token = get_request('token');
         
@@ -172,6 +177,11 @@ class organization_controller extends v1_base {
         if ($organization->type() == 1) {
             return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
         }
+		logging::d('setPassword','password' . $password);
+		if (!$password) {
+            return array('op' => 'fail', "code" => '3333', "reason" => '空口令');
+        }
+		$organization->setPassword($password);
         $organization->setName($org_name);
         $organization->setIntro($org_intro);
         

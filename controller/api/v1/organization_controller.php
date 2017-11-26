@@ -130,10 +130,6 @@ class organization_controller extends v1_base {
         if ($organization->type() == 1) {
             return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
         }
-		logging::d('setName','org_name' . $org_name);
-		if (!$org_name) {
-            return array('op' => 'fail', "code" => '3333', "reason" => '空口令');
-        }
 		if ($_FILES['file']) {
             $organization->setAvatar($org_avatar);
         }

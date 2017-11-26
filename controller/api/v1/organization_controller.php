@@ -72,6 +72,38 @@ class organization_controller extends v1_base {
 
         return array('op' => 'setPassword', "data" => $data);
 	}
+	
+	public function setName_action() {
+		$org_id = get_request('org_id');
+		$org_name = get_request('org_name');
+		$yuyue_session = get_request('yuyue_session');
+		logging::d('setName','org_id' . $org_id);
+		$user = TempUser::oneBySession($yuyue_session);
+        if (!$user) {
+            return array('op' => 'fail', "code" => '30002', "reason" => '无此用户');
+        }
+        $userid = $user->id();
+		$organization = Organization::oneById($org_id);
+
+        $owner_id = $organization->owner();
+        if ($owner_id != $userid) {
+            return array('op' => 'fail', "code" => '30003', "reason" => '此用户不是组织的发起者，无法修改');
+        }
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
+        }
+		logging::d('setName','org_name' . $org_name);
+		if (!$org_name) {
+            return array('op' => 'fail', "code" => '3333', "reason" => '空口令');
+        }
+		$organization->setName($org_name);
+		logging::d('setName','org_name' . $org_name);
+		$organization->save();
+		$data = $organization->packInfo();
+
+        return array('op' => 'setName', "data" => $data);
+	}
+	
     public function edit_action() {
         $org_id = get_request('org_id');
         $org_name = urldecode(get_request('org_name'));

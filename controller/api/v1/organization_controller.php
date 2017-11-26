@@ -106,9 +106,8 @@ class organization_controller extends v1_base {
 	
 	public function setAvatar_action() {
 		$org_id = get_request('org_id');
-		$org_name = get_request('org_name');
 		$yuyue_session = get_request('yuyue_session');
-		logging::d('setName','org_id' . $org_id);
+		logging::d('setAvatar','org_id' . $org_id);
 		
 		if($_FILES['file']){
             $org_avatar = Upload::upload_image();   //先存图片

@@ -69,8 +69,10 @@ class activity_controller extends v1_base {
         
         $my_create_activity_list = array();
         $my_org_create_activity_list = array();
+        $my_join_activity_list = array();
 
         $all_activities = Activity::all();
+        $all_sign = db_sign::inst()->all();
 
         foreach ($all_activities as $act) {
             $type = $act->type();
@@ -84,8 +86,13 @@ class activity_controller extends v1_base {
                     $my_org_create_activity_list[$act->id()] = $act->packInfo();
                 }
             }
+            foreach ($all_sign as $sign) {
+                if ($sign['user'] == $user->id() && $sign['activity'] == $act->id()) {
+                    $my_join_activity_list[$act->id()] = $act->packInfo();
+                }
+            }
         }
-        $data = array("my_create_activity_list" => $my_create_activity_list, "my_org_create_activity_list" => $my_org_create_activity_list);
+        $data = array("my_create_activity_list" => $my_create_activity_list, "my_org_create_activity_list" => $my_org_create_activity_list, "my_join_activity_list" => $my_join_activity_list);
         return $this->op("organized_all_my_list", $data);
     }
 
@@ -105,14 +112,48 @@ class activity_controller extends v1_base {
     
     public function view_action() {
         $aid = get_request_assert("activity");
-        logging::d("ACT VIEW", $aid);
+        $yuyue_session = get_request("yuyue_session");
+        logging::d("ACT aid", $aid);
+        logging::d("ACT yuyue_session", $yuyue_session);
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+        
+        $editable = false;
+        $joined = false;
+        $join_sheet = array();
         $act = Activity::oneById($aid);
+        
+        if ($act->type() == 1) {
+            if ($act->owner() == $user->id()) {
+                $editable = true;
+            }
+        }else if ($act->type() == 2) {
+            $user_orgs = $user->organizations();
+            if (in_array($act->owner(), $user_orgs['my_orgs'])) {
+                $editable = true;
+            }
+        }
+        
+        $all_sign = Sign::all();
+        //logging::d("all_sign", json_encode($all_sign));
+        foreach ($all_sign as $sign) {
+            if ($sign->calendar() == 0) {
+                if ($sign->user() == $user->id() && $sign->activity() == $aid) {
+                    $joined = true;
+                    $join_sheet = $sign->sheet();
+                }
+            }
+        }
+        
         $data = array(
-            "info" => array(
-                $act->packInfo(true),
-            ),
+            "info" => $act->packInfo(true),
+            "editable" => $editable,
+            "joined" => $joined,
+            "join_sheet" => $join_sheet
         );
-        return $this->op("activity_view", $act->packInfo());
+        return $this->op("activity_view", $data);
     }
 
     public function sign_action() {
@@ -120,6 +161,7 @@ class activity_controller extends v1_base {
         $yuyue_session = get_request("yuyue_session");
         $sheet = get_request("sheet");
 
+        logging::d("sheet", $sheet);
         $activity = Activity::oneById($activity_id);
         if (empty($activity)) {
             return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
@@ -136,21 +178,30 @@ class activity_controller extends v1_base {
         }
         $now_participants = $activity->now_participants();
         $max_participants = $activity->max_participants();
-        if ($now_participants >= $max_participants) {
+        if ($now_participants >= $max_participants && $max_participants != 0) {
             return array('op' => 'fail', "code" => '203402', "reason" => '此活动报名额度已经满额');
-        }
-        $deadline = $activity->deadline();
-        if (time() >= $deadline) {
-            return array('op' => 'fail', "code" => '203407', "reason" => '此活动报名截止时间已过，无法报名');
         }
         
         $userid = $user->id();
-        $sign = db_sign::one($activity_id, $userid);
+        
+        $sign = Sign::oneByAidUser($activity_id, $userid);
+        //$sign = db_sign::inst()->one($activity_id, $userid);
         if ($sign) {
-            return array('op' => 'fail', "code" => 1033002, "reason" => '用户已经报名过此活动');
+            $sign->set_sheet($sheet);
+            $ret = $sign->save();
+
+            return $ret ?  array('op' => 'activity_sign', "data" => $sign->packInfo()) : array('op' => 'fail', "code" => 1033022, "reason" => '活动报名修改失败');
+        }else {
+            $sign = new Sign();
+            $sign->set_activity($activity_id);
+            $sign->set_calendar(0);
+            $sign->set_user($userid);
+            $sign->set_sheet($sheet);
+            $ret = $sign->save();
+            
+            return $ret ?  array('op' => 'activity_sign', "data" => $sign->packInfo()) : array('op' => 'fail', "code" => 1033002, "reason" => '活动报名失败');
         }
-        $ret = db_sign::add($activity_id, $userid, json_encode($sheet));
-        return $ret ?  array('op' => 'activity_sign', "data" => $ret) : array('op' => 'fail', "code" => 1033002, "reason" => '活动报名失败');
+
     }
     
     public function unsign_action() {
@@ -167,11 +218,12 @@ class activity_controller extends v1_base {
             return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
         }
         $userid = $user->id();
-        $sign = db_sign::one($activity_id, $userid);
+        
+        $sign = Sign::oneByAidUser($activity_id, $userid);
         if (!$sign) {
             return array('op' => 'fail', "code" => 1033002, "reason" => '用户尚未报名过此活动');
         }
-        $ret = db_sign::del($activity_id, $userid);
+        $ret = $sign->cancel();
         return $ret ?  array('op' => 'activity_unsign', "data" => $ret) : array('op' => 'fail', "code" => 1033002, "reason" => '退出活动/取消报名失败');
     }
 
@@ -421,7 +473,33 @@ class activity_controller extends v1_base {
         
     }
 
-    public function viewmember_action() {
+    public function view_join_list_action() {
+        $activity_id = get_request("activity_id");
+        $yuyue_session = get_request("yuyue_session");
+
+        $activity = Activity::oneById($activity_id);
+        if (empty($activity)) {
+            return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
+        }
+        
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+        
+        $all_sign = Sign::all();
+        //logging::d("all_sign", json_encode($all_sign));
+        $join_list = array();
+        foreach ($all_sign as $sign) {
+            if ($sign->calendar() == 0) {
+                if ($sign->activity() == $activity_id) {
+                    $join_list[$sign->id()] = $sign->packInfo();
+                }
+            }
+        }
+        return array('op' => 'view_join_list', "data" => $join_list);
+        
+        
     }
     
     public function cancel_action() {

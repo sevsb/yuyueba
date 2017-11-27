@@ -133,17 +133,17 @@ class calendar_controller extends v1_base {
         if ($now_participants >= $max_participants) {
             return array('op' => 'fail', "code" => '203402', "reason" => '此活动报名额度已经满额');
         }
-        $deadline = $activity->deadline();
-        if (time() >= $deadline) {
-            return array('op' => 'fail', "code" => '203407', "reason" => '此活动报名截止时间已过，无法报名');
-        }
+        //$deadline = $activity->deadline();
+        //if (time() >= $deadline) {
+        //    return array('op' => 'fail', "code" => '203407', "reason" => '此活动报名截止时间已过，无法报名');
+        //}
         
         $userid = $user->id();
-        $sign = db_sign::one($activity_id, $userid);
+        $sign = db_sign::inst()->one($activity_id, $userid);
         if ($sign) {
             return array('op' => 'fail', "code" => 1033002, "reason" => '用户已经报名过此活动');
         }
-        $ret = db_sign::add($activity_id, $userid, json_encode($sheet));
+        $ret = db_sign::inst()->add($activity_id, $userid, json_encode($sheet));
         return $ret ?  array('op' => 'activity_sign', "data" => $ret) : array('op' => 'fail', "code" => 1033002, "reason" => '活动报名失败');
     }
     

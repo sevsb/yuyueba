@@ -31,13 +31,13 @@ class db_sign extends database_table {
         return $this->get_all();
     }
 
-    public function add($activity_id, $userid, $sheet) {
-        return $this->insert(array("activity" => $activity_id, "user" => $userid, "sheet" => $sheet));
+    public function add($activity_id, $calendar_id, $userid, $sheet) {
+        return $this->insert(array("activity" => $activity_id, "calendar" => $calendar_id, "user" => $userid, "sheet" => $sheet, "modify_time" => time()));
     }
 
-    public function modify($id, $name) {
+    public function modify($id, $activity, $calendar, $user, $sheet) {
         $id = (int)$id;
-        return $this->update(array("name" => $name), "id = $id");
+        return $this->update(array("sheet" => $sheet, "activity" => $activity, "user" => $user, "calendar" => $calendar, "modify_time" => time()), "id = $id");
     }
 
     public function remove($id) {
@@ -45,10 +45,9 @@ class db_sign extends database_table {
         return $this->update(array("status" => self::STATUS_DELETED), "id = $id");
     }
 
-    public function del($activity_id, $userid) {
-        $activity_id = (int)$activity_id;
-        $userid = (int)$userid;
-        return $this->delete("activity = $activity_id and user = $userid");
+    public function cancel($id) {
+        $id = (int)$id;
+        return $this->delete("id = $id");
     }
 
 

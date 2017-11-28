@@ -31,8 +31,8 @@ class db_activity extends database_table {
     }
 
     public function modify($id, $title, $info, $images, $begintime, $endtime, $repeattype, $repeatcount, $repeatend, $address, $content, $participants, $joinsheet, $joinable, $calendar_id) {
-        $id = (int)$id;
-        return $this->update(array("title" => $title, "info" => $info, "images" => $images, "begintime" => $begintime, "endtime" => $endtime, "repeattype" => $repeattype, "repeatcount" => $repeatcount, "repeatend" => $repeatend, "address" => $address, "content" => $content, "participants" => $participants, "sheet" => $joinsheet, "joinable" => $joinable, "modifytime" => time(), "calendar_id" => $calendar_id), "id = $id");
+
+        return $this->update(array("title" => $title, "info" => $info, "images" => $images, "begintime" => $begintime, "endtime" => $endtime, "repeattype" => $repeattype, "repeatcount" => $repeatcount, "repeatend" => $repeatend, "address" => $address, "content" => $content, "participants" => $participants, "sheet" => json_encode($joinsheet), "joinable" => $joinable, "modifytime" => (int)time(), "calendar_id" => $calendar_id), "id = $id");
     }
 
     public function remove($id) {

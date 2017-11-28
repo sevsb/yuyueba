@@ -40,10 +40,16 @@ class Activity {
         return $this->mSummary["info"];
     }
     public function images() {
-        return json_decode($this->mSummary["images"]);
+        $images = $this->mSummary["images"];
+        $images = $this->convert_json($images);
+        return $images;
+        logging::d("images", $images);
     }
     public function images_full_list(){
-        $images = json_decode($this->mSummary["images"]);
+        $images = $this->images();
+
+        //logging::d("images_full_list_1", $this->mSummary["images"]);
+        logging::d("images_full_list_2", $images);
         if (empty($images)) {
             return $images;
         }
@@ -123,7 +129,9 @@ class Activity {
         return $this->mSummary["joinable"];
     }
     public function joinsheet() {
-        return json_decode($this->mSummary["sheet"]);
+        $sheet = $this->mSummary["sheet"];
+        $sheet = $this->convert_json($sheet);
+        return $sheet;
     }
     public function clickcount() {
         return $this->mSummary["clickcount"];
@@ -182,7 +190,8 @@ class Activity {
         $this->mSummary["content"] = $n;
     }
     public function setImages($n) {
-        $this->mSummary["images"] = json_encode($n);
+        //$n = convert_to_string($n);
+        $this->mSummary["images"] = $n;
     }
     public function setBegintime($n) {
         $this->mSummary["begintime"] = $n;
@@ -203,7 +212,7 @@ class Activity {
         $this->mSummary["repeatcount"] = $n;
     }
     public function setJoinsheet($n) {
-        $this->mSummary["sheet"] = json_encode($n);
+        $this->mSummary["sheet"] = $n;
     }
     public function setStatus($n) {
         $this->mSummary["status"] = $n;
@@ -223,13 +232,13 @@ class Activity {
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_activity::inst()->add($this->owner(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->type(), $this->joinable(), $this->calendar_id());
+            $id = db_activity::inst()->add($this->owner(), $this->title(), $this->info(), $this->convert_to_string($this->images()), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->convert_to_string($this->joinsheet()), $this->type(), $this->joinable(), $this->calendar_id());
             if ($id !== false) {
                 $this->mSummary["id"] = $id;
                 $ret = $this->make_detail_qcode($id);
             }
         } else {
-            $id = db_activity::inst()->modify($this->id(), $this->title(), $this->info(), $this->images(), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->joinsheet(), $this->joinable(), $this->calendar_id());
+            $id = db_activity::inst()->modify($this->id(), $this->title(), $this->info(), $this->convert_to_string($this->images()), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->convert_to_string($this->joinsheet()), $this->joinable(), $this->calendar_id());
         }
         return $id;
     }
@@ -299,6 +308,20 @@ class Activity {
         return array("ret" => $ret, "activity" => $activity);
     }
     
+    public static function edit_one($activity_id, $title,  $content,  $address,  $images) {
+        
+        $activity = Activity::oneById($activity_id);
+
+        $activity->setTitle($title);
+        $activity->setContent($content);
+        $activity->setImages($images);
+        $activity->setAddress($address);
+        
+        $ret = $activity->save();
+        
+        return array("ret" => $ret, "activity" => $activity);
+    }
+    
     public static function oneById($id) {
         $activities = self::cachedAll();
         foreach ($activities as $activity) {
@@ -335,5 +358,29 @@ class Activity {
     public static function cancel($id) {
         return db_activity::inst()->cancel($id);
     }
+    
+        
+    function convert_json($string) {
+        if (!is_string($string)) {
+            logging::d('no string',$string);
+            return $string;
+        }else {
+            logging::d('is string',$string);
+            $string = json_decode($string);
+            return $this->convert_json($string);
+        }
+    }
+
+    function convert_to_string($json) {
+        if (is_string($json)) {
+            logging::d('is string',$json);
+            return $json;
+        }else {
+            logging::d('no string',$json);
+            $json = json_encode($json);
+            return $this->convert_to_string($json);
+        }
+    }
 };
+
 

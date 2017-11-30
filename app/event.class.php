@@ -4,13 +4,13 @@ include_once(dirname(__FILE__) . "/../config.php");
 class Event {
     private $mSummary = null;
 
-    const event_code_array = array(
-        "10001" => "创建单体活动",
-        "10002" => "修改单体活动",
-        "10003" => "暂停单体活动",
-        "10004" => "启动单体活动",
-        "10005" => "报名单体活动",
-        "10005" => "取消报名单体活动",
+    const EVENT_CODES = array(
+        10001 => "创建单体活动",
+        10002 => "修改单体活动",
+        10003 => "暂停单体活动",
+        10004 => "启动单体活动",
+        10005 => "报名单体活动",
+        10006 => "取消报名单体活动",
     );
     
     public function __construct($summary = array()) {
@@ -29,19 +29,21 @@ class Event {
         return $this->mSummary["activity"];
     }
     public function activity_detail() {
-        return Activity::oneById($this->mSummary["activity"])->packInfo();
+        $activity = Activity::oneById($this->mSummary["activity"]);
+        return $activity ? $activity->packInfo() : $activity;
     }
     public function calendar() {
         return $this->mSummary["calendar"];
     }
     public function calendar_detal() {
-        return Calendar::oneById($this->mSummary["calendar"])->packInfo();
+        $calendar = Calendar::oneById($this->mSummary["calendar"]);
+        return $calendar ? $calendar->packInfo() : $calendar;
     }
     public function event_code() {
         return $this->mSummary["event_code"];
     }
     public function event_content() {
-        return $event_code_array[$this->mSummary["event_code"]];
+        return self::EVENT_CODES[$this->mSummary["event_code"]];
     }
     public function operator() {
         return $this->mSummary["operator"];
@@ -49,10 +51,12 @@ class Event {
     public function time_stamp() {
         return $this->mSummary["time"];
     }
+    public function modify_time() {
+        return date("Y-m-d H:i:s",$this->time_stamp());
+    }
     public function status() {
         return $this->mSummary["status"];
     }
-    
     public function operator_detail() {
         $operator_id = $this->operator();
         $user = TempUser::oneById($operator_id);
@@ -96,12 +100,15 @@ class Event {
        return array(
             "id" => $this->id(),
             "activity" => $this->activity(),
+            "activity_detail" => $this->activity_detail(),
             "calendar" => $this->calendar(),
+            "calendar_detal" => $this->calendar_detal(),
             "event_code" => $this->event_code(),
-            "event_content" => $this->event_code(),
+            "event_content" => $this->event_content(),
             "operator" => $this->operator(),
             "operator_detail" => $this->operator_detail(),
             "time" => $this->time_stamp(),
+            "modify_time" => $this->modify_time(),
             "status" => $this->status()
         );
     }

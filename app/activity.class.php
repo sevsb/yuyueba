@@ -153,7 +153,6 @@ class Activity {
         } */
         return rtrim(UPLOAD_URL, "/") . "/qcode/" . $this->id() . ".jpg";
     }
-   
     
     public function signed_user_list() {   
         $activity_id = $this->id();

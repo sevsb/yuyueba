@@ -23,7 +23,7 @@ class db_event extends database_table {
     }
 
     public function all() {
-        return $this->get_all();
+        return $this->get_all("", " order by time desc");
     }
     
     public function add($activity, $calendar, $event_code, $operator) {

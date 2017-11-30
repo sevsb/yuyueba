@@ -46,6 +46,7 @@ class event_controller extends v1_base {
         $my_create_activity_list = array();
         $my_org_create_activity_list = array();
         $my_join_activity_list = array();
+        $my_activity_no_list = array();
 
         $all_activities = Activity::all();
         $all_sign = db_sign::inst()->all();
@@ -56,20 +57,32 @@ class event_controller extends v1_base {
             if ($type == 1) {
                 if ($act->owner() == $owner) {
                     $my_create_activity_list[$act->id()] = $act->packInfo();
+                    array_push( $my_activity_no_list, $act->id());
                 }
             }else if($type == 2) {
                 if (in_array($act->owner(), $my_organizetions)) {
                     $my_org_create_activity_list[$act->id()] = $act->packInfo();
+                    array_push( $my_activity_no_list, $act->id());
                 }
             }
             foreach ($all_sign as $sign) {
                 if ($sign['user'] == $user->id() && $sign['activity'] == $act->id()) {
                     $my_join_activity_list[$act->id()] = $act->packInfo();
+                    array_push( $my_activity_no_list, $act->id());
                 }
             }
         }
-        $data = array("my_create_activity_list" => $my_create_activity_list, "my_org_create_activity_list" => $my_org_create_activity_list, "my_join_activity_list" => $my_join_activity_list);
-        return $this->op("organized_all_my_list", $data);
+        $events = Event::all();
+        logging::d("my_activity_no_list ", json_encode($my_activity_no_list));
+        logging::d("my_activity_no_list array_unique ", json_encode(array_unique($my_activity_no_list)));
+        $event_list = [];
+        foreach ($events as $event){
+            if (in_array($event->activity(), $my_activity_no_list)) {
+                $event_list[$event->id()] = $event->packInfo();
+            }
+        }
+        $data = array("my_create_activity_list" => $my_create_activity_list, "my_org_create_activity_list" => $my_org_create_activity_list, "my_join_activity_list" => $my_join_activity_list, "my_activity_no_list" => $my_activity_no_list);
+        return $this->op("event_list", $event_list);
     }
 
     public function organized_list_action() {

@@ -193,6 +193,7 @@ class activity_controller extends v1_base {
             $sign->set_sheet($sheet);
             $ret = $sign->save();
 
+            $ret ? Event::record($activity->id(), $activity->calendar_id(), "10005", $userid) : 0;
             return $ret ?  array('op' => 'activity_sign', "data" => $sign->packInfo()) : array('op' => 'fail', "code" => 1033022, "reason" => '活动报名修改失败');
         }else {
             $sign = new Sign();
@@ -201,7 +202,8 @@ class activity_controller extends v1_base {
             $sign->set_user($userid);
             $sign->set_sheet($sheet);
             $ret = $sign->save();
-            
+  
+            $ret ? $record = Event::record($activity->id(), $activity->calendar_id(), "10005", $userid) : 0;
             return $ret ?  array('op' => 'activity_sign', "data" => $sign->packInfo()) : array('op' => 'fail', "code" => 1033002, "reason" => '活动报名失败');
         }
 
@@ -227,6 +229,7 @@ class activity_controller extends v1_base {
             return array('op' => 'fail', "code" => 1033002, "reason" => '用户尚未报名过此活动');
         }
         $ret = $sign->cancel();
+        $ret ? $record = Event::record($activity->id(), $activity->calendar_id(), "10006", $userid) : 0;
         return $ret ?  array('op' => 'activity_unsign', "data" => $ret) : array('op' => 'fail', "code" => 1033002, "reason" => '退出活动/取消报名失败');
     }
 
@@ -240,7 +243,11 @@ class activity_controller extends v1_base {
 
         $type = get_request("type");    //1: 个人 2：组织
         $owner = get_request("owner");  // 个人yuyue_session or 组织ID;
-
+        
+        $yuyue_session = get_request("yuyue_session");  // 个人yuyue_session or 组织ID;
+        $operator = TempUser::oneBySession($yuyue_session);
+        $operator_id = $operator->id();
+        
         $joinable = get_request("joinable");
         $participants = get_request("participants", 0);
         
@@ -290,7 +297,7 @@ class activity_controller extends v1_base {
             
             $ret = $result['ret'];
             $activity = $result['activity'];
-            
+            $ret ? $record = Event::record($activity->id(), $activity->calendar_id(), "10001", $operator_id) : 0;
             return $ret ?  array('op' => 'activity_organize', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 100002, "reason" => '活动发起失败');
         
         }else {
@@ -363,6 +370,7 @@ class activity_controller extends v1_base {
                 
                 $add_ret = $result['ret'];
                 $activity_id = $result['activity']->id();
+                $add_ret ? $record = Event::record($activity_id, $activity->calendar_id(), "10001", $operator_id) : 0;
                 logging::d("add_ret", $add_ret);
                 logging::d("activity_id", $activity_id);
                 array_push($activity_list, $activity_id);
@@ -436,11 +444,13 @@ class activity_controller extends v1_base {
         if ($batch == 0) {
             $result = Activity::edit_one($activity_id, $title,  $content,  $address,  $images);
             logging::d('edit', json_encode($activity));
-            $record = Event::record($activity->id(), $activity->calendar_id(), 10002, $userid);
-            logging::d('edit', json_encode($result));
-            logging::d('record', json_encode($record));
+
             $ret = $result['ret'];
             $activity = $result['activity'];
+            
+            $record = $ret ? Event::record($activity->id(), $activity->calendar_id(), "10002", $userid) : 0;
+            logging::d('edit', json_encode($result));
+            logging::d('record', json_encode($record));
             return $ret ?  array('op' => 'activity_edit', "data" => $activity->packInfo(true)) : array('op' => 'fail', "code" => 104042, "reason" => '活动修改失败');
         }else if ($batch == 1) {
             logging::d('edit', json_encode($batch));
@@ -511,7 +521,7 @@ class activity_controller extends v1_base {
             return array('op' => 'fail', "code" => '00244032', "reason" => '此活动已被撤消');
         }
         $ret = $activity->cancel();
-        
+        $ret ? $record = Event::record($activity->id(), $activity->calendar_id(), "10003", $userid) : 0;
         return $ret ?  array('op' => 'activity_cancel', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 55042, "reason" => '活动撤消失败');
         
     }
@@ -546,7 +556,7 @@ class activity_controller extends v1_base {
             return array('op' => 'fail', "code" => '00244032', "reason" => '此活动已启动');
         }
         $ret = $activity->start();
-        
+        $ret ? $record = Event::record($activity->id(), $activity->calendar_id(), "10004", $userid) : 0;
         return $ret ?  array('op' => 'activity_start', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 525042, "reason" => '活动启动失败');
         
     }

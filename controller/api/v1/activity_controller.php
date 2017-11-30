@@ -435,7 +435,10 @@ class activity_controller extends v1_base {
         
         if ($batch == 0) {
             $result = Activity::edit_one($activity_id, $title,  $content,  $address,  $images);
+            logging::d('edit', json_encode($activity));
+            $record = Event::record($activity->id(), $activity->calendar_id(), 10002, $userid);
             logging::d('edit', json_encode($result));
+            logging::d('record', json_encode($record));
             $ret = $result['ret'];
             $activity = $result['activity'];
             return $ret ?  array('op' => 'activity_edit', "data" => $activity->packInfo(true)) : array('op' => 'fail', "code" => 104042, "reason" => '活动修改失败');

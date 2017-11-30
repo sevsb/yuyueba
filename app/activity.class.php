@@ -144,8 +144,9 @@ class Activity {
     }
     public function detail_qcode() {
         $qcode = rtrim(UPLOAD_URL, "/") . "/qcode/" . $this->id() . ".jpg";
+        logging::d('qcode_url,' , $qcode);
         if (!file_exists($qcode)) {
-            logging::d('no qcode,' , "now remake detail_qcode");
+            logging::d('no qcode,' , $this->id() . ",now remake detail_qcode");
             $this->make_detail_qcode($this->id());
         }
         return rtrim(UPLOAD_URL, "/") . "/qcode/" . $this->id() . ".jpg";

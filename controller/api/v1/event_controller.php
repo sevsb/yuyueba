@@ -2,7 +2,7 @@
 include_once(dirname(__FILE__) . "/../../../config.php");
 include_once(dirname(__FILE__) . "/../v1_base.php");
 
-class activity_controller extends v1_base {
+class event_controller extends v1_base {
     private $mToken = null;
     private $mUser = null;
 
@@ -23,6 +23,53 @@ class activity_controller extends v1_base {
             ),
         );
         return $this->op("activities", $data);
+    }
+    
+    public function my_test_action(){
+        $owner = get_request("owner");
+        logging::d("ORGED_LIST owner:", $owner);
+        activity_controller::organized_all_my_list_action($owner);
+    }
+    
+    public function get_all_my_list_action(){
+        $owner = get_request("owner");
+        logging::d("ORGED_LIST owner:", $owner);
+        
+        $user = TempUser::oneBySession($owner);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+        $owner = $user->id();
+        $my_organizetions = $user->organizations();
+        $my_organizetions = $my_organizetions["my_orgs"];
+        
+        $my_create_activity_list = array();
+        $my_org_create_activity_list = array();
+        $my_join_activity_list = array();
+
+        $all_activities = Activity::all();
+        $all_sign = db_sign::inst()->all();
+
+        foreach ($all_activities as $act) {
+            $type = $act->type();
+            logging::d("actpe", $type);
+            if ($type == 1) {
+                if ($act->owner() == $owner) {
+                    $my_create_activity_list[$act->id()] = $act->packInfo();
+                }
+            }else if($type == 2) {
+                if (in_array($act->owner(), $my_organizetions)) {
+                    $my_org_create_activity_list[$act->id()] = $act->packInfo();
+                }
+            }
+            foreach ($all_sign as $sign) {
+                if ($sign['user'] == $user->id() && $sign['activity'] == $act->id()) {
+                    $my_join_activity_list[$act->id()] = $act->packInfo();
+                }
+            }
+        }
+        $data = array("my_create_activity_list" => $my_create_activity_list, "my_org_create_activity_list" => $my_org_create_activity_list, "my_join_activity_list" => $my_join_activity_list);
+        return $this->op("organized_all_my_list", $data);
     }
 
     public function organized_list_action() {
@@ -55,7 +102,7 @@ class activity_controller extends v1_base {
         return $this->op("organized_list", $ret);
     }
     
-    public function organized_all_my_list_action() {    //列出此人所有相关的activity，包括自身创建，创建组织创建，所加入组织创建,以及joined的活动
+    public function organized_all_my_list_action() {    //列出此人所有相关的activity，包括自身创建，创建组织创建，所加入组织创建
         $owner = get_request("owner");
         logging::d("ORGED_LIST owner:", $owner);
         

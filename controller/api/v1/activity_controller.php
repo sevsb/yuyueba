@@ -176,6 +176,9 @@ class activity_controller extends v1_base {
         if ($joinable == 0) {
             return array('op' => 'fail', "code" => '20302', "reason" => '此活动无法报名');
         }
+        if ($activity->status() == 1) {
+            return array('op' => 'fail', "code" => '203023', "reason" => '此活动已暂停');
+        }
         $now_participants = $activity->now_participants();
         $max_participants = $activity->max_participants();
         if ($now_participants >= $max_participants && $max_participants != 0) {

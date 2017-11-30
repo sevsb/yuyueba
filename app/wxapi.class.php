@@ -31,8 +31,8 @@ class Wxapi {
     }
     
     public static function check_access_token() {
-        $wx_acess_token = $_SESSION['WX_ACCESS_TOKEN'];
-        $wx_acess_token_expires_in = $_SESSION['WX_ACCESS_TOKEN_EXPIRES_IN'];
+        $wx_acess_token = isset($_SESSION['WX_ACCESS_TOKEN']) ? $_SESSION['WX_ACCESS_TOKEN'] : null;
+        $wx_acess_token_expires_in = isset($_SESSION['WX_ACCESS_TOKEN_EXPIRES_IN']) ? $_SESSION['WX_ACCESS_TOKEN_EXPIRES_IN'] : null;
         if (empty($wx_acess_token) || empty($wx_acess_token_expires_in) || time() > $wx_acess_token_expires_in) {
             Wxapi::get_access_token();
         }

@@ -143,6 +143,11 @@ class Activity {
         return $this->mSummary["calendar_id"];
     }
     public function detail_qcode() {
+        $qcode = rtrim(UPLOAD_URL, "/") . "/qcode/" . $this->id() . ".jpg";
+        if (!file_exists($qcode)) {
+            logging::d('no qcode,' , "now remake detail_qcode");
+            $this->make_detail_qcode($this->id());
+        }
         return rtrim(UPLOAD_URL, "/") . "/qcode/" . $this->id() . ".jpg";
     }
    

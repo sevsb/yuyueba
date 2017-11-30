@@ -238,7 +238,7 @@ class Activity {
                 $ret = $this->make_detail_qcode($id);
             }
         } else {
-            $id = db_activity::inst()->modify($this->id(), $this->title(), $this->info(), $this->convert_to_string($this->images()), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->convert_to_string($this->joinsheet()), $this->joinable(), $this->calendar_id());
+            $id = db_activity::inst()->modify($this->id(), $this->title(), $this->info(), $this->convert_to_string($this->images()), $this->begintime(), $this->endtime(), $this->repeattype(), $this->repeatcount(), $this->repeatend(), $this->address(), $this->content(), $this->participants(), $this->convert_to_string($this->joinsheet()), $this->joinable(), $this->calendar_id(), $this->status());
         }
         return $id;
     }
@@ -355,10 +355,15 @@ class Activity {
         return db_activity::inst()->remove($id);
     }
     
-    public static function cancel($id) {
-        return db_activity::inst()->cancel($id);
+    public function cancel() {
+        $this->setStatus(1);
+        return $this->save();
     }
     
+    public function start() {
+        $this->setStatus(0);
+        return $this->save();
+    }
         
     function convert_json($string) {
         if (!is_string($string)) {

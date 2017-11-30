@@ -30,9 +30,9 @@ class db_activity extends database_table {
         return $this->insert(array("owner" => $owner, "title" => $title, "info" => $info, "images" => $images, "begintime" => $begintime, "endtime" => $endtime, "repeattype" => $repeattype, "repeatcount" => $repeatcount, "repeatend" => $repeatend, "address" => $address, "content" => $content, "participants" => $participants, "sheet" => $joinsheet, "type" => $type, "joinable" => $joinable, "status" => 0, "createtime" => time(),  "modifytime" => time(), "clickcount" => 0, "calendar_id" => $calendar_id));
     }
 
-    public function modify($id, $title, $info, $images, $begintime, $endtime, $repeattype, $repeatcount, $repeatend, $address, $content, $participants, $joinsheet, $joinable, $calendar_id) {
+    public function modify($id, $title, $info, $images, $begintime, $endtime, $repeattype, $repeatcount, $repeatend, $address, $content, $participants, $joinsheet, $joinable, $calendar_id, $status) {
 
-        return $this->update(array("title" => $title, "info" => $info, "images" => $images, "begintime" => $begintime, "endtime" => $endtime, "repeattype" => $repeattype, "repeatcount" => $repeatcount, "repeatend" => $repeatend, "address" => $address, "content" => $content, "participants" => $participants, "sheet" => json_encode($joinsheet), "joinable" => $joinable, "modifytime" => (int)time(), "calendar_id" => $calendar_id), "id = $id");
+        return $this->update(array("title" => $title, "info" => $info, "images" => $images, "begintime" => $begintime, "endtime" => $endtime, "repeattype" => $repeattype, "repeatcount" => $repeatcount, "repeatend" => $repeatend, "address" => $address, "content" => $content, "participants" => $participants, "sheet" => json_encode($joinsheet), "joinable" => $joinable, "modifytime" => (int)time(), "calendar_id" => $calendar_id, "status" => $status), "id = $id");
     }
 
     public function remove($id) {

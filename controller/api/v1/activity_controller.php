@@ -478,6 +478,7 @@ class activity_controller extends v1_base {
     public function cancel_action() {
         $activity_id = get_request("activity_id");
         $yuyue_session = get_request("yuyue_session");
+        $batch = get_request("batch");
 
         $activity = Activity::oneById($activity_id);
         if (empty($activity)) {
@@ -503,9 +504,44 @@ class activity_controller extends v1_base {
         if ($activity->status() == 1) {
             return array('op' => 'fail', "code" => '00244032', "reason" => '此活动已被撤消');
         }
-        $ret = Activity::cancel($activity_id);
+        $ret = $activity->cancel();
         
         return $ret ?  array('op' => 'activity_cancel', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 55042, "reason" => '活动撤消失败');
+        
+    }
+    
+    public function start_action() {
+        $activity_id = get_request("activity_id");
+        $yuyue_session = get_request("yuyue_session");
+        $batch = get_request("batch");
+
+        $activity = Activity::oneById($activity_id);
+        if (empty($activity)) {
+            return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
+        }
+        
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+        $userid = $user->id();
+        $type = $activity->type();
+        $owner = $activity->owner();
+        if ($type == 1) {
+            if ($owner != $userid){
+                return array('op' => 'fail', "code" => '0023002', "reason" => '用户无权限编辑此活动');
+            }
+        }else if($type == 2) {
+            if (!(Organization::has_member($owner, $userid))) {
+                return array('op' => 'fail', "code" => '0023032', "reason" => '用户无权限编辑此活动');
+            }
+        }
+        if ($activity->status() == 0) {
+            return array('op' => 'fail', "code" => '00244032', "reason" => '此活动已启动');
+        }
+        $ret = $activity->start();
+        
+        return $ret ?  array('op' => 'activity_start', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 525042, "reason" => '活动启动失败');
         
     }
 

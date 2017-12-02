@@ -35,7 +35,7 @@ class organization_controller extends v1_base {
         $organization->setIntro($org_intro);
         $organization->setOwner($own_id);
         $organization->setAvatar($org_avatar);
-        
+        $organization->setJoinable("true");
         logging::d('org_create', 'org_name:' . $organization->name());
         logging::d('org_create', 'org_intro:' . $organization->intro());
         logging::d('org_create', 'own_id:' . $organization->owner());
@@ -46,6 +46,37 @@ class organization_controller extends v1_base {
 
         return array('op' => 'org_create', "data" =>  $data);
     }
+	public function setJoinable_action() {
+		$org_id = get_request('org_id');
+		$joinable = get_request('joinable');
+		$yuyue_session = get_request('yuyue_session');
+		logging::d('setJoinable','org_id' . $org_id);
+		$user = TempUser::oneBySession($yuyue_session);
+        if (!$user) {
+            return array('op' => 'fail', "code" => '30002', "reason" => '无此用户');
+        }
+        $userid = $user->id();
+		$organization = Organization::oneById($org_id);
+
+        $owner_id = $organization->owner();
+        if ($owner_id != $userid) {
+            return array('op' => 'fail', "code" => '30003', "reason" => '此用户不是组织的发起者，无法修改');
+        }
+        if ($organization->type() == 1) {
+            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
+        }
+		logging::d('setJoinable','joinable' . $joinable);
+		if (!$joinable) {
+            return array('op' => 'fail', "code" => '3333', "reason" => '信息错误');
+        }
+		$organization->setJoinable($joinable);
+		logging::d('setJoinable','joinable' . $joinable);
+		$organization->save();
+		$data = $organization->packInfo();
+
+        return array('op' => 'setJoinable', "data" => $data);
+	}
+	
 	public function setPassword_action() {
 		$org_id = get_request('org_id');
 		$password = get_request('password');

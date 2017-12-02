@@ -13,7 +13,8 @@ class Organization {
                 "intro" => "",
                 "owner " => "",
                 "type" => 0,
-				"password" => ""
+				"password" => "",
+				"joinable"=>""
             );
         }
         $this->mSummary = $summary;
@@ -52,7 +53,9 @@ class Organization {
     public function type() {
         return $this->mSummary["type"];
     }
-    
+    public function joinable() {
+        return $this->mSummary["joinable"];
+    }
     public function owner_yuyue_session() {
         $owner = $this->mSummary['owner'];
         $user = TempUser::oneById($owner);
@@ -82,17 +85,20 @@ class Organization {
 	 public function setPassword($n) {
         $this->mSummary["password"] = $n;
     }
+	 public function setJoinable($n) {
+        $this->mSummary["joinable"] = $n;
+    }
 
 
     public function save() {
         $id = $this->id();
         if ($id == 0) {
-            $id = db_organization::inst()->add($this->name(), $this->avatar(), $this->intro(), $this->owner(), $this->password());
+            $id = db_organization::inst()->add($this->name(), $this->avatar(), $this->intro(), $this->owner(), $this->password(), $this->joinable());
             if ($id !== false) {
                $this->mSummary["id"] = $id;
             }
         } else {
-            $id = db_organization::inst()->modify($this->id(), $this->name(), $this->avatar(), $this->intro(), $this->password());
+            $id = db_organization::inst()->modify($this->id(), $this->name(), $this->avatar(), $this->intro(), $this->password(), $this->joinable());
         }
         return $id;
     }
@@ -108,6 +114,7 @@ class Organization {
             "owner" => $this->owner_detail(), 
             "type" => $this->type(), 
 			"password"=>$this->password(),
+			"joinable"=>$this->joinable(),
         );
     }
 

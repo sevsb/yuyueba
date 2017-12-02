@@ -26,15 +26,15 @@ class db_organization extends database_table {
         return $this->get_all();
     }
 
-    public function add($name, $avatar, $intro, $owner, $password) {
-        return $this->insert(array("name" => $name, "avatar" => $avatar, "intro" => $intro, "owner" => $owner, "type" => 0, "password"=>$password));
+    public function add($name, $avatar, $intro, $owner, $password, $joinable) {
+        return $this->insert(array("name" => $name, "avatar" => $avatar, "intro" => $intro, "owner" => $owner, "type" => 0, "password"=>$password, "joinable"=>$joinable));
     }
 
     //$id, $this->type(), $this->openid(), $this->uid(), $this->nickname(), $this->avatar(), $this->create_time(), $this->active_time(), $this->last_login(), $this->token(),  $this->status(), $this->mSummary["groups"]
     
-    public function modify($id, $name, $avatar, $intro, $password) {
+    public function modify($id, $name, $avatar, $intro, $password, $joinable) {
         $id = (int)$id;
-        return $this->update(array("name" => $name, "avatar" => $avatar, "intro" => $intro, "password"=>$password), "id = $id");
+        return $this->update(array("name" => $name, "avatar" => $avatar, "intro" => $intro, "password"=>$password, "joinable"=>$joinable), "id = $id");
     }
 
     public function remove($id) {

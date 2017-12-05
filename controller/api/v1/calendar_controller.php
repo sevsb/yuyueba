@@ -54,7 +54,7 @@ class calendar_controller extends v1_base {
         }
         return $this->op("organized_list", $ret);
     }
-    
+
     public function my_created_list_action() {
         $yuyue_session = get_request("yuyue_session");
         $user = TempUser::oneBySession($yuyue_session);
@@ -81,6 +81,47 @@ class calendar_controller extends v1_base {
             }
         }
         return $this->op("my_created_list", $my_created_list);
+    }
+    
+    public function my_calendar_list_action() {
+        
+        $yuyue_session = get_request("yuyue_session");
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+        
+        $userid = $user->id();
+        $organizations = $user->organizations();
+        logging::d("organizations", $organizations);
+        
+        $my_created_list = [];
+        $my_org_created_list = [];
+        $my_focus_list = [];
+        $my_joined_list = [];
+        
+        $all_calendar = Calendar::all();
+        foreach ($all_calendar as $calendar) {
+            $type = $calendar->type();
+            if ($type == 1) {
+                if($calendar->owner() == $userid){
+                    $my_created_list[$calendar->id()] = $calendar->packInfo();
+                }
+            }else if ($type == 2) {
+                if (in_array($calendar->owner(), $organizations["my_orgs"])) {
+                    $my_org_created_list[$calendar->id()] = $calendar->packInfo();
+                }
+            }
+        }
+        
+        $data = array(
+            "my_created_list" => $my_created_list,
+            "my_org_created_list" => $my_org_created_list,
+            "my_focus_list" => $my_focus_list,
+            "my_joined_list" => $my_joined_list,
+        );
+        
+        return $this->op("my_calendar_list", $data);
     }
 
     public function search_action() {

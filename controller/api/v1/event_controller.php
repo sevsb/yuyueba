@@ -47,10 +47,11 @@ class event_controller extends v1_base {
         $my_org_create_activity_list = array();
         $my_join_activity_list = array();
         $my_activity_no_list = array();
+        $my_subscribe_activity_list = Subscribe::load_subscribe_activity_list($user->id());
 
         $all_activities = Activity::all();
         $all_sign = db_sign::inst()->all();
-
+        
         foreach ($all_activities as $act) {
             $type = $act->type();
             logging::d("actpe", $type);
@@ -69,6 +70,12 @@ class event_controller extends v1_base {
                 if ($sign['user'] == $user->id() && $sign['activity'] == $act->id()) {
                     $my_join_activity_list[$act->id()] = $act->packInfo();
                     array_push( $my_activity_no_list, $act->id());
+                }
+            }
+            foreach ($my_subscribe_activity_list as $sub) {
+                if ($sub['activity'] == $act->id()) {
+                    //$my_join_activity_list[$act->id()] = $act->packInfo();
+                    array_push($my_activity_no_list, $act->id());
                 }
             }
         }

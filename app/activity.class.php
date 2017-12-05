@@ -371,13 +371,27 @@ class Activity {
         $this->setStatus(0);
         return $this->save();
     }
+    
+    public function subscribe($userid) {
+        logging::d("userid", $userid);
+        if (Subscribe::load($this->id(), 0, $userid)) {
+            return true;
+        }
+        $subscribe = Subscribe::subscribe_it($this->id(), 0, $userid);
+        return $subscribe;
+    }
+    
+    public function unsubscribe($userid) {
+        $subscribe = Subscribe::unsubscribe_it($this->id(), 0, $userid);
+        return $subscribe;
+    }
         
     function convert_json($string) {
         if (!is_string($string)) {
-            logging::d('no string',$string);
+            //logging::d('no string',$string);
             return $string;
         }else {
-            logging::d('is string',$string);
+            //logging::d('is string',$string);
             $string = json_decode($string);
             return $this->convert_json($string);
         }
@@ -385,10 +399,10 @@ class Activity {
 
     function convert_to_string($json) {
         if (is_string($json)) {
-            logging::d('is string',$json);
+            //logging::d('is string',$json);
             return $json;
         }else {
-            logging::d('no string',$json);
+            //logging::d('no string',$json);
             $json = json_encode($json);
             return $this->convert_to_string($json);
         }

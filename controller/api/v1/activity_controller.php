@@ -69,11 +69,14 @@ class activity_controller extends v1_base {
         
         $my_create_activity_list = array();
         $my_org_create_activity_list = array();
+        $my_subscribe_activity_list = array();
         $my_join_activity_list = array();
 
         $all_activities = Activity::all();
         $all_sign = db_sign::inst()->all();
-
+        
+        $all_my_subscribe_activity_list = Subscribe::load_subscribe_activity_list($user->id());
+        logging::d("all_my_subscribe_activity_list owner:", json_encode($all_my_subscribe_activity_list));
         foreach ($all_activities as $act) {
             $type = $act->type();
             logging::d("actpe", $type);
@@ -91,8 +94,13 @@ class activity_controller extends v1_base {
                     $my_join_activity_list[$act->id()] = $act->packInfo();
                 }
             }
+            foreach ($all_my_subscribe_activity_list as $sub) {
+                if ($sub['activity'] == $act->id()) {
+                    $my_subscribe_activity_list[$act->id()] = $act->packInfo();
+                }
+            }
         }
-        $data = array("my_create_activity_list" => $my_create_activity_list, "my_org_create_activity_list" => $my_org_create_activity_list, "my_join_activity_list" => $my_join_activity_list);
+        $data = array("my_create_activity_list" => $my_create_activity_list, "my_org_create_activity_list" => $my_org_create_activity_list, "my_join_activity_list" => $my_join_activity_list, "my_subscribe_activity_list" => $my_subscribe_activity_list);
         return $this->op("organized_all_my_list", $data);
     }
 
@@ -109,6 +117,7 @@ class activity_controller extends v1_base {
         );
         return $this->op("activities", $data);
     }
+
     
     public function view_action() {
         $aid = get_request_assert("activity");
@@ -121,10 +130,11 @@ class activity_controller extends v1_base {
         }
         
         $editable = false;
+        $subscribe = false;
         $joined = false;
         $join_sheet = array();
         $act = Activity::oneById($aid);
-        
+
         if ($act->type() == 1) {
             if ($act->owner() == $user->id()) {
                 $editable = true;
@@ -151,7 +161,7 @@ class activity_controller extends v1_base {
             "info" => $act->packInfo(true),
             "editable" => $editable,
             "joined" => $joined,
-            "join_sheet" => $join_sheet
+            "join_sheet" => $join_sheet,
         );
         return $this->op("activity_view", $data);
     }
@@ -487,8 +497,6 @@ class activity_controller extends v1_base {
             }
         }
         return array('op' => 'view_join_list', "data" => $join_list);
-        
-        
     }
     
     public function cancel_action() {
@@ -558,6 +566,69 @@ class activity_controller extends v1_base {
         $ret = $activity->start();
         $ret ? $record = Event::record($activity->id(), $activity->calendar_id(), "10004", $userid) : 0;
         return $ret ?  array('op' => 'activity_start', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 525042, "reason" => '活动启动失败');
+        
+    }
+    
+    public function check_subscribe_action(){
+        $aid = get_request_assert("activity");
+        $yuyue_session = get_request("yuyue_session");
+
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+
+        $subscribe = Subscribe::load($aid, 0, $user->id());
+        return array('op' => 'activity_check_subscribe', "data" => $subscribe);
+    }
+    
+    public function subscribe_action() {
+        $activity_id = get_request("activity_id");
+        $yuyue_session = get_request("yuyue_session");
+        logging::d("aid", $activity_id);
+        $activity = Activity::oneById($activity_id);
+        if (empty($activity)) {
+            return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
+        }
+        
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+
+        $userid = $user->id();
+        $type = $activity->type();
+        $owner = $activity->owner();
+        logging::d("userid", $userid);
+        $ret = $activity->subscribe($userid);
+        $subscribe = Subscribe::load($activity_id, 0, $user->id());
+        $ret ? $record = Event::record($activity->id(), $activity->calendar_id(), "10010", $userid) : 0;
+        return $ret ?  array('op' => 'activity_subsrcibe', "data" => $subscribe) : array('op' => 'fail', "code" => 566642, "reason" => '活动关注失败');
+        
+    }
+
+    public function unsubscribe_action() {
+        $activity_id = get_request("activity_id");
+        $yuyue_session = get_request("yuyue_session");
+
+        $activity = Activity::oneById($activity_id);
+        if (empty($activity)) {
+            return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
+        }
+        
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+
+        $userid = $user->id();
+        $type = $activity->type();
+        $owner = $activity->owner();
+        
+        $ret = $activity->unsubscribe($userid);
+        $subscribe = Subscribe::load($activity_id, 0, $user->id());
+        //$ret ? $record = Event::record($activity->id(), $activity->calendar_id(), "10011", $userid) : 0;
+        return $ret ?  array('op' => 'activity_unsubscribe', "data" => $subscribe) : array('op' => 'fail', "code" => 5666742, "reason" => '活动取消关注失败');
         
     }
 

@@ -140,14 +140,35 @@ class calendar_controller extends v1_base {
     
     public function view_action() {
         $id = get_request_assert("id");
-        logging::d("CAL VIEW", $id);
+        $yuyue_session = get_request("yuyue_session");
+        
+
         $calendar = Calendar::oneById($id);
+        logging::d("CAL VIEW", $id);
+        logging::d("ACT yuyue_session", $yuyue_session);
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+        
+        $editable = false;
+        if ($calendar->type() == 1) {
+            if ($calendar->owner() == $user->id()) {
+                $editable = true;
+            }
+        }else if ($calendar->type() == 2) {
+            $user_orgs = $user->organizations();
+            if (in_array($calendar->owner(), $user_orgs['my_orgs'])) {
+                $editable = true;
+            }
+        }
+
         $data = array(
-            "info" => array(
-                $calendar->packInfo(true),
-            ),
+            "info" => $calendar->packInfo(true),
+            "editable" => $editable,
         );
-        return $this->op("calendar_view", $calendar->packInfo());
+        
+        return $this->op("calendar_view", $data);
     }
 
     public function sign_action() {
@@ -306,24 +327,26 @@ class calendar_controller extends v1_base {
 
         $user = TempUser::oneBySession($yuyue_session);
         if (empty($user)) {
-            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+            return array('op' => 'fail', "code" => '0010002', "reason" => '无此用户');
         }
-        if ($type == 1) {
-            $yuyue_session = $owner;
-            $user = TempUser::oneBySession($yuyue_session);
-            if (!$user) {
-                return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
-            }
-            $owner = $user->id();
-        }
-        
-        //$type = get_request("type");    //1: 个人 2：组织
-        //$owner = get_request("owner");  // 个人yuyue_session or 组织ID;
+
         if (!empty($calendar_id)) {
             $calendar = Calendar::oneById($calendar_id);
             if (empty($calendar)) {
                 return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
             }
+            if ($calendar->type() == 1) {
+                if ($calendar->owner() != $user->id()) {
+                    return array('op' => 'fail', "code" => 0022201, "reason" => '无权利编辑此日历活动1');
+                }
+            }else if ($calendar->type() == 2) {
+                $organizations = $user->organizations();
+                $my_orgs = $organizations["my_orgs"];
+                if ( !in_array($calendar->owner(), $my_orgs)) {
+                    return array('op' => 'fail', "code" => 0022222, "reason" => '无权利编辑此日历活动2');
+                }
+            }
+            
         }else {
             $calendar = new Calendar();
         }
@@ -332,8 +355,6 @@ class calendar_controller extends v1_base {
         $calendar->setOwner($owner);
         $calendar->set_Type($type);
         
-        //logging::d('calendar', dump_var($calendar));
-        //return;
         $ret = $calendar->save();
         
         return $ret ?  array('op' => 'calendar_edit', "data" => $calendar->packInfo()) : array('op' => 'fail', "code" => 100742, "reason" => '日历活动编辑失败');

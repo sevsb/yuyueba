@@ -380,7 +380,7 @@ class activity_controller extends v1_base {
                 
                 $add_ret = $result['ret'];
                 $activity_id = $result['activity']->id();
-                $add_ret ? $record = Event::record($activity_id, $activity->calendar_id(), "10001", $operator_id) : 0;
+                $add_ret ? $record = Event::record($activity_id, $result['activity']->calendar_id(), "10001", $operator_id) : 0;
                 logging::d("add_ret", $add_ret);
                 logging::d("activity_id", $activity_id);
                 array_push($activity_list, $activity_id);

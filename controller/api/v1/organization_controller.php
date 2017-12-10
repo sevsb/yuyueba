@@ -240,28 +240,34 @@ class organization_controller extends v1_base {
     public function join_action() {
         $org_id = get_request('org_id');
         $yuyue_session = get_request("yuyue_session");
-        
+         $Password = get_request("Password");
+		 
         $organization = Organization::oneById($org_id);
-        $user = TempUser::oneBySession($yuyue_session);
-        if (empty($organization)) {
-            return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
+		 if (empty($organization)) {
+            return array("op" => "fail" , "code" => "400001" , "reason" => "未找到此组织");
         }
+		if($organization->joinable=="false")
+			return array('op' => 'fail', "code" => '400002', "reason" => '该组织禁止申请加入');
+		if($organization->password!=$Password)
+			return array('op' => 'fail', "code" => '400003', "reason" => '口令错误');
+        $user = TempUser::oneBySession($yuyue_session);
+       
         if (!$user) {
-            return array('op' => 'fail', "code" => '333', "reason" => '无此用户');
+            return array('op' => 'fail', "code" => '100003', "reason" => '无此用户');
         }
         if ($organization->type() == 1) {
-            return array('op' => 'fail', "code" => '2323', "reason" => '此组织已经被解散');
+            return array('op' => 'fail', "code" => '400004', "reason" => '此组织已经被解散');
         }
         if($yuyue_session == $organization->owner_yuyue_session()) {
-            return array('op' => 'fail', "code" => '444', "reason" => '申请加入的user是组织创建者');
+            return array('op' => 'fail', "code" => '400005', "reason" => '申请加入的user是组织创建者');
         }
         $userid = $user->id();
         if(db_organization_member::inst()->one($org_id, $userid)) {
-            return array('op' => 'fail', "code" => '4443', "reason" => '申请的用户已经是此组织会员');
+            return array('op' => 'fail', "code" => '400006', "reason" => '申请的用户已经是此组织会员');
         }
         
         $ret = Organization::receive_join($org_id, $userid);
-        return $ret ? array("op" => "org_join" , "data" => $ret) : array('op' => 'fail', "code" => '666', "reason" => '申请失败');
+        return $ret ? array("op" => "org_join" , "data" => $ret) : array('op' => 'fail', "code" => '100004', "reason" => '申请失败');
     }
     
     public function disband_action() {

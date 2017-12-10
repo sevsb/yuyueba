@@ -387,12 +387,13 @@ class organization_controller extends v1_base {
 
     public function search_action() {
         $org_id = get_request('org_id');
+		logging::d('search_action', 'org_id:' .$org_id);   
         $organization = Organization::oneById($org_id);
         if (empty($organization)) {
-            return array("op" => "fail" , "code" => "222" , "reason" => "未找到此组织");
+            return array("op" => "fail" , "code" => "400001" , "reason" => "未找到此组织");
         }
         if ($organization->type() == 1) {
-            return array('op' => 'fail', "code" => '555', "reason" => '此组织已经被解散');
+            return array('op' => 'fail', "code" => '400004', "reason" => '此组织已经被解散');
         }
         return array("op" => "org_search" , "data" => $organization->packInfo());
     }

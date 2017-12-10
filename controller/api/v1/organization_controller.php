@@ -240,15 +240,15 @@ class organization_controller extends v1_base {
     public function join_action() {
         $org_id = get_request('org_id');
         $yuyue_session = get_request("yuyue_session");
-         $Password = get_request("Password");
+         $org_password = get_request("org_password");
 		 
         $organization = Organization::oneById($org_id);
 		 if (empty($organization)) {
             return array("op" => "fail" , "code" => "400001" , "reason" => "未找到此组织");
         }
-		if($organization->joinable=="false")
+		if($organization->joinable()=="false")
 			return array('op' => 'fail', "code" => '400002', "reason" => '该组织禁止申请加入');
-		if($organization->password!=$Password)
+		if($organization->password()!=$org_password)
 			return array('op' => 'fail', "code" => '400003', "reason" => '口令错误');
         $user = TempUser::oneBySession($yuyue_session);
        

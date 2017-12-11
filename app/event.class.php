@@ -40,7 +40,7 @@ class Event {
     public function calendar() {
         return $this->mSummary["calendar"];
     }
-    public function calendar_detal() {
+    public function calendar_detail() {
         $calendar = Calendar::oneById($this->mSummary["calendar"]);
         return $calendar ? $calendar->packInfo() : $calendar;
     }
@@ -107,7 +107,7 @@ class Event {
             "activity" => $this->activity(),
             "activity_detail" => $this->activity_detail(),
             "calendar" => $this->calendar(),
-            "calendar_detal" => $this->calendar_detal(),
+            "calendar_detail" => $this->calendar_detail(),
             "event_code" => $this->event_code(),
             "event_content" => $this->event_content(),
             "operator" => $this->operator(),

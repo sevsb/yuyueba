@@ -156,7 +156,20 @@ class Calendar {
     public function status() {
         return $this->mSummary["status"];
     }
-   
+       
+    public function subscribe($userid) {
+        logging::d("userid", $userid);
+        if (Subscribe::load(0, $this->id(), $userid)) {
+            return true;
+        }
+        $subscribe = Subscribe::subscribe_it(0, $this->id(), $userid);
+        return $subscribe;
+    }
+    
+    public function unsubscribe($userid) {
+        $subscribe = Subscribe::unsubscribe_it(0, $this->id(), $userid);
+        return $subscribe;
+    }
     
     public function signed_user_list() {   
         $Calendar_id = $this->id();

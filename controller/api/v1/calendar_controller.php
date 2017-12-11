@@ -423,6 +423,74 @@ class calendar_controller extends v1_base {
         }
         return array('op' => 'upload_image', "data" => $image);
     }
+    
+    public function check_subscribe_action(){
+        $calendar_id = get_request_assert("calendar");
+        $yuyue_session = get_request("yuyue_session");
+
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+
+        $subscribe = Subscribe::load(0, $calendar_id, $user->id());
+        return array('op' => 'calendar_check_subscribe', "data" => $subscribe);
+    }
+    
+    public function subscribe_action() {
+        $calendar_id = get_request("calendar");
+        $yuyue_session = get_request("yuyue_session");
+        logging::d("aid", $calendar_id);
+        $calendar = Calendar::oneById($calendar_id);
+        if (empty($calendar)) {
+            return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
+        }
+        
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+
+        $userid = $user->id();
+        $type = $calendar->type();
+        $owner = $calendar->owner();
+        logging::d("userid", $userid);
+        $ret = $calendar->subscribe($userid);
+        $subscribe = Subscribe::load(0, $calendar_id, $user->id());
+        $ret ? $record = Event::record(0, $calendar_id, "20010", $userid) : 0;
+        return $ret ?  array('op' => 'calendar_subsrcibe', "data" => $subscribe) : array('op' => 'fail', "code" => 566642, "reason" => '日历活动关注失败');
+        
+    }
+
+    public function unsubscribe_action() {
+        $calendar_id = get_request("calendar");
+        $yuyue_session = get_request("yuyue_session");
+
+        $calendar = Calendar::oneById($calendar_id);
+        if (empty($calendar)) {
+            return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
+        }
+        
+        $user = TempUser::oneBySession($yuyue_session);
+        if (empty($user)) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
+
+        $userid = $user->id();
+        $type = $calendar->type();
+        $owner = $calendar->owner();
+        
+        $ret = $calendar->unsubscribe($userid);
+        $subscribe = Subscribe::load(0, $calendar_id, $user->id());
+        //$ret ? $record = Event::record($activity->id(), $activity->calendar_id(), "10011", $userid) : 0;
+        return $ret ?  array('op' => 'calendar_unsubscribe', "data" => $subscribe) : array('op' => 'fail', "code" => 5666742, "reason" => '日历活动取消关注失败');
+        
+    }
+    
+    
+    
+    
+    
 }
 
 

@@ -25,36 +25,7 @@ class calendar_controller extends v1_base {
         return $this->op("activities", $data);
     }
 
-    public function organized_list_action() {
-        $type = get_request("type");
-        $owner = get_request("owner");
-        logging::d("ORGED_LIST type:", $type);
-        logging::d("ORGED_LIST owner:", $owner);
-        if($type == 1){
-            $user = TempUser::oneBySession($owner);
-            if (empty($user)) {
-                return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
-            }
-            $owner = $user->id();
-        }else if ($type == 2){
-            $organization = Organization::oneById($owner);
-            if (empty($organization)) {
-                return array('op' => 'fail', "code" => '000003', "reason" => '组织不存在');
-            }
-        }else {
-            return array('op' => 'fail', "code" => '000004', "reason" => 'type错误');
-        }
-
-        $all_activities = Activity::all();
-        $ret = [];
-        foreach ($all_activities as $act) {
-            if ($act->owner() == $owner) {
-                $ret[$act->id()] = $act->packInfo();
-            }
-        }
-        return $this->op("organized_list", $ret);
-    }
-
+/*
     public function my_created_list_action() {
         $yuyue_session = get_request("yuyue_session");
         $user = TempUser::oneBySession($yuyue_session);
@@ -82,7 +53,7 @@ class calendar_controller extends v1_base {
         }
         return $this->op("my_created_list", $my_created_list);
     }
-    
+*/
     public function my_calendar_list_action() {
         
         $yuyue_session = get_request("yuyue_session");
@@ -120,8 +91,6 @@ class calendar_controller extends v1_base {
                     $my_subscribe_list[$calendar->id()] = $calendar->packInfo();
                 }
             }
-            
-            
         }
         
         $data = array(
@@ -181,76 +150,19 @@ class calendar_controller extends v1_base {
         return $this->op("calendar_view", $data);
     }
 
-    public function sign_action() {
-        $activity_id = get_request("activity_id");
-        $yuyue_session = get_request("yuyue_session");
-        $sheet = get_request("sheet");
-
-        $activity = Activity::oneById($activity_id);
-        if (empty($activity)) {
-            return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
-        }
-        
-        $user = TempUser::oneBySession($yuyue_session);
-        if (empty($user)) {
-            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
-        }
-        
-        $joinable = $activity->joinable();
-        if ($joinable == 0) {
-            return array('op' => 'fail', "code" => '20302', "reason" => '此活动无法报名');
-        }
-        $now_participants = $activity->now_participants();
-        $max_participants = $activity->max_participants();
-        if ($now_participants >= $max_participants) {
-            return array('op' => 'fail', "code" => '203402', "reason" => '此活动报名额度已经满额');
-        }
-        //$deadline = $activity->deadline();
-        //if (time() >= $deadline) {
-        //    return array('op' => 'fail', "code" => '203407', "reason" => '此活动报名截止时间已过，无法报名');
-        //}
-        
-        $userid = $user->id();
-        $sign = db_sign::inst()->one($activity_id, $userid);
-        if ($sign) {
-            return array('op' => 'fail', "code" => 1033002, "reason" => '用户已经报名过此活动');
-        }
-        $ret = db_sign::inst()->add($activity_id, $userid, json_encode($sheet));
-        return $ret ?  array('op' => 'activity_sign', "data" => $ret) : array('op' => 'fail', "code" => 1033002, "reason" => '活动报名失败');
-    }
-    
-    public function unsign_action() {
-        $activity_id = get_request("activity_id");
-        $yuyue_session = get_request("yuyue_session");
-
-        $activity = Activity::oneById($activity_id);
-        if (empty($activity)) {
-            return array('op' => 'fail', "code" => 00022201, "reason" => '活动不存在');
-        }
-        
-        $user = TempUser::oneBySession($yuyue_session);
-        if (empty($user)) {
-            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
-        }
-        $userid = $user->id();
-        $sign = db_sign::one($activity_id, $userid);
-        if (!$sign) {
-            return array('op' => 'fail', "code" => 1033002, "reason" => '用户尚未报名过此活动');
-        }
-        $ret = db_sign::del($activity_id, $userid);
-        return $ret ?  array('op' => 'activity_unsign', "data" => $ret) : array('op' => 'fail', "code" => 1033002, "reason" => '退出活动/取消报名失败');
-    }
-
     public function mine_action() {
     }
 
     public function reply_action() {
     }
 
+    /*
     public function organize_action() {
 
         $type = get_request("type");    //1: 个人 2：组织
         $owner = get_request("owner");  // 个人yuyue_session or 组织ID;
+        
+        $yuyue_session = get_request("yuyue_session");  // yuyue_session 
 
         $joinable = get_request("joinable");
         $participants = get_request("participants", 0);
@@ -276,12 +188,12 @@ class calendar_controller extends v1_base {
         if (($type != 1 && $type != 2) || empty($owner)) {
             return array('op' => 'fail', "code" => 000001, "reason" => '活动类型或创建者信息不完整');
         }
+        
+        $user = TempUser::oneBySession($yuyue_session);
+        if (!$user) {
+            return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
+        }
         if ($type == 1) {
-            $yuyue_session = $owner;
-            $user = TempUser::oneBySession($yuyue_session);
-            if (!$user) {
-                return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
-            }
             $owner = $user->id();
         }
         if (empty($title) || empty($info) || empty($content) ) {
@@ -323,9 +235,12 @@ class calendar_controller extends v1_base {
         //return;
         $ret = $activity->save();
         
+        $ret ? $record = Event::record(0, $calendar_id, "20001", $user->id()) : 0;
+        logging::d("ACT record", dump_var($record));
         return $ret ?  array('op' => 'activity_organize', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 100002, "reason" => '活动发起失败');
         
     }
+    */
 
     public function edit_action() {
         $calendar_id = get_request("id");
@@ -335,9 +250,14 @@ class calendar_controller extends v1_base {
         $owner = get_request("owner");
         $yuyue_session = get_request("yuyue_session");
 
+        //logging::d("ACT owner", dump_var($owner));
+        
         $user = TempUser::oneBySession($yuyue_session);
         if (empty($user)) {
             return array('op' => 'fail', "code" => '0010002', "reason" => '无此用户');
+        }
+        if ($type == 1) {
+            $owner = $user->id();
         }
 
         if (!empty($calendar_id)) {
@@ -366,7 +286,8 @@ class calendar_controller extends v1_base {
         $calendar->set_Type($type);
         
         $ret = $calendar->save();
-        
+        $calendar_id ? $event_code = 20002 : $event_code = 20001;
+        $ret ? $record = Event::record(0, $calendar->id(), $event_code, $user->id()) : 0;
         return $ret ?  array('op' => 'calendar_edit', "data" => $calendar->packInfo()) : array('op' => 'fail', "code" => 100742, "reason" => '日历活动编辑失败');
         
         return;
@@ -376,6 +297,7 @@ class calendar_controller extends v1_base {
     public function viewmember_action() {
     }
     
+    /*
     public function cancel_action() {
         $activity_id = get_request("activity_id");
         $yuyue_session = get_request("yuyue_session");
@@ -409,6 +331,7 @@ class calendar_controller extends v1_base {
         return $ret ?  array('op' => 'activity_cancel', "data" => $activity->packInfo()) : array('op' => 'fail', "code" => 55042, "reason" => '活动撤消失败');
         
     }
+    */
 
     public function tipoff_action() {
     }

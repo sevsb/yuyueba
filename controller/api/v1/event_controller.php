@@ -32,63 +32,85 @@ class event_controller extends v1_base {
     }
     
     public function get_all_my_list_action(){
-        $owner = get_request("owner");
-        logging::d("ORGED_LIST owner:", $owner);
+        $yuyue_session = get_request("owner");
+        logging::d("ORGED_LIST yuyue_session:", $yuyue_session);
         
-        $user = TempUser::oneBySession($owner);
+        $user = TempUser::oneBySession($yuyue_session);
         if (empty($user)) {
             return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
         }
-        $owner = $user->id();
+        $userid = $user->id();
         $my_organizetions = $user->organizations();
         $my_organizetions = $my_organizetions["my_orgs"];
         
-        $my_create_activity_list = array();
-        $my_org_create_activity_list = array();
-        $my_join_activity_list = array();
         $my_activity_no_list = array();
+        $my_calendar_no_list = array();
+        
         $my_subscribe_activity_list = Subscribe::load_subscribe_activity_list($user->id());
+        $my_subscribe_calendar_list = Subscribe::load_subscribe_calendar_list($user->id());
 
         $all_activities = Activity::all();
+        $all_calendars = Calendar::all();
         $all_sign = db_sign::inst()->all();
         
+        // 遍历activity_list
         foreach ($all_activities as $act) {
             $type = $act->type();
             logging::d("actpe", $type);
             if ($type == 1) {
-                if ($act->owner() == $owner) {
-                    $my_create_activity_list[$act->id()] = $act->packInfo();
+                if ($act->owner() == $userid) {
                     array_push( $my_activity_no_list, $act->id());
                 }
             }else if($type == 2) {
                 if (in_array($act->owner(), $my_organizetions)) {
-                    $my_org_create_activity_list[$act->id()] = $act->packInfo();
                     array_push( $my_activity_no_list, $act->id());
                 }
             }
             foreach ($all_sign as $sign) {
                 if ($sign['user'] == $user->id() && $sign['activity'] == $act->id()) {
-                    $my_join_activity_list[$act->id()] = $act->packInfo();
                     array_push( $my_activity_no_list, $act->id());
                 }
             }
             foreach ($my_subscribe_activity_list as $sub) {
                 if ($sub['activity'] == $act->id()) {
-                    //$my_join_activity_list[$act->id()] = $act->packInfo();
                     array_push($my_activity_no_list, $act->id());
                 }
             }
         }
+        
+        
+        // 遍历calendar_list
+        foreach ($all_calendars as $calendar) {
+            $type = $calendar->type();
+            logging::d("actpe", $type);
+            if ($type == 1) {
+                if ($calendar->owner() == $userid) {
+                    array_push( $my_calendar_no_list, $calendar->id());
+                }
+            }else if($type == 2) {
+                if (in_array($calendar->owner(), $my_organizetions)) {
+                    array_push( $my_calendar_no_list, $calendar->id());
+                }
+            }
+            // calendar没有报名，只有订阅
+            foreach ($my_subscribe_calendar_list as $sub) {
+                if ($sub['calendar'] == $calendar->id()) {
+                    array_push($my_calendar_no_list, $calendar->id());
+                }
+            }
+        }
+        
         $events = Event::all();
         logging::d("my_activity_no_list ", json_encode($my_activity_no_list));
-        logging::d("my_activity_no_list array_unique ", json_encode(array_unique($my_activity_no_list)));
+        logging::d("my_calendar_no_list ", json_encode($my_calendar_no_list));
         $event_list = [];
+        
         foreach ($events as $event){
-            if (in_array($event->activity(), $my_activity_no_list)) {
+            if (in_array($event->activity(), $my_activity_no_list) || in_array($event->calendar(), $my_calendar_no_list)) {
                 $event_list[$event->id()] = $event->packInfo();
             }
         }
-        $data = array("my_create_activity_list" => $my_create_activity_list, "my_org_create_activity_list" => $my_org_create_activity_list, "my_join_activity_list" => $my_join_activity_list, "my_activity_no_list" => $my_activity_no_list);
+        
         return $this->op("event_list", $event_list);
     }
 

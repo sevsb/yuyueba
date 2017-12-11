@@ -26,6 +26,11 @@ class db_subscribe extends database_table {
         $userid = (int)$userid;
         return $this->get_all("calendar = 0 and user = $userid");
     }
+    
+    public function get_calendar_by_user($userid) {
+        $userid = (int)$userid;
+        return $this->get_all("activity = 0 and user = $userid");
+    }
 
     public function all() {
         return $this->get_all();

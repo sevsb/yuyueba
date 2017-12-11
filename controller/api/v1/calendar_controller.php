@@ -99,8 +99,10 @@ class calendar_controller extends v1_base {
         $my_org_created_list = [];
         $my_focus_list = [];
         $my_joined_list = [];
+        $my_subscribe_list = [];
         
         $all_calendar = Calendar::all();
+        $all_my_subscribe_calendar_list = Subscribe::load_subscribe_calendar_list($user->id());
         foreach ($all_calendar as $calendar) {
             $type = $calendar->type();
             if ($type == 1) {
@@ -112,13 +114,21 @@ class calendar_controller extends v1_base {
                     $my_org_created_list[$calendar->id()] = $calendar->packInfo();
                 }
             }
+            
+            foreach ($all_my_subscribe_calendar_list as $sub) {
+                if ($sub['calendar'] == $calendar->id()) {
+                    $my_subscribe_list[$calendar->id()] = $calendar->packInfo();
+                }
+            }
+            
+            
         }
         
         $data = array(
             "my_created_list" => $my_created_list,
             "my_org_created_list" => $my_org_created_list,
-            "my_focus_list" => $my_focus_list,
             "my_joined_list" => $my_joined_list,
+            "my_subscribe_list" => $my_subscribe_list,
         );
         
         return $this->op("my_calendar_list", $data);

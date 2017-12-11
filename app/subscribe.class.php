@@ -80,6 +80,10 @@ class Subscribe {
     
     public static function load_subscribe_activity_list($userid){
         return db_subscribe::inst()->get_activity_by_user($userid);
+    }    
+    
+    public static function load_subscribe_calendar_list($userid){
+        return db_subscribe::inst()->get_calendar_by_user($userid);
     }
     
     public static function subscribe_it($aid, $cid, $userid){

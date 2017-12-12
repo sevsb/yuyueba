@@ -82,25 +82,20 @@ class user_controller extends v1_base {
         
         $all_orgs = Organization::all();
         $all_org_members = db_organization_member::inst()->all();
-        //var_dump($all_orgs);
-        //var_dump($all_org_members);
+
         
         foreach ($all_org_members as $member) {
-            $member_org_id = $member["organization"];
-            $member_userid = $member["user"];
-            if ($member_userid == $userid) {
-                $join_orgs[$member_org_id] = $all_orgs[$member_org_id]->packInfo();
-            }
-
-        }
-        
-        foreach ($all_orgs as $org) {
-            if ($org->owner() == $userid) {
-                $own_organizations[$org->id()] = $org->packInfo();
+            $member_org_id = $member['organization'];
+            if ($member['user'] == $userid) {
+                if ($member['type'] == 0) {
+                    $join_orgs[$member_org_id] = $all_orgs[$member_org_id]->packInfo();
+                }else if ($member['type'] == 1) {
+                    $own_orgs[$member_org_id] = $all_orgs[$member_org_id]->packInfo();
+                }
             }
         }
 
-        $data = array("own_orgs" =>$own_organizations, 'join_orgs' => $join_orgs);
+        $data = array("own_orgs" =>$own_orgs, 'join_orgs' => $join_orgs);
         //dump_var( $data );
         return array("op" => "organizations", 'data' => $data);
         

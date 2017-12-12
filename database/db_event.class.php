@@ -22,6 +22,11 @@ class db_event extends database_table {
         return $this->get_one("id = $id");
     }
 
+    public function load($activity, $calendar, $event_code, $operator){
+        $id = (int)$id;
+        return $this->get_one("activity = $activity and calendar = $calendar and event_code = $event_code and operator = $operator");
+    }
+
     public function all() {
         return $this->get_all("", " order by time desc");
     }

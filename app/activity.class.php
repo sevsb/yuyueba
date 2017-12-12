@@ -177,7 +177,7 @@ class Activity {
     
     public function has_permission($userid) {
         if ($this->type() == 1) {
-            return $this->owner() == $usesid;
+            return $this->owner() == $userid;
         }else if ($this->type() == 2) {
             return db_organization_member::inst()->one($this->owner(), $userid);
         }else {

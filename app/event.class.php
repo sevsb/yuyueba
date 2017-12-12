@@ -124,8 +124,10 @@ class Event {
     }
     
     public static function record($activity, $calendar, $event_code, $operator) {
-        $event = new Event();
-            
+        $event = Event::load($activity, $calendar, $event_code, $operator);
+        if (empty($event)) {
+            $event = new Event();
+        }
         $event->set_activity($activity);
         $event->set_calendar($calendar);
         $event->set_event_code($event_code);
@@ -158,6 +160,15 @@ class Event {
             }
         }
         return null;
+    }
+    
+    public static function load($activity, $calendar, $event_code, $operator) {
+        $ret = db_event::inst()->load($activity, $calendar, $event_code, $operator);
+        if ($ret) {
+            return new Event($ret);
+        }else {
+            return null;
+        }
     }
 
     public static function all() {

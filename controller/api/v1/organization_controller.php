@@ -41,10 +41,9 @@ class organization_controller extends v1_base {
         logging::d('org_create', 'own_id:' . $organization->owner());
         logging::d('org_create', 'org_avatar:' . $organization->avatar());
         
-        $organization->save();
-        $data = $organization->packInfo();
+        $ret = $organization->save();
 
-        return array('op' => 'org_create', "data" =>  $data);
+        return $ret ?  array('op' => 'org_create', "data" => $organization->packInfo()) : array('op' => 'fail', "code" => 17022, "reason" => '组织创建失败');
     }
 	public function setJoinable_action() {
 		$org_id = get_request('org_id');

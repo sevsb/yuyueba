@@ -93,7 +93,18 @@ class Organization {
     public function save() {
         $id = $this->id();
         if ($id == 0) {
+            db_organization::inst()->begin_transaction();
+            db_organization_member::inst()->begin_transaction();
             $id = db_organization::inst()->add($this->name(), $this->avatar(), $this->intro(), $this->owner(), $this->password(), $this->joinable());
+            $member = db_organization_member::inst()->add($id, $this->owner(), 1);
+            if ($id && $member) {
+                db_organization::inst()->commit();
+                db_organization_member::inst()->commit();
+            }else {
+                db_organization::inst()->rollback();
+                db_organization_member::inst()->rollback();
+                return false;
+            }
             if ($id !== false) {
                $this->mSummary["id"] = $id;
             }

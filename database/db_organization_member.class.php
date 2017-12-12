@@ -31,8 +31,8 @@ class db_organization_member extends database_table {
         return $this->get_all();
     }
 
-    public function add($org_id, $userid) {
-        return $this->insert(array("user" => $userid, "organization" => $org_id, "type" => 0 ));
+    public function add($org_id, $userid, $type = 0) {
+        return $this->insert(array("user" => $userid, "organization" => $org_id, "type" => $type ));
     }
 
     public function modify($id, $name) {

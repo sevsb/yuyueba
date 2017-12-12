@@ -91,26 +91,22 @@ class TempUser extends User {
         
         $all_orgs = Organization::all();
         $all_org_members = db_organization_member::inst()->all();
-        //var_dump($all_orgs);
-        //var_dump($all_org_members);
         
         foreach ($all_org_members as $member) {
             $member_org_id = $member["organization"];
             $member_userid = $member["user"];
+            $member_type = $member["type"];
             if ($member_userid == $userid) {
-                $join_orgs[$member_org_id] = $all_orgs[$member_org_id]->packInfo();
+                if ($member_type == 0) {
+                    $own_organizations[$org->id()] = $all_orgs[$member_org_id]->packInfo();
+                }else if ($member_type == 1) {
+                    $join_orgs[$member_org_id] = $all_orgs[$member_org_id]->packInfo();
+                }
                 array_push($my_orgs, $member_org_id);
             }
-
         }
-        foreach ($all_orgs as $org) {
-            if ($org->owner() == $userid) {
-                $own_organizations[$org->id()] = $org->packInfo();
-                array_push($my_orgs, $org->id());
-            }
-        }
-        $data = array("own_orgs" =>$own_organizations, 'join_orgs' => $join_orgs, 'my_orgs' => $my_orgs);
-        return $data;
+        return array("own_orgs" =>$own_organizations, 'join_orgs' => $join_orgs, 'my_orgs' => $my_orgs);
+        
     }
 
     //修改参数函数

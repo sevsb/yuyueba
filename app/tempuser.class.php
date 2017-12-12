@@ -98,7 +98,7 @@ class TempUser extends User {
             $member_type = $member["type"];
             if ($member_userid == $userid) {
                 if ($member_type == 0) {
-                    $own_organizations[$org->id()] = $all_orgs[$member_org_id]->packInfo();
+                    $own_organizations[$member_org_id] = $all_orgs[$member_org_id]->packInfo();
                 }else if ($member_type == 1) {
                     $join_orgs[$member_org_id] = $all_orgs[$member_org_id]->packInfo();
                 }

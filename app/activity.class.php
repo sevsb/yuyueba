@@ -174,6 +174,16 @@ class Activity {
         }
         return $ret;
     }
+    
+    public function has_permission($userid) {
+        if ($this->type() == 1) {
+            return $this->owner() == $usesid;
+        }else if ($this->type() == 2) {
+            return db_organization_member::inst()->one($this->owner(), $userid);
+        }else {
+            return false;
+        }
+    }
 
     public function setTitle($n) {
         $this->mSummary["title"] = $n;

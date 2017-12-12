@@ -427,14 +427,8 @@ class activity_controller extends v1_base {
         $type = $activity->type();
         $owner = $activity->owner();
         
-        if ($type == 1) {
-            if ($owner != $userid){
-                return array('op' => 'fail', "code" => '0023002', "reason" => '用户无权限编辑此活动');
-            }
-        }else if($type == 2) {
-            if (!(Organization::has_member($owner, $userid))) {
-                return array('op' => 'fail', "code" => '0023032', "reason" => '用户无权限编辑此活动');
-            }
+        if (!$activity->has_permission($userid)) {
+            return array('op' => 'fail', "code" => '0023002', "reason" => '用户无权限编辑此活动');
         }
 
         $title = get_request("title");
@@ -516,15 +510,10 @@ class activity_controller extends v1_base {
         $userid = $user->id();
         $type = $activity->type();
         $owner = $activity->owner();
-        if ($type == 1) {
-            if ($owner != $userid){
-                return array('op' => 'fail', "code" => '0023002', "reason" => '用户无权限编辑此活动');
-            }
-        }else if($type == 2) {
-            if (!(Organization::has_member($owner, $userid))) {
-                return array('op' => 'fail', "code" => '0023032', "reason" => '用户无权限编辑此活动');
-            }
+        if (!$activity->has_permission($userid)) {
+            return array('op' => 'fail', "code" => '0023002', "reason" => '用户无权限编辑此活动');
         }
+        
         if ($activity->status() == 1) {
             return array('op' => 'fail', "code" => '00244032', "reason" => '此活动已被撤消');
         }
@@ -551,14 +540,8 @@ class activity_controller extends v1_base {
         $userid = $user->id();
         $type = $activity->type();
         $owner = $activity->owner();
-        if ($type == 1) {
-            if ($owner != $userid){
-                return array('op' => 'fail', "code" => '0023002', "reason" => '用户无权限编辑此活动');
-            }
-        }else if($type == 2) {
-            if (!(Organization::has_member($owner, $userid))) {
-                return array('op' => 'fail', "code" => '0023032', "reason" => '用户无权限编辑此活动');
-            }
+        if (!$activity->has_permission($userid)) {
+            return array('op' => 'fail', "code" => '0023002', "reason" => '用户无权限编辑此活动');
         }
         if ($activity->status() == 0) {
             return array('op' => 'fail', "code" => '00244032', "reason" => '此活动已启动');

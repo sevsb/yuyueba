@@ -193,6 +193,38 @@ class Event {
     public static function remove($id) {
         return db_event::inst()->remove($id);
     }
+    
+    
+//我个人 && 我相关组织创建的活动 && 我关注的活动 && 我报名的活动
+/*  select c.id from yyba_activity c join yyba_organization_member b on b.organization = c.owner  where c.type = 2 and b.user = 5
+    union 
+    select a.id from yyba_activity a where a.type = 1 and a.owner = 5
+    union
+    select sub.activity from yyba_subscribe sub where sub.user = 5
+    union
+    select yyba_sign.activity from yyba_sign where yyba_sign.user = 5 
+*/
+    
+    public static function get_activity_event_list($userid){
+        $mysql = "
+            SELECT x.*, act.title activity_title, tempu.nickname operator_name, tempu.avatar operator_avatar FROM yyba_event x 
+            join (
+                SELECT c.id FROM yyba_activity c join yyba_organization_member b ON b.organization = c.owner WHERE c.type = 2 and b.user = $userid   
+                union 
+                SELECT a.id FROM yyba_activity a WHERE a.type = 1 and a.owner = $userid
+                union
+                SELECT sub.activity FROM yyba_subscribe sub WHERE sub.user = $userid
+                union
+                SELECT yyba_sign.activity FROM yyba_sign WHERE yyba_sign.user = $userid 
+            ) y 
+            ON y.id = x.activity
+            join 
+                yyba_activity act ON act.id = x.activity
+            join 
+                yyba_tempuser tempu ON x.operator = tempu.id order by x.time desc";
+                
+        return db_base::inst()->do_query($mysql);
+    }
 
 };
 

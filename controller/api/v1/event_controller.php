@@ -19,78 +19,28 @@ class event_controller extends v1_base {
             return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
         }
         $userid = $user->id();
-        $my_organizetions = $user->organizations();
-        $my_organizetions = $my_organizetions["my_orgs"];
         
-        $my_activity_no_list = array();
-        $my_calendar_no_list = array();
+        $my_activity_event_list = [];
+        $my_calendar_event_list = [];
         
-        $my_subscribe_activity_list = Subscribe::load_subscribe_activity_list($user->id());
-        $my_subscribe_calendar_list = Subscribe::load_subscribe_calendar_list($user->id());
-
-        $all_activities = Activity::all();
-        $all_calendars = Calendar::all();
-        $all_sign = db_sign::inst()->all();
+        $my_activity_event_list = Event::get_activity_event_list($userid);
         
-        // 遍历activity_list
-        foreach ($all_activities as $act) {
-            $type = $act->type();
-            logging::d("actpe", $type);
-            if ($type == 1) {
-                if ($act->owner() == $userid) {
-                    array_push( $my_activity_no_list, $act->id());
-                }
-            }else if($type == 2) {
-                if (in_array($act->owner(), $my_organizetions)) {
-                    array_push( $my_activity_no_list, $act->id());
-                }
-            }
-            foreach ($all_sign as $sign) {
-                if ($sign['user'] == $user->id() && $sign['activity'] == $act->id()) {
-                    array_push( $my_activity_no_list, $act->id());
-                }
-            }
-            foreach ($my_subscribe_activity_list as $sub) {
-                if ($sub['activity'] == $act->id()) {
-                    array_push($my_activity_no_list, $act->id());
-                }
-            }
+        $event_code = Event::EVENT_CODES;
+        
+        $res_my_activity_event_list = array();
+        
+        foreach ($my_activity_event_list as $id => $event) {
+            $res_my_activity_event_list[$event['time']] = $event;
+            $res_my_activity_event_list[$event['time']]['event_content'] = $event_code[$event['event_code']];
         }
         
+        $data = array(
+            "my_activity_event_list" => $res_my_activity_event_list,
+            "my_calendar_event_list" => $my_calendar_event_list
+        );
         
-        // 遍历calendar_list
-        foreach ($all_calendars as $calendar) {
-            $type = $calendar->type();
-            logging::d("actpe", $type);
-            if ($type == 1) {
-                if ($calendar->owner() == $userid) {
-                    array_push( $my_calendar_no_list, $calendar->id());
-                }
-            }else if($type == 2) {
-                if (in_array($calendar->owner(), $my_organizetions)) {
-                    array_push( $my_calendar_no_list, $calendar->id());
-                }
-            }
-            // calendar没有报名，只有订阅
-            foreach ($my_subscribe_calendar_list as $sub) {
-                if ($sub['calendar'] == $calendar->id()) {
-                    array_push($my_calendar_no_list, $calendar->id());
-                }
-            }
-        }
+        return $this->op("event_list", $data);
         
-        $events = Event::all();
-        logging::d("my_activity_no_list ", json_encode($my_activity_no_list));
-        logging::d("my_calendar_no_list ", json_encode($my_calendar_no_list));
-        $event_list = [];
-        
-        foreach ($events as $event){
-            if (in_array($event->activity(), $my_activity_no_list) || in_array($event->calendar(), $my_calendar_no_list)) {
-                $event_list[$event->id()] = $event->packInfo();
-            }
-        }
-        
-        return $this->op("event_list", $event_list);
     }
 
 }

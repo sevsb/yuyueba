@@ -396,7 +396,7 @@ class Activity {
         return $subscribe;
     }
         
-    function convert_json($string) {
+    public function convert_json($string) {
         if (!is_string($string)) {
             //logging::d('no string',$string);
             return $string;
@@ -407,7 +407,7 @@ class Activity {
         }
     }
 
-    function convert_to_string($json) {
+    public function convert_to_string($json) {
         if (is_string($json)) {
             //logging::d('is string',$json);
             return $json;
@@ -417,6 +417,105 @@ class Activity {
             return $this->convert_to_string($json);
         }
     }
+    
+    public static function get_all_my_list($userid) {
+        
+        $my_create_activity_list = self::get_my_create_activity_list($userid);
+        $my_org_create_activity_list = self::get_my_org_create_activity_list($userid);
+
+        $my_join_activity_list = self::get_my_join_activity_list($userid);
+        $my_subscribe_activity_list = self::get_my_subscribe_activity_list($userid);
+        
+        foreach ($my_org_create_activity_list as $id => $activity) {
+            $my_org_create_activity_list[$id]['owner_avatar'] = rtrim(UPLOAD_URL, "/") . "/" . $activity['owner_avatar'];
+        }
+        
+        foreach ($my_join_activity_list as $id => $activity) {
+            if ($activity['type'] == 2) {
+                $my_join_activity_list[$id]['owner_avatar'] = rtrim(UPLOAD_URL, "/") . "/" . $activity['owner_avatar'];
+            }
+        }
+        
+        foreach ($my_subscribe_activity_list as $id => $activity) {
+            if ($activity['type'] == 2) {
+                $my_subscribe_activity_list[$id]['owner_avatar'] = rtrim(UPLOAD_URL, "/") . "/" . $activity['owner_avatar'];
+            }
+        }
+        
+        $data = array(
+            "my_create_activity_list" => $my_create_activity_list, 
+            "my_org_create_activity_list" => $my_org_create_activity_list, 
+            "my_join_activity_list" => $my_join_activity_list, 
+            "my_subscribe_activity_list" => $my_subscribe_activity_list
+        );
+        return $data;
+    }
+    
+    public static function get_my_create_activity_list($userid){
+        $sql = "
+        select a.*, b.avatar owner_avatar 
+        from yyba_activity a join yyba_tempuser b 
+        on b.id = a.owner 
+        where a.type = 1 and a.owner = $userid and a.calendar_id = 0";
+        return db_base::inst()->do_query($sql);
+    }
+    
+    public static function get_my_org_create_activity_list($userid){
+        $sql = "
+        select a.*, c.avatar owner_avatar 
+        from yyba_activity a 
+        join yyba_organization_member b 
+        on b.organization = a.owner  
+        join yyba_organization c 
+        on c.id = a.owner 
+        where b.user = $userid and a.type = 2";
+        return db_base::inst()->do_query($sql);
+    }
+    
+    public static function get_my_join_activity_list($userid){
+        $sql = "
+        select a.*, c.avatar owner_avatar 
+        from yyba_activity a 
+        join yyba_sign b 
+        on b.activity = a.id 
+        join yyba_tempuser c 
+        on c.id = a.owner 
+        where b.user = $userid and a.type = 1
+        union
+        select x.*, z.avatar owner_avatar
+        from yyba_activity x 
+        join yyba_sign y 
+        on y.activity = x.id 
+        join yyba_organization z 
+        on z.id = x.owner 
+        where y.user = $userid and x.type = 2";
+        return db_base::inst()->do_query($sql);
+    }
+    
+    public static function get_my_subscribe_activity_list($userid){
+        $sql = "
+        select a.* , c.avatar owner_avatar 
+        from yyba_activity a 
+        join yyba_subscribe b 
+        on b.activity = a.id 
+        join yyba_tempuser c 
+        on c.id = a.owner 
+        where b.user = $userid and a.type = 1
+        union
+        select x.*, z.avatar owner_avatar
+        from yyba_activity x 
+        join yyba_subscribe y 
+        on y.activity = x.id 
+        join yyba_organization z 
+        on z.id = x.owner 
+        where y.user = $userid and x.type = 2";
+        return db_base::inst()->do_query($sql);
+    }
+    
+
+    
+    
+    
 };
 
 

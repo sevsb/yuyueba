@@ -23,13 +23,18 @@ class event_controller extends v1_base {
         $my_activity_event_list = [];
         $my_calendar_event_list = [];
         
-        $my_activity_event_list = Event::get_activity_event_list($userid);
+        $my_activity_event_list = Event::get_activity_event_list_new($userid);
+        //$my_activity_event_list = Event::get_activity_event_list($userid);
         
         $event_code = Event::EVENT_CODES;
         
         $res_my_activity_event_list = array();
         
         foreach ($my_activity_event_list as $id => $event) {
+            if ($event["operator"] == $userid){
+                $event["operator_name"] = '你';
+            }
+            $event['time_content'] = time_content($event['time']);
             $res_my_activity_event_list[$event['time']] = $event;
             $res_my_activity_event_list[$event['time']]['event_content'] = $event_code[$event['event_code']];
         }
@@ -122,3 +127,21 @@ function increate_month($y, $m){
     return array("y" => $y, "m" => $m);
 }
 
+function time_content($time) {
+    $t = time() - $time;  
+    $f = array(  
+        '31536000'=>'年',  
+        '2592000'=>'个月',  
+        '604800'=>'星期',  
+        '86400'=>'天',  
+        '3600'=>'小时',  
+        '60'=>'分钟',  
+        '1'=>'秒'  
+    );  
+    foreach ($f as $k => $v)    {  
+        $c = floor($t / (int)$k);
+        if ($c != 0) {  
+            return $c.$v.'前';  
+        }  
+    }  
+}

@@ -64,6 +64,12 @@ class activity_controller extends v1_base {
             return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
         }
         $owner = $user->id();
+        
+        $my_list = Activity::get_all_my_list($user->id());
+        return $this->op("organized_all_my_list", $my_list);
+        
+        /*
+        
         $my_organizetions = $user->organizations();
         $my_organizetions = $my_organizetions["my_orgs"];
         
@@ -71,12 +77,27 @@ class activity_controller extends v1_base {
         $my_org_create_activity_list = array();
         $my_subscribe_activity_list = array();
         $my_join_activity_list = array();
-
+        $my_sign_list = array();
+        $my_subscribe_list = array();
+        
         $all_activities = Activity::all();
         $all_sign = db_sign::inst()->all();
         
         $all_my_subscribe_activity_list = Subscribe::load_subscribe_activity_list($user->id());
         logging::d("all_my_subscribe_activity_list owner:", json_encode($all_my_subscribe_activity_list));
+        
+        
+        foreach ($all_sign as $sign) {
+            if ($sign['user'] == $user->id() ) {
+                array_push($my_sign_list, $sign['activity']);
+            }
+        }
+        foreach ($all_my_subscribe_activity_list as $sub) {
+            if ($sub['user'] == $user->id()) {
+                array_push($my_subscribe_list, $sub['activity']);
+            }
+        }
+        
         foreach ($all_activities as $act) {
             $type = $act->type();
             logging::d("actpe", $type);
@@ -89,19 +110,22 @@ class activity_controller extends v1_base {
                     $my_org_create_activity_list[$act->id()] = $act->packInfo();
                 }
             }
-            foreach ($all_sign as $sign) {
-                if ($sign['user'] == $user->id() && $sign['activity'] == $act->id()) {
-                    $my_join_activity_list[$act->id()] = $act->packInfo();
-                }
+            if (in_array($act->id(), $my_subscribe_list)) {
+                $my_join_activity_list[$act->id()] = $act->packInfo();
             }
-            foreach ($all_my_subscribe_activity_list as $sub) {
-                if ($sub['activity'] == $act->id()) {
-                    $my_subscribe_activity_list[$act->id()] = $act->packInfo();
-                }
+            if (in_array($act->id(), $my_sign_list)) {
+                $my_subscribe_activity_list[$act->id()] = $act->packInfo();
             }
         }
-        $data = array("my_create_activity_list" => $my_create_activity_list, "my_org_create_activity_list" => $my_org_create_activity_list, "my_join_activity_list" => $my_join_activity_list, "my_subscribe_activity_list" => $my_subscribe_activity_list);
+        $data = array(
+        "my_create_activity_list" => $my_create_activity_list, 
+        "my_org_create_activity_list" => $my_org_create_activity_list, 
+        "my_join_activity_list" => $my_join_activity_list, 
+        "my_subscribe_activity_list" => $my_subscribe_activity_list);
         return $this->op("organized_all_my_list", $data);
+        
+        
+        */
     }
 
     public function search_action() {

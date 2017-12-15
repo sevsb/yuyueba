@@ -5,16 +5,16 @@ class Event {
     private $mSummary = null;
 
     const EVENT_CODES = array(
-        10001 => "创建单体活动",
-        10002 => "修改单体活动",
-        10003 => "暂停单体活动",
-        10004 => "启动单体活动",
-        10005 => "报名单体活动",
+        10001 => "创建了单体活动",
+        10002 => "修改了单体活动",
+        10003 => "暂停了单体活动",
+        10004 => "启动了单体活动",
+        10005 => "报名了单体活动",
         10006 => "取消报名单体活动",
-        10010 => "订阅单体活动",
-        20001 => "创建日历活动",
-        20002 => "修改日历活动",
-        20010 => "订阅日历活动",
+        10010 => "订阅了单体活动",
+        20001 => "创建了日历活动",
+        20002 => "修改了日历活动",
+        20010 => "订阅了日历活动",
         //10011 => "取消订阅单体活动",
     );
     
@@ -195,8 +195,12 @@ class Event {
     }
     
     
-//我个人 && 我相关组织创建的活动 && 我关注的活动 && 我报名的活动
-/*  select c.id from yyba_activity c join yyba_organization_member b on b.organization = c.owner  where c.type = 2 and b.user = 5
+
+
+
+// 我个人 && 我相关组织创建的活动 && 我关注的活动 && 我报名的活动
+/*
+    select c.id from yyba_activity c join yyba_organization_member b on b.organization = c.owner  where c.type = 2 and b.user = 5
     union 
     select a.id from yyba_activity a where a.type = 1 and a.owner = 5
     union
@@ -204,6 +208,7 @@ class Event {
     union
     select yyba_sign.activity from yyba_sign where yyba_sign.user = 5 
 */
+
     
     public static function get_activity_event_list($userid){
         $mysql = "
@@ -223,6 +228,64 @@ class Event {
             join 
                 yyba_tempuser tempu ON x.operator = tempu.id order by x.time desc";
                 
+        return db_base::inst()->do_query($mysql);
+    }
+
+    
+// 我个人创建的活动， 应该收到所有信息，包括修改，暂停，启动，关注，报名
+// 我组织创建的活动， 应该收到所有信息，包括修改，暂停，启动，关注，报名
+// 我关注的活动，应收到修改，暂停，启动信息
+// 我报名的活动，应收到修改，暂停，启动信息。
+
+// 修改，暂停，启动 ： XXX 活动 被修改/暂停/启动了
+// 关注，报名 ： xxx 活动 被关注/报名了。
+
+// 所有我自身相关的都应当被记录，并表现为 “你” xxxx 了  xxxx活动
+    
+    
+    
+/*
+    const EVENT_CODES = array(
+        10001 => "创建单体活动",
+        10002 => "修改单体活动",
+        10003 => "暂停单体活动",
+        10004 => "启动单体活动",
+        10005 => "报名单体活动",
+        10006 => "取消报名单体活动",
+        10010 => "订阅单体活动",
+        20001 => "创建日历活动",
+        20002 => "修改日历活动",
+        20010 => "订阅日历活动",
+        //10011 => "取消订阅单体活动",
+    ); 
+*/
+    
+    public static function get_activity_event_list_new($userid){
+        $mysql = "
+        SELECT z.*,act.title activity_title, tempu.nickname operator_name, tempu.avatar operator_avatar  FROM yyba_event z JOIN (
+            SELECT x1.* FROM yyba_event x1 
+            JOIN (
+                SELECT c.id FROM yyba_activity c JOIN yyba_organization_member b ON b.organization = c.owner WHERE c.type = 2 and b.user = $userid   
+                UNION 
+                SELECT a.id FROM yyba_activity a WHERE a.type = 1 and a.owner = $userid
+            ) y1 ON y1.id = x1.activity
+            UNION (
+            SELECT x2.* FROM yyba_event x2 
+            JOIN (
+                SELECT sub.activity FROM yyba_subscribe sub WHERE sub.user = $userid
+                UNION
+                SELECT yyba_sign.activity FROM yyba_sign WHERE yyba_sign.user = $userid 
+            ) y2 ON y2.activity = x2.activity WHERE x2.event_code = 10002 OR x2.event_code = 10003 OR x2.event_code = 10004
+            )
+            UNION (
+            SELECT x3.* FROM yyba_event x3 WHERE x3.operator = $userid
+            )
+        ) evt ON evt.id = z.id 
+        JOIN 
+            yyba_activity act ON act.id = z.activity
+        JOIN 
+            yyba_tempuser tempu ON z.operator = tempu.id";
+            
         return db_base::inst()->do_query($mysql);
     }
 

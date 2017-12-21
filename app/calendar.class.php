@@ -312,5 +312,74 @@ class Calendar {
     public static function cancel($id) {
         return db_calendar::inst()->cancel($id);
     }
+    
+    public static function get_all_my_list($userid) {
+               
+        $my_created_list = self::get_my_created_list($userid);
+        $my_org_created_list = self::get_my_org_created_list($userid);
+        $my_subscribe_list = self::my_subscribe_list($userid);
+        
+        
+        foreach ($my_org_created_list as $id => $activity) {
+            $my_org_created_list[$id]['owner_avatar'] = rtrim(UPLOAD_URL, "/") . "/" . $activity['owner_avatar'];
+        }
+        
+        foreach ($my_subscribe_list as $id => $activity) {
+            if ($activity['type'] == 2) {
+                $my_subscribe_list[$id]['owner_avatar'] = rtrim(UPLOAD_URL, "/") . "/" . $activity['owner_avatar'];
+            }
+        }
+        
+        $data = array(
+            "my_created_list" => $my_created_list,
+            "my_org_created_list" => $my_org_created_list,
+            "my_subscribe_list" => $my_subscribe_list,
+        );
+        return $data;
+    }
+    
+    public static function get_my_created_list($userid) {
+        $sql = "
+        select a.*, b.avatar owner_avatar
+        from yyba_calendar a 
+        join yyba_tempuser b 
+        on b.id = a.owner 
+        where a.owner = $userid and a.type = 1";
+        return db_base::inst()->do_query($sql);
+    }
+    public static function get_my_org_created_list($userid) {
+        $sql = "
+        select a.*,c.avatar owner_avatar
+        from yyba_calendar a 
+        join yyba_organization_member b 
+        on a.owner = b.organization
+        join yyba_organization c 
+        on c.id = a.owner 
+        where a.type = 2 and b.user = $userid";
+        return db_base::inst()->do_query($sql);
+    }
+
+    public static function my_subscribe_list($userid) {
+        $sql = "
+        select a.*,c.avatar owner_avatar
+        from yyba_calendar a 
+        join yyba_subscribe b 
+        on a.id = b.calendar 
+        join yyba_tempuser c 
+        on c.id = a.owner 
+        where b.user = $userid and a.type = 1 
+        union 
+        select x.*,z.avatar owner_avatar
+        from yyba_calendar x 
+        join yyba_subscribe y 
+        on x.id = y.calendar 
+        join yyba_organization z 
+        on z.id = x.owner 
+        where y.user = $userid and x.type = 2";
+        return db_base::inst()->do_query($sql);
+    }
+    
+    
+    
 };
 

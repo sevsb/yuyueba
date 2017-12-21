@@ -63,6 +63,20 @@ class calendar_controller extends v1_base {
         }
         
         $userid = $user->id();
+        
+        
+        $my_list = Calendar::get_all_my_list($userid);
+        return $this->op("my_calendar_list", $my_list);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         $organizations = $user->organizations();
         logging::d("organizations", $organizations);
         

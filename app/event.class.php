@@ -262,7 +262,7 @@ class Event {
     
     public static function get_activity_event_list_new($userid){
         $mysql = "
-        SELECT z.*,act.title activity_title, tempu.nickname operator_name, tempu.avatar operator_avatar  FROM yyba_event z JOIN (
+        SELECT z.*,act.title, tempu.nickname operator_name, tempu.avatar operator_avatar  FROM yyba_event z JOIN (
             SELECT x1.* FROM yyba_event x1 
             JOIN (
                 SELECT c.id FROM yyba_activity c JOIN yyba_organization_member b ON b.organization = c.owner WHERE c.type = 2 and b.user = $userid   
@@ -284,7 +284,83 @@ class Event {
         JOIN 
             yyba_activity act ON act.id = z.activity
         JOIN 
-            yyba_tempuser tempu ON z.operator = tempu.id";
+            yyba_tempuser tempu ON z.operator = tempu.id
+        order by z.time desc    
+        ";
+            
+        return db_base::inst()->do_query($mysql);
+    }
+
+    
+    public static function get_calendar_event_list_new($userid){
+        $mysql = "
+            SELECT z.*,cal.title , tempu.nickname operator_name, tempu.avatar operator_avatar  FROM yyba_event z JOIN (
+            select a.* from yyba_calendar a  where a.owner = $userid and a.type =1
+            UNION
+            select c.* from yyba_calendar c JOIN 
+            (select * from yyba_organization_member where user = $userid )b on c.owner = b.organization and c.type =2 
+            union 
+            select e.* from yyba_calendar e JOIN
+            (select * from yyba_subscribe where user = $userid) d on d.calendar = e.id
+            ) cals ON cals.id = z.calendar 
+            JOIN 
+            yyba_calendar cal ON cal.id = z.calendar
+            JOIN 
+            yyba_tempuser tempu ON z.operator = tempu.id where z.activity = 0
+            order by z.time desc  
+            ";
+            
+        return db_base::inst()->do_query($mysql);
+    }
+
+    
+    public static function get_event_list_new($userid){
+        $mysql = "
+        
+    SELECT z.*,act.title, tempu.nickname operator_name, tempu.avatar operator_avatar  FROM yyba_event z JOIN (
+        SELECT x1.* FROM yyba_event x1 
+        JOIN (
+            SELECT c.id FROM yyba_activity c JOIN yyba_organization_member b ON b.organization = c.owner WHERE c.type = 2 and b.user = $userid   
+            UNION 
+            SELECT a.id FROM yyba_activity a WHERE a.type = 1 and a.owner = $userid
+        ) y1 ON y1.id = x1.activity
+        UNION (
+        SELECT x2.* FROM yyba_event x2 
+        JOIN (
+            SELECT sub.activity FROM yyba_subscribe sub WHERE sub.user = $userid
+            UNION
+            SELECT yyba_sign.activity FROM yyba_sign WHERE yyba_sign.user = $userid 
+        ) y2 ON y2.activity = x2.activity WHERE x2.event_code = 10002 OR x2.event_code = 10003 OR x2.event_code = 10004
+        )
+        UNION (
+        SELECT x3.* FROM yyba_event x3 WHERE x3.operator = $userid
+        )
+    ) evt ON evt.id = z.id 
+    JOIN 
+        yyba_activity act ON act.id = z.activity
+    JOIN 
+        yyba_tempuser tempu ON z.operator = tempu.id
+
+        
+    union 
+
+
+    SELECT z.*,cal.title , tempu.nickname operator_name, tempu.avatar operator_avatar  FROM yyba_event z JOIN (
+    select a.* from yyba_calendar a  where a.owner = $userid and a.type =1
+    UNION
+    select c.* from yyba_calendar c JOIN 
+    (select * from yyba_organization_member where user = $userid )b on c.owner = b.organization and c.type =2 
+    union 
+    select e.* from yyba_calendar e JOIN
+    (select * from yyba_subscribe where user = $userid) d on d.calendar = e.id
+    ) cals ON cals.id = z.calendar 
+    JOIN 
+    yyba_calendar cal ON cal.id = z.calendar
+    JOIN 
+    yyba_tempuser tempu ON z.operator = tempu.id where z.activity = 0
+
+    order by time DESC
+        ";
             
         return db_base::inst()->do_query($mysql);
     }

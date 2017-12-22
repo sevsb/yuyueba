@@ -19,32 +19,26 @@ class event_controller extends v1_base {
             return array('op' => 'fail', "code" => '000002', "reason" => '无此用户');
         }
         $userid = $user->id();
-        
-        $my_activity_event_list = [];
-        $my_calendar_event_list = [];
-        
-        $my_activity_event_list = Event::get_activity_event_list_new($userid);
-        //$my_activity_event_list = Event::get_activity_event_list($userid);
-        
+
+        $my_event_list = Event::get_event_list_new($userid);
         $event_code = Event::EVENT_CODES;
+        $my_event_list_new = [];
         
-        $res_my_activity_event_list = array();
-        
-        foreach ($my_activity_event_list as $id => $event) {
+        foreach ($my_event_list as $id => $event) {
             if ($event["operator"] == $userid){
                 $event["operator_name"] = '你';
             }
             $event['time_content'] = time_content($event['time']);
-            $res_my_activity_event_list[$event['time']] = $event;
-            $res_my_activity_event_list[$event['time']]['event_content'] = $event_code[$event['event_code']];
+            $event['event_content'] = $event_code[$event['event_code']];
+            if ($event["calendar"] != 0 && $event["activity"] == 0 ) {
+                $event['view_url'] = '../create/calendar?id=' . $event["calendar"];
+            }else {
+                $event['view_url'] = '../activity/detail?id=' . $event["activity"];
+            }
+            array_push($my_event_list_new, $event);
         }
         
-        $data = array(
-            "my_activity_event_list" => $res_my_activity_event_list,
-            "my_calendar_event_list" => $my_calendar_event_list
-        );
-        
-        return $this->op("event_list", $data);
+        return $this->op("event_list", $my_event_list_new);
         
     }
 

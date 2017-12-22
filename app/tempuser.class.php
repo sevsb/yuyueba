@@ -317,12 +317,12 @@ class TempUser extends User {
         return db_tempuser::inst()->remove($uid);
     }
     
-    public function my_index() {
+    public function my_index($start_index) {
         $userid = $this->id();
-        return self::get_my_index($userid);
+        return self::get_my_index($userid, $start_index);
     }
         
-    public static function get_my_index($userid) {
+    public static function get_my_index($userid, $start_index = 0) {
         $sql = "
         
     select aa.id activity_id, aa.title, aa.content, aa.type, aa.calendar_id, aa.modifytime, aa.status,  ab.avatar owner_avatar 
@@ -402,7 +402,7 @@ class TempUser extends User {
         on zz.id = zx.owner 
         where zy.user = 5 and zx.type = 2    
        
-    order by modifytime desc limit 0, 20
+    order by modifytime desc limit $start_index, 20
         
         ";
         $list = db_base::inst()->do_query($sql);

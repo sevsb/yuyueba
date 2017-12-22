@@ -161,13 +161,14 @@ class user_controller extends v1_base {
     
     public function my_index_action(){
         $yuyue_session = get_request('yuyue_session', "");
+        $start_index = get_request('start_index', 0);
         $user = TempUser::oneBySession($yuyue_session);
         if (!$user) {
             return array('op' => 'fail', "code" => '232323', "reason" => '无此用户');
         }
         $userid = $user->id();
         
-        $my_index = $user->my_index();
+        $my_index = $user->my_index($start_index);
         return array("op" => "my_index", 'data' => $my_index);
         
     }

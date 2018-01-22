@@ -80,7 +80,7 @@ public function send_action(){
 		return array("data" =>$data ,"op" =>"send" );
    }
 
-   public function verify_action() {
+   public function verify1_action() {
 	
 		$nationCode = get_request('nationCode');
 		$phoneNumber = get_request('phoneNumber');
@@ -118,7 +118,7 @@ public function send_action(){
 		logging::d("yuyue_session", "一切正常 is:"  . $reason.$status );
 		return array("op" =>"verify","data" => $data );
    }
-   public function verify1_action() {
+   public function verify_action() {
 	
 		$nationCode = get_request('nationCode');
 		$phoneNumber = get_request('phoneNumber');

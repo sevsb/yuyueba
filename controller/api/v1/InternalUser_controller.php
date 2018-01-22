@@ -226,7 +226,9 @@ public function send_action(){
 	再次登陆，免去短信验证，只能登陆与本地微信绑定帐号
 	*/
     public function login_action() {
+		
 	$yuyue_session = get_request('yuyue_session');		
+	$data= new stdclass();
 		if(empty($yuyue_session)){
 			logging::d("yuyue_session", "111111 is:"  );
 			$data->reason ="信息不全";
@@ -247,7 +249,7 @@ public function send_action(){
 		
 		$user = InternalUser::oneById($tempuser->uid);
 		
-		$data= new stdclass();
+		
 		if (empty($user)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "33333 is:"  );
 			$data->reason ="无此用户";

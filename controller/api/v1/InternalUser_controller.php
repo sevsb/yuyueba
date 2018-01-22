@@ -171,9 +171,10 @@ public function send_action(){
 		}else{
 			logging::d("verify_action", "$status==0  " .$status );
 			$data = array("status" => $status , "reason" => $reason);
-			return array("data" => $dataaaa , "dataz" => $data ,  "op" => "verify1" );
+			
 		}
 		logging::d("verify_action", " status  " .$status." reason " .$reason." id " .$id);
+		return array("data" => $dataaaa ,  "op" => "verify1" );
 		return array("data" => $data , "op" => "verify" );
    }
    

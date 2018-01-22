@@ -113,7 +113,7 @@ public function send_action(){
 				logging::d("yuyue_session", "44444 is:"  );
 				$data->reason ="验证码错误";
 				$data->status = 0;
-			
+			return array("op" => "verify","data" => $data  );
 			}else{
 			
 				$tempId = $tempuser->id();//获取对应tempid			
@@ -171,7 +171,7 @@ public function send_action(){
 			$tempuser->save();
 			$data->info = array( "id" => $id , "yuyue_session" => $yuyue_session);
 		}else{
-			logging::d("verify_action", "$status==0  " .$status );	
+			logging::d("verify_action", "$data->status==0  " .$data->status );	
 		}
 		logging::d("verify_action", " status  " .$data->status." reason " .$data->reason." id " .$data->id);
 

@@ -89,30 +89,30 @@ public function send_action(){
 		$verify_code = get_request('verify_code');
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
-		$status = 10;
+		
 		$id = -1 ;
 		$reason="系统错误";
-		$data = array("123"=>12316);
-		$dataaaa = array("123"=>12316);
+		 $data = new stdClass();
+           
 		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
 			logging::d("yuyue_session", "111111 is:"  );
-			$reason ="信息不全";
-			$status = 0;
+			$data->reason ="信息不全";
+			$data->status = 0;
 		
 		}else if(empty($tempuser)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "1222222 is:"  );
-			$reason ="系统错误，请重启小程序";
-			$status = 0;
+			$data->reason ="系统错误，请重启小程序";
+			$data->status = 0;
 		}else if (empty($user)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "33333 is:"  );
-			$reason ="手机错误，请重新输入";
-			$status = 0;
+			$data->reason ="手机错误，请重新输入";
+			$data->status = 0;
 			
 		}else{ 
 			if(!$user->verify($verify_code)){
 				logging::d("yuyue_session", "44444 is:"  );
-				$reason ="验证码错误";
-				$status = 0;
+				$data->reason ="验证码错误";
+				$data->status = 0;
 			
 			}else{
 			
@@ -121,17 +121,17 @@ public function send_action(){
 			
 					if($user->verify_status()=="true"){//已注册成功，登陆
 			logging::d("yuyue_session", "status 1 $status " . $status);
-						$status = 2;
+						$data->status = 2;
 					}else if($tempuser->id()==0){//未注册,注册
 					logging::d("yuyue_session", "status 2 $status " . $status);
 						$tempuser->setUId($user->id());
 						$user->setStatus("true");
 						$user->setCode("00000");
-						$status = 1;
+						$data->status = 1;
 					}else{//一个微信注册过，又用另一个手机号注册
 					
-						$reason ="无此用户";
-						$status = 0;
+						$data->reason ="无此用户";
+						$data->status = 0;
 						logging::d("yuyue_session", "status 3 $status " . $status);
 					}
 			
@@ -140,43 +140,42 @@ public function send_action(){
 					if($user->verify_status()=="true"){//已注册成功，登陆
 						$tempuser = TempUser::oneById($user->tempid());//获取对应用户信息
 						if (empty($tempuser)) {//如果没有对应的user，系统错误。
-							$reason ="系统错误，账号无效，请联系管理员";
-							$status = 0;
+							$data->reason ="系统错误，账号无效，请联系管理员";
+							$data->status = 0;
 					
 						}else{
 							
 						$yuyue_session =$tempuser->yuyue_session();//获取yuyue_session
 						$user->setStatus("true");
 						$user->setCode("00000");
-						$status = 3;
+						$data->status = 3;
 						}
 					}else if($tempuser->id()==0){//不应有这种情况
 						$tempuser->setUId($user->id());
 						$user->setTempId($tempuser->id());
 						$user->setStatus("true");
 						$user->setCode("00000");
-						$status = 1;
+						$data->status = 1;
 					}else{//账号绑定错误
-						$reason ="账号错误";
-						$status = 0;
+						$data->reason ="账号错误";
+						$data->status = 0;
 					}
 					logging::d("yuyue_session", "status 4 $status " . $status);
 				}
 			}
 		}	
-		if($status!=0){
+		if($data->status!=0){
 			logging::d("verify_action", "$status!=0  " .$status );
+			
 			$id = $user->save();
 			$tempuser->save();
-			$data = array("status" => $status , "info"=>array( "id" => $id , "yuyue_session" => $yuyue_session));
+			$data->info = array( "id" => $id , "yuyue_session" => $yuyue_session);
 		}else{
-			logging::d("verify_action", "$status==0  " .$status );
-			$data = array("status" => $status , "reason" => $reason);
-			
+			logging::d("verify_action", "$status==0  " .$status );	
 		}
-		logging::d("verify_action", " status  " .$status." reason " .$reason." id " .$id);
+		logging::d("verify_action", " status  " .$data->status." reason " .$data->reason." id " .$data->id);
 
-		return array("data" => $data , "op" => "verify" );
+		return array("op" => "verify","data" => $data  );
    }
    
     public function getInfo_action() {

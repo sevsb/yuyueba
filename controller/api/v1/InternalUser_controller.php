@@ -87,6 +87,39 @@ public function send_action(){
 		$yuyue_session = get_request('yuyue_session');
 		logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session );
 		$verify_code = get_request('verify_code');
+		
+		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
+		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
+		 $data = new stdClass();
+           
+		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
+			logging::d("yuyue_session", "111111 is:"  );
+			$data->reason ="信息不全";
+			$data->status = 0;
+		
+		}else if(empty($tempuser)) {//如果没有对应的user，系统错误。
+			logging::d("yuyue_session", "1222222 is:"  );
+			$data->reason ="系统错误，请重启小程序";
+			$data->status = 0;
+		}else if (empty($user)) {//如果没有对应的user，系统错误。
+			logging::d("yuyue_session", "33333 is:"  );
+			$data->reason ="手机错误，请重新输入";
+			$data->status = 0;
+			
+		}else{ //一切正常
+			$data->reason ="一切正常";
+			$data->status = 1;
+		}
+		
+		return array("op" => "verify","data" => $data  );
+   }
+   public function verify1_action() {
+	
+		$nationCode = get_request('nationCode');
+		$phoneNumber = get_request('phoneNumber');
+		$yuyue_session = get_request('yuyue_session');
+		logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session );
+		$verify_code = get_request('verify_code');
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
 		
@@ -177,7 +210,6 @@ public function send_action(){
 
 		return array("op" => "verify","data" => $data  );
    }
-   
     public function getInfo_action() {
 
 		$yuyue_session = get_request('yuyue_session');		

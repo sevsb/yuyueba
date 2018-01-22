@@ -90,6 +90,7 @@ public function send_action(){
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
 		$status = 10;
+		$id = -1 ;
 		$reason="系统错误";
 		$data = array("123"=>12316);
 		$dataaaa = array("123"=>12316);
@@ -174,7 +175,7 @@ public function send_action(){
 			
 		}
 		logging::d("verify_action", " status  " .$status." reason " .$reason." id " .$id);
-		return array("data" => $dataaaa ,  "op" => "verify1" );
+
 		return array("data" => $data , "op" => "verify" );
    }
    

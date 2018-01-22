@@ -119,6 +119,8 @@ class InternalUser {
         return new User($user);
     }
 	
+
+	
     public static function all($include_deleted = false) {
         $users = db_user::inst()->all();
         $arr = array();

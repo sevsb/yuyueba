@@ -161,7 +161,7 @@ public function send_action(){
 						$data->reason ="账号错误";
 						$data->status = 0;
 					}
-					logging::d("yuyue_session", "status 4 $status " . $status);
+				//	logging::d("yuyue_session", "status 4 $status " . $status);
 				}
 			}
 		}	
@@ -172,9 +172,9 @@ public function send_action(){
 			$tempuser->save();
 			$data->info = array( "id" => $id , "yuyue_session" => $yuyue_session);
 		}else{
-			logging::d("verify_action", "$data->status==0  " .$data->status );	
+		//	logging::d("verify_action", "$data->status==0  " .$data->status );	
 		}
-		logging::d("verify_action", " status  " .$data->status." reason " .$data->reason." id " .$data->id);
+		//logging::d("verify_action", " status  " .$data->status." reason " .$data->reason." id " .$data->id);
 
 		return array("op" => "verify","data" => $data  );
    }
@@ -222,27 +222,38 @@ public function send_action(){
 		}
 		return array( "op" => "getInfo","data" => $data  );
 	}
+	/*
+	再次登陆，免去短信验证，只能登陆与本地微信绑定帐号
+	*/
     public function login_action() {
 	$yuyue_session = get_request('yuyue_session');		
-		$uid = get_request('uid');
-		$user = InternalUser::oneById($uid);
-		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
-		$data= new stdclass();
 		if(empty($yuyue_session)){
 			logging::d("yuyue_session", "111111 is:"  );
 			$data->reason ="信息不全";
 			$data->status = 0;
-		
-		}else if(empty($tempuser)) {//如果没有对应的user，系统错误。
+		return array( "op" => "login","data" => $data);
+		}
+		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
+		if(empty($tempuser)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "1222222 is:"  );
-			$data->reason ="系统错误，请重启小程序";
+			$data->reason ="yuyue_session错误，请重启小程序";
 			$data->status = 0;
-		}else if (empty($user)) {//如果没有对应的user，系统错误。
+		}else if($tempuser->uid==0)){
+			logging::d("yuyue_session", "00000 is:"  );
+			$data->reason ="未注册";
+			$data->status = 0;
+		}
+		return array( "op" => "login","data" => $data);
+		
+		$user = InternalUser::oneById($tempuser->uid);
+		
+		$data= new stdclass();
+		if (empty($user)) {//如果没有对应的user，系统错误。
 			logging::d("yuyue_session", "33333 is:"  );
 			$data->reason ="无此用户";
 			$data->status = 0;
 			
-		}else if($tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
+		}else if($user->verify_status()&&$tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
 			$tempuser->setSessionKey =  md5(time() . $tempuser->yuyue_session());
 			$tempuser->save();
 			$data->phoneNumber =  $user->telephone();

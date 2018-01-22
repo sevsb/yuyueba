@@ -11,16 +11,16 @@ public function send_action(){
         $phoneNumber = get_request('phoneNumber');
         $yuyue_session = get_request('yuyue_session');
   
-    $tempuser = TempUser::oneBySession($yuyue_session);//»ñÈ¡ÓÃ»§ĞÅÏ¢
+    $tempuser = TempUser::oneBySession($yuyue_session);//è·å–ç”¨æˆ·ä¿¡æ¯
 			if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session))
-			return array("data" =>array("status"=>0,"reason"=>"ĞÅÏ¢²»È«") ,"op" =>"verify" );
+			return array("data" =>array("status"=>0,"reason"=>"ä¿¡æ¯ä¸å…¨") ,"op" =>"verify" );
 		$templId = 50285;
 		
-		if (empty($tempuser)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬¾Í´´½¨Ò»¸ö¡£
+		if (empty($tempuser)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œå°±åˆ›å»ºä¸€ä¸ªã€‚
 			$tempuser = new TempUser();
 		}
-		$user = InternalUser::oneByTelephone($phoneNumber);//Í¨¹ıÊÖ»úºÅ »ñÈ¡¶ÔÓ¦µÄÄÚ²¿ÓÃ»§
-		if (empty($user)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬¾Í´´½¨Ò»¸ö¡£
+		$user = InternalUser::oneByTelephone($phoneNumber);//é€šè¿‡æ‰‹æœºå· è·å–å¯¹åº”çš„å†…éƒ¨ç”¨æˆ·
+		if (empty($user)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œå°±åˆ›å»ºä¸€ä¸ªã€‚
 			$user = new InternalUser();
 		}
 
@@ -29,9 +29,9 @@ public function send_action(){
 
 
 		logging::d("tempuser", "Id is:" .$tempuser->id());
-		$tempId = $tempuser->id();//»ñÈ¡¶ÔÓ¦tempid
+		$tempId = $tempuser->id();//è·å–å¯¹åº”tempid
 		$type = 0;
-		if($user->id()==0){//Î´×¢²á
+		if($user->id()==0){//æœªæ³¨å†Œ
 				
 			$user->setTempId($tempId);
 			logging::d("tempId", "tempId is:" .$tempId);
@@ -40,20 +40,20 @@ public function send_action(){
 			logging::d("sendsms", "phoneNumber is:" .$phoneNumber);
 	
 		}
-		else if($user->id()!=0){//ÒÑ×¢²á
-			if($user->verify_status()=="true"){//ÒÑ×¢²á³É¹¦£¬µÇÂ½
+		else if($user->id()!=0){//å·²æ³¨å†Œ
+			if($user->verify_status()=="true"){//å·²æ³¨å†ŒæˆåŠŸï¼Œç™»é™†
 	
-				if($tempId==$user->tempid()){//¶ÔÓ¦Î¢ĞÅµÇÂ½ ²»×ö´¦Àí
+				if($tempId==$user->tempid()){//å¯¹åº”å¾®ä¿¡ç™»é™† ä¸åšå¤„ç†
 					$type = 1;
-				}else{//²»ÊÇ¶ÔÓ¦Î¢ĞÅ »ñÈ¡session
-					$tempuser = TempUser::oneById($user->tempid());//»ñÈ¡¶ÔÓ¦ÓÃ»§ĞÅÏ¢
-					$yuyue_session =$tempuser->yuyue_session();//»ñÈ¡yuyue_session
+				}else{//ä¸æ˜¯å¯¹åº”å¾®ä¿¡ è·å–session
+					$tempuser = TempUser::oneById($user->tempid());//è·å–å¯¹åº”ç”¨æˆ·ä¿¡æ¯
+					$yuyue_session =$tempuser->yuyue_session();//è·å–yuyue_session
 					$type = 2;
 				}
-			}else{//Î´×¢²á³É¹¦
-				if($tempId==$user->tempid()){//¶ÔÓ¦Î¢ĞÅ×¢²á ²»×ö´¦Àí
+			}else{//æœªæ³¨å†ŒæˆåŠŸ
+				if($tempId==$user->tempid()){//å¯¹åº”å¾®ä¿¡æ³¨å†Œ ä¸åšå¤„ç†
 				
-				}else{//°ó¶¨ÓĞÎÊÌâ
+				}else{//ç»‘å®šæœ‰é—®é¢˜
 					$user->setTempId($tempId);
 			logging::d("tempId", "tempId is:" .$tempId);
 				}
@@ -62,7 +62,7 @@ public function send_action(){
 			
 		}	
 			
-			$verification_code = rand(1000,9999);//Ëæ»úÑéÖ¤Âë
+			$verification_code = rand(1000,9999);//éšæœºéªŒè¯ç 
 			$user->setCode($verification_code);
 			logging::d("sendsms", "verification_code is:" .$verification_code);
 			
@@ -88,36 +88,36 @@ public function send_action(){
 		logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session );
 		$verify_code = get_request('verify_code');
 		
-		$tempuser = TempUser::oneBySession($yuyue_session);//»ñÈ¡ÓÃ»§ĞÅÏ¢
-		$user = InternalUser::oneByTelephone($phoneNumber);//Í¨¹ıÊÖ»úºÅ »ñÈ¡¶ÔÓ¦µÄÄÚ²¿ÓÃ»§
-		$reason ="Ò»ÇĞbuÕı³£";
+		$tempuser = TempUser::oneBySession($yuyue_session);//è·å–ç”¨æˆ·ä¿¡æ¯
+		$user = InternalUser::oneByTelephone($phoneNumber);//é€šè¿‡æ‰‹æœºå· è·å–å¯¹åº”çš„å†…éƒ¨ç”¨æˆ·
+		$reason ="ä¸€åˆ‡buæ­£å¸¸";
 		$status = -1;
 	
            
 		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
 			logging::d("yuyue_session", "111111 is:"  );
-			$reason ="ĞÅÏ¢²»È«";
+			$reason ="ä¿¡æ¯ä¸å…¨";
 			$status = 0;
 		
-		}else if(empty($tempuser)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬ÏµÍ³´íÎó¡£
+		}else if(empty($tempuser)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œç³»ç»Ÿé”™è¯¯ã€‚
 			logging::d("yuyue_session", "1222222 is:"  );
-			$reason ="ÏµÍ³´íÎó£¬ÇëÖØÆôĞ¡³ÌĞò";
+			$reason ="ç³»ç»Ÿé”™è¯¯ï¼Œè¯·é‡å¯å°ç¨‹åº";
 			$status = 0;
-		}else if (empty($user)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬ÏµÍ³´íÎó¡£
+		}else if (empty($user)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œç³»ç»Ÿé”™è¯¯ã€‚
 			logging::d("yuyue_session", "33333 is:"  );
-			$reason ="ÊÖ»ú´íÎó£¬ÇëÖØĞÂÊäÈë";
+			$reason ="æ‰‹æœºé”™è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥";
 			$status = 0;
 			
-		}else{ //Ò»ÇĞÕı³£
-		logging::d("yuyue_session", "Ò»ÇĞÕı³£ is:"  );
-			$reason ="Ò»ÇĞÕı³£";
+		}else{ //ä¸€åˆ‡æ­£å¸¸
+		logging::d("yuyue_session", "ä¸€åˆ‡æ­£å¸¸ is:"  );
+			$reason ="ä¸€åˆ‡æ­£å¸¸";
 			$status = 1;
 		}
 		$reason=json_decode($reason);
-		$reason1 = 'Ò»ÇĞÕı³£';
-		$reason12  ="Ò»ÇĞÕı³£";
+		$reason1 = 'ä¸€åˆ‡æ­£å¸¸';
+		$reason12  ="ä¸€åˆ‡æ­£å¸¸";
 		$data = array("reason" => $reason,"status"=> $status );
-		logging::d("yuyue_session", "Ò»ÇĞÕı³£ is:"  . $reason.$status );
+		logging::d("yuyue_session", "ä¸€åˆ‡æ­£å¸¸ is:"  . $reason.$status );
 		return array("op" =>"verify","reason" => $reason,"reason1" => $reason1,"reason12"=>$reason12,"status"=>$status );
    }
    public function verify1_action() {
@@ -127,77 +127,77 @@ public function send_action(){
 		$yuyue_session = get_request('yuyue_session');
 		logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session );
 		$verify_code = get_request('verify_code');
-		$tempuser = TempUser::oneBySession($yuyue_session);//»ñÈ¡ÓÃ»§ĞÅÏ¢
-		$user = InternalUser::oneByTelephone($phoneNumber);//Í¨¹ıÊÖ»úºÅ »ñÈ¡¶ÔÓ¦µÄÄÚ²¿ÓÃ»§
+		$tempuser = TempUser::oneBySession($yuyue_session);//è·å–ç”¨æˆ·ä¿¡æ¯
+		$user = InternalUser::oneByTelephone($phoneNumber);//é€šè¿‡æ‰‹æœºå· è·å–å¯¹åº”çš„å†…éƒ¨ç”¨æˆ·
 		
 		$id = -1 ;
-		$reason="ÏµÍ³´íÎó";
+		$reason="ç³»ç»Ÿé”™è¯¯";
 		 $data = new stdClass();
            
 		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
 			logging::d("yuyue_session", "111111 is:"  );
-			$data->reason ="ĞÅÏ¢²»È«";
+			$data->reason ="ä¿¡æ¯ä¸å…¨";
 			$data->status = 0;
 		
-		}else if(empty($tempuser)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬ÏµÍ³´íÎó¡£
+		}else if(empty($tempuser)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œç³»ç»Ÿé”™è¯¯ã€‚
 			logging::d("yuyue_session", "1222222 is:"  );
-			$data->reason ="ÏµÍ³´íÎó£¬ÇëÖØÆôĞ¡³ÌĞò";
+			$data->reason ="ç³»ç»Ÿé”™è¯¯ï¼Œè¯·é‡å¯å°ç¨‹åº";
 			$data->status = 0;
-		}else if (empty($user)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬ÏµÍ³´íÎó¡£
+		}else if (empty($user)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œç³»ç»Ÿé”™è¯¯ã€‚
 			logging::d("yuyue_session", "33333 is:"  );
-			$data->reason ="ÊÖ»ú´íÎó£¬ÇëÖØĞÂÊäÈë";
+			$data->reason ="æ‰‹æœºé”™è¯¯ï¼Œè¯·é‡æ–°è¾“å…¥";
 			$data->status = 0;
 			
 		}else{ 
 			if(!$user->verify($verify_code)){
 				logging::d("yuyue_session", "44444 is:"  );
-				$data->reason ="ÑéÖ¤Âë´íÎó";
+				$data->reason ="éªŒè¯ç é”™è¯¯";
 				$data->status = 0;
 			return array("op" => "verify","data" => $data  );
 			}else{
 			
-				$tempId = $tempuser->id();//»ñÈ¡¶ÔÓ¦tempid			
-				if($user->tempid()== $tempId){//µ¥·½°ó¶¨ÎŞÎó
+				$tempId = $tempuser->id();//è·å–å¯¹åº”tempid			
+				if($user->tempid()== $tempId){//å•æ–¹ç»‘å®šæ— è¯¯
 			
-					if($user->verify_status()=="true"){//ÒÑ×¢²á³É¹¦£¬µÇÂ½
+					if($user->verify_status()=="true"){//å·²æ³¨å†ŒæˆåŠŸï¼Œç™»é™†
 			logging::d("yuyue_session", "status 1 $status " . $status);
 						$data->status = 2;
-					}else if($tempuser->id()==0){//Î´×¢²á,×¢²á
+					}else if($tempuser->id()==0){//æœªæ³¨å†Œ,æ³¨å†Œ
 					logging::d("yuyue_session", "status 2 $status " . $status);
 						$tempuser->setUId($user->id());
 						$user->setStatus("true");
 						$user->setCode("00000");
 						$data->status = 1;
-					}else{//Ò»¸öÎ¢ĞÅ×¢²á¹ı£¬ÓÖÓÃÁíÒ»¸öÊÖ»úºÅ×¢²á
+					}else{//ä¸€ä¸ªå¾®ä¿¡æ³¨å†Œè¿‡ï¼Œåˆç”¨å¦ä¸€ä¸ªæ‰‹æœºå·æ³¨å†Œ
 					
-						$data->reason ="ÎŞ´ËÓÃ»§";
+						$data->reason ="æ— æ­¤ç”¨æˆ·";
 						$data->status = 0;
 						logging::d("yuyue_session", "status 3 $status " . $status);
 					}
 			
-				}else {//²»ÊÇ¶ÔÓ¦Î¢ĞÅ£¬
+				}else {//ä¸æ˜¯å¯¹åº”å¾®ä¿¡ï¼Œ
 				
-					if($user->verify_status()=="true"){//ÒÑ×¢²á³É¹¦£¬µÇÂ½
-						$tempuser = TempUser::oneById($user->tempid());//»ñÈ¡¶ÔÓ¦ÓÃ»§ĞÅÏ¢
-						if (empty($tempuser)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬ÏµÍ³´íÎó¡£
-							$data->reason ="ÏµÍ³´íÎó£¬ÕËºÅÎŞĞ§£¬ÇëÁªÏµ¹ÜÀíÔ±";
+					if($user->verify_status()=="true"){//å·²æ³¨å†ŒæˆåŠŸï¼Œç™»é™†
+						$tempuser = TempUser::oneById($user->tempid());//è·å–å¯¹åº”ç”¨æˆ·ä¿¡æ¯
+						if (empty($tempuser)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œç³»ç»Ÿé”™è¯¯ã€‚
+							$data->reason ="ç³»ç»Ÿé”™è¯¯ï¼Œè´¦å·æ— æ•ˆï¼Œè¯·è”ç³»ç®¡ç†å‘˜";
 							$data->status = 0;
 					
 						}else{
 							
-						$yuyue_session =$tempuser->yuyue_session();//»ñÈ¡yuyue_session
+						$yuyue_session =$tempuser->yuyue_session();//è·å–yuyue_session
 						$user->setStatus("true");
 						$user->setCode("00000");
 						$data->status = 3;
 						}
-					}else if($tempuser->id()==0){//²»Ó¦ÓĞÕâÖÖÇé¿ö
+					}else if($tempuser->id()==0){//ä¸åº”æœ‰è¿™ç§æƒ…å†µ
 						$tempuser->setUId($user->id());
 						$user->setTempId($tempuser->id());
 						$user->setStatus("true");
 						$user->setCode("00000");
 						$data->status = 1;
-					}else{//ÕËºÅ°ó¶¨´íÎó
-						$data->reason ="ÕËºÅ´íÎó";
+					}else{//è´¦å·ç»‘å®šé”™è¯¯
+						$data->reason ="è´¦å·é”™è¯¯";
 						$data->status = 0;
 					}
 					logging::d("yuyue_session", "status 4 $status " . $status);
@@ -222,7 +222,7 @@ public function send_action(){
 		$yuyue_session = get_request('yuyue_session');		
 		$uid = get_request('uid');
 		$user = InternalUser::oneById($uid);
-		$tempuser = TempUser::oneBySession($yuyue_session);//»ñÈ¡ÓÃ»§ĞÅÏ¢
+		$tempuser = TempUser::oneBySession($yuyue_session);//è·å–ç”¨æˆ·ä¿¡æ¯
 		
 	
 		$reason =".0.0.";
@@ -233,16 +233,16 @@ public function send_action(){
 		if(empty($yuyue_session)){
 			
 			logging::d("yuyue_session", "111111 is:"  );
-			$reason ="ĞÅÏ¢²»È«";
+			$reason ="ä¿¡æ¯ä¸å…¨";
 			$status = 0;
 		
-		}else if(empty($tempuser)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬ÏµÍ³´íÎó¡£
+		}else if(empty($tempuser)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œç³»ç»Ÿé”™è¯¯ã€‚
 			logging::d("yuyue_session", "1222222 is:"  );
-			$reason ="ÏµÍ³´íÎó£¬ÇëÖØÆôĞ¡³ÌĞò";
+			$reason ="ç³»ç»Ÿé”™è¯¯ï¼Œè¯·é‡å¯å°ç¨‹åº";
 			$status = 0;
-		}else if (empty($user)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬ÏµÍ³´íÎó¡£
+		}else if (empty($user)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œç³»ç»Ÿé”™è¯¯ã€‚
 			logging::d("yuyue_session", "33333 is:"  );
-			$reason ="ÎŞ´ËÓÃ»§";
+			$reason ="æ— æ­¤ç”¨æˆ·";
 			$status = 0;
 			
 		}else if($tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
@@ -252,7 +252,7 @@ public function send_action(){
 			$status = 1;
 		}else{
 			logging::d("yuyue_session", "1789789781 is:"  );
-			$reason ="Î´Öª´íÎó";
+			$reason ="æœªçŸ¥é”™è¯¯";
 		}
 		if($status==1)
 		$data= array("phoneNumber"=>$phoneNumber,"avatar"=>$avatar,"status"=>$status);
@@ -265,20 +265,20 @@ public function send_action(){
 	$yuyue_session = get_request('yuyue_session');		
 		$uid = get_request('uid');
 		$user = InternalUser::oneById($uid);
-		$tempuser = TempUser::oneBySession($yuyue_session);//»ñÈ¡ÓÃ»§ĞÅÏ¢
+		$tempuser = TempUser::oneBySession($yuyue_session);//è·å–ç”¨æˆ·ä¿¡æ¯
 		$data= new stdclass();
 		if(empty($yuyue_session)){
 			logging::d("yuyue_session", "111111 is:"  );
-			$data->reason ="ĞÅÏ¢²»È«";
+			$data->reason ="ä¿¡æ¯ä¸å…¨";
 			$data->status = 0;
 		
-		}else if(empty($tempuser)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬ÏµÍ³´íÎó¡£
+		}else if(empty($tempuser)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œç³»ç»Ÿé”™è¯¯ã€‚
 			logging::d("yuyue_session", "1222222 is:"  );
-			$data->reason ="ÏµÍ³´íÎó£¬ÇëÖØÆôĞ¡³ÌĞò";
+			$data->reason ="ç³»ç»Ÿé”™è¯¯ï¼Œè¯·é‡å¯å°ç¨‹åº";
 			$data->status = 0;
-		}else if (empty($user)) {//Èç¹ûÃ»ÓĞ¶ÔÓ¦µÄuser£¬ÏµÍ³´íÎó¡£
+		}else if (empty($user)) {//å¦‚æœæ²¡æœ‰å¯¹åº”çš„userï¼Œç³»ç»Ÿé”™è¯¯ã€‚
 			logging::d("yuyue_session", "33333 is:"  );
-			$data->reason ="ÎŞ´ËÓÃ»§";
+			$data->reason ="æ— æ­¤ç”¨æˆ·";
 			$data->status = 0;
 			
 		}else if($tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){

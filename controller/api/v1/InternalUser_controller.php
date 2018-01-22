@@ -113,12 +113,10 @@ public function send_action(){
 			$reason ="一切正常";
 			$status = 1;
 		}
-		$reason=json_decode($reason);
-		$reason1 = '一切正常';
-		$reason12  ="一切正常";
+		
 		$data = array("reason" => $reason,"status"=> $status );
 		logging::d("yuyue_session", "一切正常 is:"  . $reason.$status );
-		return array("op" =>"verify","reason" => $reason,"reason1" => $reason1,"reason12"=>$reason12,"status"=>$status );
+		return array("op" =>"verify","data" => $data );
    }
    public function verify1_action() {
 	

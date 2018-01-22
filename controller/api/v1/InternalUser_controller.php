@@ -113,7 +113,7 @@ public function send_action(){
 			$status = 1;
 		}
 		$data = array("reason" => $reason,"status"=> $status );
-		return array("op" => "verify","data"=> $data );
+		return array("op" => "verify","reason" => $reason,"status"=> $status );
    }
    public function verify1_action() {
 	

@@ -111,7 +111,7 @@ public function send_action(){
 			$data->status = 1;
 		}
 		
-		return array("op" => "verify","data" => $data  );
+		return array("op" => "verify" );
    }
    public function verify1_action() {
 	

@@ -89,7 +89,7 @@ public function send_action(){
 		$verify_code = get_request('verify_code');
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
-		$type = 0;
+		$type = 10;
 		$reason="系统错误";
 		$data = array("123"=>12316);
 		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
@@ -118,19 +118,22 @@ public function send_action(){
 				if($user->tempid()== $tempId){//单方绑定无误
 			
 					if($user->verify_status()=="true"){//已注册成功，登陆
-			
+			logging::d("yuyue_session", "type 1 $type " . $type);
 						$type = 2;
 					}else if($tempuser->id()==0){//未注册,注册
+					logging::d("yuyue_session", "type 2 $type " . $type);
 						$tempuser->setUId($user->id());
 						$user->setStatus("true");
 						$user->setCode("00000");
 						$type = 1;
 					}else{//一个微信注册过，又用另一个手机号注册
+					logging::d("yuyue_session", "type 3 $type " . $type);
 						$reason ="无此用户";
 						$type = 0;
 					}
 			
 				}else {//不是对应微信，
+				
 					if($user->verify_status()=="true"){//已注册成功，登陆
 						$tempuser = TempUser::oneById($user->tempid());//获取对应用户信息
 						if (empty($tempuser)) {//如果没有对应的user，系统错误。
@@ -154,6 +157,7 @@ public function send_action(){
 						$reason ="账号错误";
 						$type = 0;
 					}
+					logging::d("yuyue_session", "type 4 $type " . $type);
 				}
 			}
 		}	
@@ -163,9 +167,10 @@ public function send_action(){
 			$tempuser->save();
 			$data = array("status" => $type , "info"=>array( "id" => $id , "yuyue_session" => $yuyue_session));
 		}else{
-			logging::d("verify_action", "$type!=0  " .$type );
+			logging::d("verify_action", "$type==0  " .$type );
 			$data = array("status" => $type , "reason" => $reason);
 		}
+		logging::d("verify_action", "data  " .$data );
 		return array("data" => $data , "op" => "verify" );
    }
    

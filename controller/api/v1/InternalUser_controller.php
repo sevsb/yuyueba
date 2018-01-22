@@ -92,6 +92,7 @@ public function send_action(){
 		$status = 10;
 		$reason="系统错误";
 		$data = array("123"=>12316);
+		$dataaaa = array("123"=>12316);
 		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
 			logging::d("yuyue_session", "111111 is:"  );
 			$reason ="信息不全";
@@ -170,6 +171,7 @@ public function send_action(){
 		}else{
 			logging::d("verify_action", "$status==0  " .$status );
 			$data = array("status" => $status , "reason" => $reason);
+			return array("data" => $dataaaa , "op" => "verify1" );
 		}
 		logging::d("verify_action", " status  " .$status." reason " .$reason." id " .$id);
 		return array("data" => $data , "op" => "verify" );

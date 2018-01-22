@@ -80,44 +80,7 @@ public function send_action(){
 		return array("data" =>$data ,"op" =>"send" );
    }
 
-   public function verify1_action() {
-	
-		$nationCode = get_request('nationCode');
-		$phoneNumber = get_request('phoneNumber');
-		$yuyue_session = get_request('yuyue_session');
-		logging::d("yuyue_session", "yuyue_session is:" .$yuyue_session );
-		$verify_code = get_request('verify_code');
-		
-		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
-		$user = InternalUser::oneByTelephone($phoneNumber);//通过手机号 获取对应的内部用户
-		$reason ="一切bu正常";
-		$status = -1;
-	
-           
-		if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session)||empty($verify_code)){
-			logging::d("yuyue_session", "111111 is:"  );
-			$reason ="信息不全";
-			$status = 0;
-		
-		}else if(empty($tempuser)) {//如果没有对应的user，系统错误。
-			logging::d("yuyue_session", "1222222 is:"  );
-			$reason ="系统错误，请重启小程序";
-			$status = 0;
-		}else if (empty($user)) {//如果没有对应的user，系统错误。
-			logging::d("yuyue_session", "33333 is:"  );
-			$reason ="手机错误，请重新输入";
-			$status = 0;
-			
-		}else{ //一切正常
-		logging::d("yuyue_session", "一切正常 is:"  );
-			$reason ="一切正常";
-			$status = 1;
-		}
-		
-		$data = array("reason" => $reason,"status"=> $status );
-		logging::d("yuyue_session", "一切正常 is:"  . $reason.$status );
-		return array("op" =>"verify","data" => $data );
-   }
+   
    public function verify_action() {
 	
 		$nationCode = get_request('nationCode');
@@ -151,7 +114,7 @@ public function send_action(){
 				logging::d("yuyue_session", "44444 is:"  );
 				$data->reason ="验证码错误";
 				$data->status = 0;
-			return array("op" => "verify","data" => $data  );
+	
 			}else{
 			
 				$tempId = $tempuser->id();//获取对应tempid			
@@ -160,7 +123,7 @@ public function send_action(){
 					if($user->verify_status()=="true"){//已注册成功，登陆
 			logging::d("yuyue_session", "status 1 $status " . $status);
 						$data->status = 2;
-					}else if($tempuser->id()==0){//未注册,注册
+					}else if($tempuser->uid()==0){//未注册,注册
 					logging::d("yuyue_session", "status 2 $status " . $status);
 						$tempuser->setUId($user->id());
 						$user->setStatus("true");

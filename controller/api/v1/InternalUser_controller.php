@@ -15,7 +15,7 @@ public function send_action(){
 			if(empty($nationCode)||empty($phoneNumber)||empty($yuyue_session))
 			return array("data" =>array("status"=>0,"reason"=>"信息不全") ,"op" =>"verify" );
 		$templId = 50285;
-		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
+		
 		if (empty($tempuser)) {//如果没有对应的user，就创建一个。
 			$tempuser = new TempUser();
 		}
@@ -158,10 +158,12 @@ public function send_action(){
 			}
 		}	
 		if($type!=0){
+			logging::d("verify_action", "$type!=0  " .$type );
 			$id = $user->save();
 			$tempuser->save();
 			$data = array("status" => $type , "info"=>array( "id" => $id , "yuyue_session" => $yuyue_session));
 		}else{
+			logging::d("verify_action", "$type!=0  " .$type );
 			$data = array("status" => $type , "reason" => $reason);
 		}
 		return array("data" => $data , "op" => "verify" );

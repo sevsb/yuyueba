@@ -193,7 +193,7 @@ public function send_action(){
 			logging::d("yuyue_session", "1222222 is:"  );
 			$data->reason ="yuyue_session错误，请重启小程序";
 			$data->status = 0;
-		}else if($tempuser->uid==0)){
+		}else if($tempuser->uid==0){
 			logging::d("yuyue_session", "00000 is:"  );
 			$data->reason ="未注册";
 			$data->status = 0;
@@ -237,7 +237,7 @@ public function send_action(){
 			logging::d("yuyue_session", "1222222 is:"  );
 			$data->reason ="yuyue_session错误，请重启小程序";
 			$data->status = 0;
-		}else if($tempuser->uid==0)){
+		}else if($tempuser->uid==0){
 			logging::d("yuyue_session", "00000 is:"  );
 			$data->reason ="未注册";
 			$data->status = 0;

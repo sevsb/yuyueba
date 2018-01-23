@@ -197,9 +197,7 @@ public function send_action(){
 			logging::d("yuyue_session", "00000 is:"  );
 			$data->reason ="未注册";
 			$data->status = 0;
-		}
-		return array( "op" => "getInfo","data" => $data);
-		
+		}else{
 		$user = InternalUser::oneById($tempuser->uid);
 		
 		
@@ -215,7 +213,7 @@ public function send_action(){
 			$data->yuyue_session = $tempuser->yuyue_session();
 			$data->status = 1;
 		}
-		
+		}
 		return array( "op" => "getInfo","data" => $data);
    }
 	

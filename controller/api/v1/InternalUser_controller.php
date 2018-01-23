@@ -198,7 +198,7 @@ public function send_action(){
 			$data->reason ="未注册";
 			$data->status = 0;
 		}else{
-		$user = InternalUser::oneById($tempuser->uid);
+		$user = InternalUser::oneById($tempuser->uid());
 		
 		
 		if (empty($user)) {//如果没有对应的user，系统错误。
@@ -222,13 +222,13 @@ public function send_action(){
 	*/
     public function login_action() {
 		
-	$yuyue_session = get_request('yuyue_session');		
+		$yuyue_session = get_request('yuyue_session');		
 	$data= new stdclass();
 		if(empty($yuyue_session)){
 			logging::d("yuyue_session", "111111 is:"  );
 			$data->reason ="信息不全";
 			$data->status = 0;
-		return array( "op" => "login","data" => $data);
+		return array( "op" => "getInfo","data" => $data);
 		}
 		$tempuser = TempUser::oneBySession($yuyue_session);//获取用户信息
 		if(empty($tempuser)) {//如果没有对应的user，系统错误。
@@ -239,10 +239,8 @@ public function send_action(){
 			logging::d("yuyue_session", "00000 is:"  );
 			$data->reason ="未注册";
 			$data->status = 0;
-		}
-		return array( "op" => "login","data" => $data);
-		
-		$user = InternalUser::oneById($tempuser->uid);
+		}else{
+		$user = InternalUser::oneById($tempuser->uid());
 		
 		
 		if (empty($user)) {//如果没有对应的user，系统错误。
@@ -257,7 +255,7 @@ public function send_action(){
 			$data->yuyue_session = $tempuser->yuyue_session();
 			$data->status = 1;
 		}
-		
-		return array( "op" => "login","data" => $data);
+		}
+		return array( "op" => "getInfo","data" => $data);
    }
 }

@@ -207,7 +207,7 @@ public function send_action(){
 			$data->status = 0;
 			
 		}else if($user->verify_status()&&$tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
-			$data->uid =  $tempuser-->uid();
+			$data->uid =  $tempuser->uid();
 			$data->phoneNumber =  $user->telephone();
 			$data->yuyue_session = $tempuser->yuyue_session();
 			$data->status = 1;
@@ -251,7 +251,7 @@ public function send_action(){
 		}else if($user->verify_status()&&$tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
 			$tempuser->setSessionKey =  md5(time() . $tempuser->yuyue_session());
 			$tempuser->save();
-			$data->uid =  $tempuser-->uid();
+			$data->uid =  $tempuser->uid();
 			$data->phoneNumber =  $user->telephone();
 			$data->yuyue_session = $tempuser->yuyue_session();
 			$data->status = 1;

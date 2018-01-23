@@ -218,7 +218,7 @@ public function send_action(){
 		
 		return array( "op" => "getInfo","data" => $data);
    }
-	}
+	
 	/*
 	再次登陆，免去短信验证，只能登陆与本地微信绑定帐号
 	*/

@@ -207,8 +207,7 @@ public function send_action(){
 			$data->status = 0;
 			
 		}else if($user->verify_status()&&$tempuser->uid() == $user->id()&&$user->tempId()==$tempuser->id()){
-			$tempuser->setSessionKey =  md5(time() . $tempuser->yuyue_session());
-			$tempuser->save();
+		
 			$data->phoneNumber =  $user->telephone();
 			$data->yuyue_session = $tempuser->yuyue_session();
 			$data->status = 1;
@@ -222,6 +221,7 @@ public function send_action(){
 	*/
     public function login_action() {
 		
+	
 		$yuyue_session = get_request('yuyue_session');		
 	$data= new stdclass();
 		if(empty($yuyue_session)){
@@ -258,4 +258,5 @@ public function send_action(){
 		}
 		return array( "op" => "getInfo","data" => $data);
    }
+	
 }
